@@ -1,0 +1,69 @@
+<div class="container">
+  <div class="account account--overview">
+    <header class="account__header">
+      <div class="account__header-matter">
+        <div>
+          {% render 'account-greeting' %}
+        </div>
+
+        {% if settings.rewards_enabled and settings.rewards_store_country_code %}
+          <div class="account__rewards-balance">
+            <h5>
+              <span>{{ 'loyalty_rewards.your_rewards_balance' | t }}</span>
+              <span class="js-rewards-balance"></span>
+            </h5>
+            <p class="small">
+              <span class="js-rewards-expiry"></span>
+            </p>
+            <a class="small" href="/pages/rewards">{{ 'loyalty_rewards.view_rewards_status' | t }}</a>
+          </div>
+        {% endif %}
+      </div>
+
+      {% render 'component-accounts-pages-menu', linklist: linklists[settings.account_links], parent_class: 'account__top-nav' %}
+    </header>
+
+    <div class="account__summary">
+      <div class="account__summary-order">
+        {% paginate customer.orders limit 1 %}
+          {% if customer.orders.size != 0 %}
+            <h5>{{ 'customer.orders.recent_order' | t }}</h5>
+
+            {% for order in customer.orders %}
+              {% render 'account-order-card', order: order %}
+              {% break %}
+            {% endfor %}
+          {% else %}
+            <p class="account__summary-no-orders">{{ 'customer.orders.none' | t }}</p>
+          {% endif %}
+        {% endpaginate %}
+        </div>
+      <div class="account__items">
+        <div class="account__summary-item">
+          <h5>
+            Account Details
+          </h5>
+          <p>
+            {{ customer.name }}<br />
+            {{ customer.email }}
+          </p>
+        </div>
+        {% for address in customer.addresses %}
+          {% if address == customer.default_address %}
+          <div class="account__summary-item">
+            <h5>{{ 'customer.addresses.shipping_to' | t }}</h5>
+            <div class="address__summary">
+              {{ address | format_address }}
+            </div>
+            <p>
+              <a href="{{ routes.account_addresses_url }}" class="btn__text btn__text--icon-left">
+                {%- render 'icon-pencil' -%}<span>{{- 'customer.addresses.edit_address' | t -}}</span>
+              </a>
+            </p>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>

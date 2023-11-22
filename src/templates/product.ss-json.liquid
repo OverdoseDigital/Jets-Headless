@@ -1,0 +1,88 @@
+{%- layout none -%}
+{%- liquid
+    assign current_variant = product.selected_or_first_available_variant
+
+    assign includesVideo = false
+    if product.metafields.video.show_video == 1
+      if product.metafields.video.video_url != blank
+        assign includesVideo = true
+        assign videoUrl = product.metafields.video.video_url
+      endif
+    endif
+
+    if product.media.size > 1
+      assign featuredMediaClass = 'featured'
+    endif
+-%}
+
+{%- capture video -%}
+	{%- if includesVideo -%}
+		{%- render 'component-video', video: videoUrl, autoplay: true, controls: false, aspect_ratio: 'portrait', video_class: featuredMediaClass -%}
+	{%- else -%}
+		false
+	{%- endif -%}
+{%- endcapture -%}
+
+{%- capture image -%}
+	{%- render 'ss-component-image', image: product.featured_image, max_width: 960 -%}
+{%- endcapture -%}
+
+{%- capture images -%}
+	{% for media in product.media %}
+		{%- render 'ss-component-image', image: media, max_width: 960 -%}{%- if forloop.last -%}{%- else -%},{%- endif -%}
+	{% endfor %}
+{%- endcapture -%}
+
+{%- capture variant -%}
+    {
+      "id" : {{- current_variant.id | json -}},
+      "title" : {{- current_variant.title | json -}},
+      "available" : {{- current_variant.available | json -}}
+    }
+{%- endcapture -%}
+
+{%- capture variants -%}
+	{% for variant in product.variants %}
+		{
+			"id" : {{- variant.id | json -}},
+			"title" : {{- variant.title | json -}},
+			"available" : {{- variant.available | json -}}
+		}{%- if forloop.last -%}{%- else -%},{%- endif -%}
+	{% endfor %}
+{%- endcapture -%}
+
+{%- capture badge -%}
+	 {%- render 'product-badge', product: product, includeIconBadge: true -%}
+{%- endcapture -%}
+
+{%- capture swatches -%}
+	{%- assign stitchedProducts = product.metafields.stitching.stitched_products -%}
+	{% for stitchedProduct in stitchedProducts.value %}
+		{
+			"colorGroup" : {{- stitchedProduct.color-group | handleize | json -}},
+			"colorLabel" : {{- stitchedProduct.color | capitalize | json -}},
+			"colorHandle" : {{- stitchedProduct.color | handleize | json -}},
+			"productHandle" : {{- stitchedProduct.handle | handleize | json -}}
+		}{%- if forloop.last -%}{%- else -%},{%- endif -%}
+	{% endfor %}
+{%- endcapture -%}
+
+{
+	{{- product.handle | json -}}: {
+		"id" : {{- product.id | json -}},
+		"url" : {{- product.url | within: collection | json -}},
+		"title" : {{- product.title | json -}},
+		"handle" : {{- product.handle | json -}},
+		"price" : {{- product.price | money_without_currency | json -}},
+		"msrp"  : {{- product.compare_at_price | money_without_currency | json -}},
+		"priceMin" : {{- product.price_min | money_without_currency | json -}},
+		"video" : {{- video | strip_newlines | json | replace:'\t':'' -}},
+		"imageTransparent" : "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+		"image" : {{ image }},
+		"images" : [{{ images }}],
+		"variant" : {{ variant }},
+		"variants" : [{{ variants }}],
+		"badge" : {{- badge | strip_newlines | json | replace:'\t':'' -}},
+		"swatches" : [{{ swatches }}]
+	}
+}

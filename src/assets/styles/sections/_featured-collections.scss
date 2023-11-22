@@ -1,0 +1,53 @@
+@use 'sass:math';
+
+$outline-buffer: rem(6px); // ensure outline of list item can be seen fully
+
+.featured-collections {
+  margin-top: $spacing-md;
+  margin-bottom: $spacing-md;
+
+  @include media-query($medium-up) {
+    margin-top: $spacing-lg;
+    margin-bottom: $spacing-lg;
+  }
+
+  .product-cards-carousel-tabs {
+    margin-top: ($spacing-md - $outline-buffer) $spacing-md;
+    margin-bottom: ($spacing-md - $outline-buffer) $spacing-md;
+  }
+
+  .product-cards-carousel-tabs__list {
+    padding-top: $outline-buffer;
+  }
+}
+
+.featured-collections__title,
+.featured-collections__description,
+.featured-collections__cta {
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.featured-collections__title {
+  .h3 {
+    margin-bottom: 1rem;
+  }
+}
+
+.featured-collections__description {
+  p {
+    margin-bottom: rem(9px);
+
+    @include media-query($large-up) {
+      margin-bottom: rem(2px);
+    }
+  }
+}
+
+.featured-collections__cta {
+  margin-bottom: rem(25px);
+
+  @include media-query($large-up) {
+    margin-bottom: rem(42px);
+  }
+}

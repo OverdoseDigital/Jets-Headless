@@ -1,0 +1,337 @@
+{%- if section.settings.hero_timer_enabled -%}
+<script>
+    // Set the launch date and time
+    var launchDate = new Date('{{ section.settings.hero_timer_month }} {{ section.settings.hero_timer_day }}, {{ section.settings.hero_timer_year }} {{ section.settings.hero_timer_timedue }}').getTime();
+
+    // Update the countdown every second
+    var countdown = setInterval(function() {
+        // Get the current date and time
+        var now = new Date().getTime();
+
+        // Find the remaining time
+        var timeRemaining = launchDate - now;
+
+        // Calculate the days, hours, minutes, and seconds
+        var days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        // Convert days to hours and add to the total hours
+        hours += days * 24;
+
+        // Display the countdown
+        var countdownElement = document.getElementById('countdown');
+        countdownElement.innerHTML = hours + ' : ' + 
+            minutes.toString().padStart(2, '0') + ' : ' + 
+            seconds.toString().padStart(2, '0') + '';
+
+        // If the countdown is finished, display a message
+        if (timeRemaining < 0) {
+            clearInterval(countdown);
+            countdownElement.innerHTML = '{{ section.settings.hero_timer_error_message }}';
+        }
+    }, 1000);
+</script>
+
+<style>
+    /* FIX MENU Height */
+    @media only screen and (min-width: 25rem) and (max-width: 61.8125rem){
+        .nav-drawer{
+            height: calc(100% - 135px) !important;
+        }
+    }
+
+    @media only screen and (max-width: 61.8125rem) {
+        .nav-drawer{
+            height: calc(100% - 135px) !important;
+        }
+    }
+    /* FIX MENU Height */
+    
+    .teaser-container {
+        height: calc(100% + 22px);
+        background-color: {{ section.settings.hero_timer_bgcolour }};
+        color: {{ section.settings.hero_timer_colour }};
+        text-align: center;
+        padding: 10px;
+    }
+
+    .teaser-container div {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 22px;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+</style>
+      {% if section.settings.hero_timer_url != blank %}
+      <a href="{{ section.settings.hero_timer_url }}">
+      {% endif %}
+            <div class="teaser-container">
+                <div>
+                    <h4 style="margin: 0;">{{ section.settings.hero_timer_message }}</h4>
+                    
+                    <div id="countdown"></div>
+                    
+                </div>
+            </div>
+      {% if section.settings.hero_timer_url != blank %}
+      </a>
+      {% endif %}
+  {%- endif -%}
+{% schema %}
+  {
+    "name": "Timer Hero Announcement",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "hero_timer_enabled",
+        "label": "Show Timer Hero Announcement",
+        "default": false
+      },
+      {
+      "type": "url",
+      "id": "hero_timer_url",
+      "label": "Timer Hero Bar link"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "hero_timer_message",
+        "default": "Your hero message comes here",
+        "label": "Message"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "hero_timer_error_message",
+        "default": "Launch date has passed!",
+        "label": "Message if date has passed"
+      },
+      {
+        "type": "header",
+        "content": "Set a due date"
+      },
+          {
+            "type": "select",
+            "id": "hero_timer_day",
+            "label": "Day",
+            "options": [
+              {
+                "value": "1",
+                "label": "1"
+              },
+              {
+                "value": "2",
+                "label": "2"
+              },
+              {
+                "value": "3",
+                "label": "3"
+              },
+              {
+                "value": "4",
+                "label": "4"
+              },
+              {
+                "value": "5",
+                "label": "5"
+              },
+              {
+                "value": "6",
+                "label": "6"
+              },
+              {
+                "value": "7",
+                "label": "7"
+              },
+              {
+                "value": "8",
+                "label": "8"
+              },
+              {
+                "value": "9",
+                "label": "9"
+              },
+              {
+                "value": "10",
+                "label": "10"
+              },
+              {
+                "value": "11",
+                "label": "11"
+              },
+              {
+                "value": "12",
+                "label": "12"
+              },
+              {
+                "value": "13",
+                "label": "13"
+              },
+              {
+                "value": "14",
+                "label": "14"
+              },
+              {
+                "value": "15",
+                "label": "15"
+              },
+              {
+                "value": "16",
+                "label": "16"
+              },
+              {
+                "value": "17",
+                "label": "17"
+              },
+              {
+                "value": "18",
+                "label": "18"
+              },
+              {
+                "value": "19",
+                "label": "19"
+              },
+              {
+                "value": "20",
+                "label": "20"
+              },
+              {
+                "value": "21",
+                "label": "21"
+              },
+              {
+                "value": "22",
+                "label": "22"
+              },
+              {
+                "value": "23",
+                "label": "23"
+              },
+              {
+                "value": "24",
+                "label": "24"
+              },
+              {
+                "value": "25",
+                "label": "25"
+              },
+              {
+                "value": "26",
+                "label": "26"
+              },
+              {
+                "value": "27",
+                "label": "27"
+              },
+              {
+                "value": "28",
+                "label": "28"
+              },
+              {
+                "value": "29",
+                "label": "29"
+              },
+              {
+                "value": "30",
+                "label": "30"
+              },
+              {
+                "value": "31",
+                "label": "31"
+              }
+            ],
+            "default": "1"
+          },
+          {
+            "type": "select",
+            "id": "hero_timer_month",
+            "label": "Month",
+            "options": [
+              {
+                "value": "January",
+                "label": "January"
+              },
+              {
+                "value": "February",
+                "label": "February"
+              },
+              {
+                "value": "March",
+                "label": "March"
+              },
+              {
+                "value": "April",
+                "label": "April"
+              },
+              {
+                "value": "May",
+                "label": "May"
+              },
+              {
+                "value": "June",
+                "label": "June"
+              },
+              {
+                "value": "July",
+                "label": "July"
+              },
+              {
+                "value": "August",
+                "label": "August"
+              },
+              {
+                "value": "September",
+                "label": "September"
+              },
+              {
+                "value": "October",
+                "label": "October"
+              },
+              {
+                "value": "November",
+                "label": "November"
+              },
+              {
+                "value": "December",
+                "label": "December"
+              }
+            ],
+            "default": "January"
+          },
+          {
+            "type": "text",
+            "id": "hero_timer_year",
+            "label": "Year [YYYY]"
+          },
+          {
+            "type": "text",
+            "id": "hero_timer_timedue",
+            "label": "Due Time [HH:MM:SS]"
+          },
+      {
+        "type": "header",
+        "content": "Look & Feel"
+      },
+      {
+        "type": "color",
+        "id": "hero_timer_bgcolour",
+        "label": "Background Colour",
+        "default": "#414141"
+      },
+      {
+        "type": "color",
+        "id": "hero_timer_colour",
+        "label": "Text colour",
+        "default": "#FFFFFF"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

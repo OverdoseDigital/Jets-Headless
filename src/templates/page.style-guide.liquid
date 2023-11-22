@@ -1,0 +1,602 @@
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="h2">{{ page.title }}</h1>
+  </div>
+
+  <div class="page-content">
+    <style>
+      section {
+        margin-bottom: 32px;
+      }
+      .section-title {
+        margin-bottom: 16px;
+      }
+      .buttons-container {
+        margin: 16px 0;
+      }
+      .buttons-container button {
+        margin: 0 24px 16px 0;
+      }
+      section .form__group input:not([type=checkbox]):not([type=radio]),
+      section .form__group textarea {
+        width: 100%;
+      }
+      .form__group--flex {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .form__group--flex input {
+        margin-right: 10px;
+      }
+      .icons-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        grid-auto-rows: 60px;
+        margin: 50px 0 100px;
+      }
+
+      .icons-grid--large .icon {
+        width: 48px;
+        height: 48px;
+      }
+
+      .icon-filled .icon-fill {
+        fill: currentColor;
+      }
+
+      section > .product__label {
+        position: static;
+      }
+    </style>
+
+    <section>
+      <h2 class="section-title h3">Headings</h2>
+      <h1 class="hero">Heading one hero</h1>
+      <h1>Heading one</h1>
+      <h2>Heading two</h2>
+      <h3>Heading three</h3>
+      <h4>Heading four</h4>
+      <h5>Heading five</h5>
+      <h6>Heading six</h6>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Body text</h2>
+      <p>Suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat.</p>
+      <p>Lorem <strong>ipsum dolor sit</strong> amet, consectetuer <em>adipiscing elit</em>, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna <a href="#">liquam erat volutpat</a>. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper.</p>
+
+      <ul>
+        <li>One</li>
+        <li>Two</li>
+        <li>Three</li>
+        <li>Four</li>
+      </ul>
+
+      <ol>
+        <li>One</li>
+        <li>Two</li>
+        <li>Three</li>
+        <li>Four</li>
+      </ol>
+
+      <h2 class="section-title h3">Body text - large</h2>
+      <p class="paragraph-large">Suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat.</p>
+
+      <h2 class="section-title h3">Body text - small</h2>
+      <p class="small">Suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat.</p>
+
+
+
+      <h4 class="docs-title">Blockquote</h4>
+
+      <blockquote>
+        <p>Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.</p>
+        <cite>The author of the quote</cite>
+      </blockquote>
+
+      <h4 class="docs-title">Small text and labels</h4>
+      <label>Label</label>
+      <small>Suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat.</small>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">RTE</h2>
+      <div class="rte">
+        <h1>Heading One</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in.</p>
+        <h2>Heading Two</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in.</p>
+        <h3>Heading Three</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in.</p>
+        <h4>Heading Four</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in.</p>
+        <h5>Heading Five</h5>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in.</p>
+        <h6>Heading Six</h6>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Icons</h2>
+
+
+      <div class="icons-grid">
+        {%- liquid
+          render 'icon-account'
+          render 'icon-arrow-down'
+          render 'icon-arrow-left'
+          render 'icon-arrow-right'
+          render 'icon-arrow-up'
+          render 'icon-bag'
+          render 'icon-book'
+          render 'icon-box'
+          render 'icon-bump-friendly'
+          render 'icon-calendar'
+          render 'icon-chat'
+          render 'icon-check'
+          render 'icon-chevron-down'
+          render 'icon-chevron-left'
+          render 'icon-chevron-right'
+          render 'icon-chevron-up'
+          render 'icon-close'
+          render 'icon-cross'
+          render 'icon-envelope'
+          render 'icon-filter'
+          render 'icon-forward'
+          render 'icon-heart'
+          render 'icon-gift'
+          render 'icon-gift-money'
+          render 'icon-lifesaver'
+          render 'icon-location'
+          render 'icon-lock'
+          render 'icon-measure'
+          render 'icon-menu'
+          render 'icon-minus'
+          render 'icon-minus-sm'
+          render 'icon-money'
+          render 'icon-model-xr'
+          render 'icon-palm'
+          render 'icon-phone'
+          render 'icon-plus'
+          render 'icon-plus-sm'
+          render 'icon-regenerated-fibers'
+          render 'icon-return'
+          render 'icon-rss'
+          render 'icon-search'
+          render 'icon-sunlounge'
+          render 'icon-support'
+          render 'icon-sustainable'
+          render 'icon-truck'
+          render 'icon-upload'
+
+          render 'icon-bikini-sm'
+          render 'icon-calendar-sm'
+          render 'icon-globe'
+          render 'icon-location-sm'
+          render 'icon-measure-sm'
+          render 'icon-phone-sm'
+          render 'icon-swimsuit-sm'
+        -%}
+
+      </div>
+
+      <div class="icons-grid icons-grid--large">
+
+        {% liquid
+            render 'icon-highlight-adjustable'
+            render 'icon-highlight-chlorine-resistant'
+            render 'icon-highlight-clip-closure'
+            render 'icon-highlight-drawstring'
+            render 'icon-highlight-elasticated'
+            render 'icon-highlight-full-coverage'
+            render 'icon-highlight-fuller-cups'
+            render 'icon-highlight-hidden-support'
+            render 'icon-highlight-high-support'
+            render 'icon-highlight-light-support'
+            render 'icon-highlight-long-sleeve'
+            render 'icon-highlight-bump-friendly'
+            render 'icon-highlight-medium-coverage'
+            render 'icon-highlight-medium-support'
+            render 'icon-highlight-pockets'
+            render 'icon-highlight-quick-dry-cups'
+            render 'icon-highlight-regenerated-fibers'
+            render 'icon-highlight-removable-straps'
+            render 'icon-highlight-reversible'
+            render 'icon-highlight-skimpy-coverage'
+            render 'icon-highlight-soft'
+            render 'icon-highlight-sustainable'
+            render 'icon-highlight-ties'
+            render 'icon-highlight-underwire'
+            render 'icon-highlight-upf-rated'
+            render 'icon-highlight-uv-protection'
+            render 'icon-highlight-water-sports'
+            render 'icon-highlight-wide-straps'
+            render 'icon-highlight-zipper'
+          %}
+      </div>
+
+      <div class="icons-grid">
+        {%- liquid
+          render 'icon-afterpay'
+          render 'icon-amex'
+          render 'icon-apple-pay'
+          render 'icon-google-pay'
+          render 'icon-jcb'
+          render 'icon-klarna'
+          render 'icon-mastercard'
+          render 'icon-openpay'
+          render 'icon-paypal'
+          render 'icon-shopify-pay'
+          render 'icon-visa'
+          render 'icon-zip'
+        -%}
+      </div>
+
+      <div class="icons-grid">
+        {%- liquid
+          render 'icon-facebook'
+          render 'icon-instagram'
+          render 'icon-pinterest'
+          render 'icon-snapchat'
+          render 'icon-tiktok'
+          render 'icon-tumblr'
+          render 'icon-twitter'
+          render 'icon-vimeo'
+          render 'icon-youtube'
+        -%}
+      </div>
+
+      {% render 'icon-shopify-logo' %}
+
+      <h4>Animated icons (click them)</h4>
+
+      <div class="icons-grid">
+      <span data-animate-demo>{% render 'icon-bag' %}</span>
+      <span data-animate-demo>{% render 'icon-heart' %}</span>
+      </div>
+
+      <script>
+        const animateSpans = document.querySelectorAll('[data-animate-demo]');
+        animateSpans.forEach((span) => {
+          span.addEventListener('click', () => {
+            span.classList.toggle('icon-animate');
+          })
+        })
+      </script>
+
+      <h4>Sprite icons</h4>
+      <p>Icons that are frequently reused are better served in this format.</p>
+      <div class="icons-grid">
+        {% liquid render 'use-svg', title: 'Arrow up icon', svg_id: 'iconArrowUp', class: 'icon icon-arrow-up', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Arrow left icon', svg_id: 'iconArrowLeft', class: 'icon icon-arrow-left', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Arrow right icon', svg_id: 'iconArrowRight', class: 'icon icon-arrow-right', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Arrow down icon', svg_id: 'iconArrowDown', class: 'icon icon-arrow-down', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Chevron up icon', svg_id: 'iconChevronUp', class: 'icon icon-chevron-up', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Chevron right icon', svg_id: 'iconChevronRight', class: 'icon icon-chevron-right', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Chevron down icon', svg_id: 'iconChevronDown', class: 'icon icon-chevron-down', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Plus icon', svg_id: 'iconPlus', class: 'icon icon-plus', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Minus icon', svg_id: 'iconMinus', class: 'icon icon-minus', viewbox: '0 0 24 24'
+         render 'use-svg', title: 'Plus icon', svg_id: 'iconPlusSm', class: 'icon icon-plus-sm', viewbox: '0 0 20 20'
+         render 'use-svg', title: 'Minus icon', svg_id: 'iconMinusSm', class: 'icon icon-minus-sm', viewbox: '0 0 20 20'
+         render 'use-svg', title: 'Bubble point', svg_id: 'iconBubblePoint', class: 'icon icon-bubble-point', viewbox: '0 0 12 4'
+        %}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Buttons</h2>
+
+      <h4>Default Button</h4>
+      <code>.btn</code>
+      <div class="buttons-container">
+        <button class="btn">Default Button</button>
+        <button class="btn" disabled>Button disabled</button>
+      </div>
+
+      <h4>Secondary Button modifier</h4>
+      <code>.btn .btn--secondary</code>
+      <div class="buttons-container">
+        <button class="btn btn--secondary">Secondary Button</button>
+        <button class="btn btn--secondary" disabled>Secondary Disabled</button>
+      </div>
+
+      <h4>Small Button modifier</h4>
+      <code>.btn .btn--secondary</code>
+      <div class="buttons-container">
+        <button class="btn btn--secondary btn--small">Small Secondary Button</button>
+        <button class="btn btn--secondary btn--small" disabled>Small Secondary Disabled</button>
+      </div>
+
+      <h4>Block Button modifier</h4>
+      <code>.btn .btn--block</code>
+      <div class="buttons-container">
+        <button class="btn btn--block">Block Button</button>
+        <button class="btn btn--block" disabled>Button Disabled</button>
+      </div>
+
+      <h4>Icon Button</h4>
+      <code>.btn__icon</code>
+      <div class="buttons-container">
+        <button class="btn__icon">{% render 'icon-heart' %}</button>
+      </div>
+
+      <h4>Text Button</h4>
+      <code>.btn__text</code>
+      <div class="buttons-container">
+        <button class="btn__text">Text Button</button>
+      </div>
+
+      <code>.btn__text .btn__text--icon-left</code>
+      <div class="buttons-container">
+        <button class="btn__text btn__text--icon-left">{% render 'icon-filter' %} Find in store</button>
+      </div>
+
+      <code>.btn__text .btn__text--icon-right</code>
+      <div class="buttons-container">
+        <button class="btn__text btn__text--icon-right">Read more {% render 'icon-plus' %}</button>
+      </div>
+
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Forms</h2>
+      <form>
+        <div class="form__group">
+          <label for="ContactFormName">{{ 'contact.form.name' | t }}</label>
+          <input type="text"
+          name="contact[name]"
+          id="ContactFormName"
+          placeholder="{{ 'contact.form.name' | t }}"
+          value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}">
+        </div>
+
+        <div class="form__group">
+          <label for="ContactFormName">{{ 'contact.form.name' | t }} (error)</label>
+          <input type="text"
+          name="contact[name]"
+          id="ContactFormName"
+          class="input-error"
+          placeholder="{{ 'contact.form.name' | t }}"
+          value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}">
+        </div>
+
+        <div class="form__group">
+          <select id="selectHorizontal1">
+            <option value="0">Choose option</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+          </select>
+        </div>
+
+        <div class="custom-select-hybrid form__group">
+          <span class="selectLabel" id="jobLabel"> Main job role</span>
+          <div class="selectWrapper">
+            <select class="selectNative js-selectNative" aria-labelledby="jobLabel">
+              <option value="sel" disabled="" selected=""> Select role...</option>
+              <option value="ds">UI/UX Designer</option>
+              <option value="fe">Frontend Engineer</option>
+              <option value="be">Backend Engineer</option>
+              <option value="qa">QA Engineer</option>
+              <option value="un">Unicorn</option>
+            </select>
+
+            <!-- Hide the custom select from AT (e.g. SR) using aria-hidden -->
+            <div class="selectCustom js-selectCustom" aria-hidden="true">
+              <div class="selectCustom-trigger">Select role...</div>
+              <div class="selectCustom-options">
+                <div class="selectCustom-option" data-value="ds">UI/UX Designer</div>
+                <div class="selectCustom-option" data-value="fe">Frontend Engineer</div>
+                <div class="selectCustom-option" data-value="be">Backend Engineer</div>
+                <div class="selectCustom-option" data-value="qa">QA Engineer</div>
+                <div class="selectCustom-option" data-value="un">Unicorn</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form__group">
+          <div class="form__inline-input">
+            <input type="checkbox" id="checkInline" />
+            <label for="checkInline">Checkbox Label</label>
+          </div>
+          <div class="form__inline-input">
+            <input type="checkbox" id="checkInline2" disabled />
+            <label for="checkInline2">Checkbox Label disabled</label>
+          </div>
+          <div class="form__inline-input">
+            <input type="checkbox" id="checkInline3" checked disabled />
+            <label for="checkInline3">Checkbox Label checked disabled</label>
+          </div>
+        </div>
+
+        <div class="form__group">
+          <div class="form__inline-input">
+            <input type="radio" id="radio-option-1" name="radio-option" />
+            <label for="radio-option-1">Radio Button 1</label>
+          </div>
+          <div class="form__inline-input">
+            <input type="radio" id="radio-option-2" name="radio-option" />
+            <label for="radio-option-2">Radio Button 2</label>
+          </div>
+          <div class="form__inline-input">
+            <input type="radio" id="radio-option-3" name="radio-option" />
+            <label for="radio-option-3">Radio Button 3</label>
+          </div>
+          <div class="form__inline-input">
+            <input type="radio" id="radio-option-4" name="radio-option" disabled />
+            <label for="radio-option-4">Radio Button 4 disabled</label>
+          </div>
+
+          <div class="form__inline-input">
+            <input type="radio" id="radio-option-5" name="radio-option-single" disabled checked />
+            <label for="radio-option-5">Radio Button 5 disabled checked</label>
+          </div>
+        </div>
+
+        <div class="form__group">
+          <label for="ContactFormMessage">{{ 'contact.form.message' | t }}</label>
+          <textarea rows="10"
+          name="contact[body]"
+          id="ContactFormMessage"
+          placeholder="{{ 'contact.form.message' | t }}">
+          {%- if form.body -%}
+          {{- form.body -}}
+          {%- endif -%}
+          </textarea>
+        </div>
+
+        <input type="submit" class="btn" value="{{ 'contact.form.send' | t }}">
+      </form>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Collection Card</h2>
+
+      {%- for collection in collections limit: 1 -%}
+        {%- comment %}<locksmith:5dd5>{% endcomment -%}
+          {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: collection, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+        {%- comment %}</locksmith:5dd5>{% endcomment -%}
+        {% assign collection = collection %}
+      {%- endfor -%}
+      <div class="collection-list__grid">
+        <div class="collection-list__grid-item">
+          {%-
+            render 'component-collection-card',
+            collection: collection,
+            lazy: true,
+            link_text: 'Shop Now',
+            link_type: 'text_link'
+          -%}
+        </div>
+        <div class="collection-list__grid-item">
+          {%-
+            render 'component-collection-card',
+            collection: collection,
+            lazy: true,
+            link_text: 'Shop Now',
+            link_type: 'btn_link'
+          -%}
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Product Card</h2>
+
+      <ul class="collection-grid collection-grid--default list-inline" data-layout-mobile="2" data-layout-mobile-alt="1" data-layout-desktop="4" data-layout-desktop-alt="2">
+        {%- for product in collection.products limit: 4 -%}
+          {%- comment %}<locksmith:7b3d>{% endcomment -%}
+            {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: product, subject_parent: collection, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+          {%- comment %}</locksmith:7b3d>{% endcomment -%}
+          <li class="collection-grid__tile">
+            {%- render 'product-card', product: product -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Article Card</h2>
+
+      <div class="blog-posts__grid">
+        {%- for article in blogs.news.articles limit: 3 -%}
+          {% render 'article-card', article: article, blog: blogs.news %}
+        {%- endfor -%}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Breadcrumbs</h2>
+
+      <nav class="breadcrumbs" aria-label="Breadcrumbs">
+        <ol class="breadcrumbs__list">
+          <li class="breadcrumbs__item"><a class="breadcrumbs__link" href="/"><span>Home</span></a></li>
+          <li class="breadcrumbs__item"><a class="breadcrumbs__link" href="#"><span>Gold</span></a></li>
+          <li class="breadcrumbs__item"><span>Choker with Gold Pendant</span></li>
+        </ol>
+      </nav>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Accordions</h2>
+      {%- liquid
+        assign accordionLabels = 'Accordion label 1|Accordion label 2|Accordion label 3|Accordion label 4'
+        assign accordionContent = 'Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.'
+
+        assign labelArray = accordionLabels | split: '|'
+        assign contentArray = accordionContent | split: '|'
+
+        render 'component-accordion-item', labels: labelArray, contents: contentArray, multi: false, open_first: true
+      -%}
+
+      <h3>Same accordion with multi open but closed first item, and has 'is-left' modifier</h3>
+      {% render 'component-accordion-item', labels: labelArray, contents: contentArray, multi: true, open_first: false, modifiers: 'is-left' %}
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Tabs</h2>
+      <div class="js-tabs" data-tabs-prefix-class="custom-class">
+        <ul class="js-tablist list-inline" >
+          <li class="js-tablist__item">
+            <a class="js-tablist__link" href="#tab-content-example-1" data-selected="1">Tab One</a>
+          </li>
+          <li class="js-tablist__item">
+            <a class="js-tablist__link" href="#tab-content-example-2">Tab Two</a>
+          </li>
+          <li class="js-tablist__item">
+            <a class="js-tablist__link" href="#tab-content-example-3">Tab three</a>
+          </li>
+        </ul>
+        <div id="tab-content-example-1" class="js-tabcontent">
+          <h4>Tab content one</h4>
+          <p>Tab content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.</p>
+        </div>
+        <div id="tab-content-example-2" class="js-tabcontent">
+          <h4>Tab content two</h4>
+          <p>Tab content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.</p>
+        </div>
+        <div id="tab-content-example-3" class="js-tabcontent">
+          <h4>Tab content three</h4>
+          <p>Tab content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.|Accordion content lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Badges</h2>
+      <span class="product__label product__label--sale">Sale</span>
+      <span class="product__label">Online Exclusive</span>
+      <span class="product__label product__label--black">Limited</span>
+    </section>
+
+    <section>
+      <h2 class="section-title h3">Pagination</h2>
+
+      <nav aria-label="Pagination Navigation">
+        <ol class="pagination">
+          <li class="disabled" aria-label="{{ 'accessibility_labels.previous_page_disabled' | t }}">
+            <span class="arrow-nav">
+              <span aria-hidden="true">{% render 'icon-chevron-left' %}</span>
+            </span>
+          </li>
+          <li class="active" aria-current="page"><span>1</span></li>
+          <li><a href="#">2</a></li>
+          <li><a href="#">3</a></li>
+          <li><a href="#">4</a></li>
+          <li>
+            <a class="arrow-nav" href="{{ paginate.next.url }}" aria-label="{{ 'accessibility_labels.next_page' | t }}">
+              <span aria-hidden="true">{% render 'icon-chevron-right' %}</span>
+            </a>
+          </li>
+        </ol>
+      </nav>
+    </section>
+
+  </div>
+
+</div>

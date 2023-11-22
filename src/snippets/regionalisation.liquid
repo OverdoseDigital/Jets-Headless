@@ -1,0 +1,452 @@
+{%- if settings.enable_hreflangs or settings.enable_autoredirects or settings.enable_currency_selector -%}
+  {%- comment -%}Retrieve region information from Theme Settings{%- endcomment -%}
+  {%- liquid
+    assign allRegionCodes = ''
+    assign allRegionNames = ''
+    assign allRegionDomains = ''
+    assign allRegionCountries = ''
+    assign allRegionCurrencies = ''
+    assign allRegionDefaults = ''
+    assign allRegionCurrents = ''
+    for index in (1..6)
+      assign regionCodeIndexSettings = index | append: '_region_code'
+      assign regionCode = settings[regionCodeIndexSettings] | downcase
+      assign regionNameIndexSettings = index | append: '_region_name'
+      assign regionName = settings[regionNameIndexSettings]
+      assign regionDomainIndexSettings = index | append: '_region_domain'
+      assign regionDomain = settings[regionDomainIndexSettings] | downcase
+      assign regionCountryListIndexSetting = index | append: '_region_country_list'
+      assign regionCountryList = settings[regionCountryListIndexSetting] | downcase
+      assign regionCurrencyListIndexSetting = index | append: '_region_currency_list'
+      assign regionCurrencyList = settings[regionCurrencyListIndexSetting]
+      assign regionDefaultIndexSetting = index | append: '_region_default'
+      assign regionDefault = settings[regionDefaultIndexSetting]
+      assign regionCurrentIndexSetting = index | append: '_region_current'
+      assign regionCurrent = settings[regionCurrentIndexSetting]
+      if regionCode != blank
+        assign allRegionCodes = allRegionCodes | append: '|' | append: regionCode
+        assign allRegionNames = allRegionNames | append: '|' | append: regionName
+        assign allRegionDomains = allRegionDomains | append: '|' | append: regionDomain
+        assign allRegionCountries = allRegionCountries | append: '|' | append: regionCountryList
+        assign allRegionCurrencies = allRegionCurrencies | append: '|' | append: regionCurrencyList
+        assign allRegionDefaults = allRegionDefaults | append: '|' | append: regionDefault
+        assign allRegionCurrents = allRegionCurrents | append: '|' | append: regionCurrent
+      endif
+    endfor
+    assign allRegionCodes = allRegionCodes | remove_first: '|' | split: '|'
+    assign allRegionNames = allRegionNames | remove_first: '|' | split: '|'
+    assign allRegionDomains = allRegionDomains | remove_first: '|' | split: '|'
+    assign allRegionCountries = allRegionCountries | remove_first: '|' | split: '|'
+    assign allRegionCurrencies = allRegionCurrencies | remove_first: '|' | split: '|'
+    assign allRegionDefaults = allRegionDefaults | remove_first: '|' | split: '|'
+    assign allRegionCurrents = allRegionCurrents | remove_first: '|' | split: '|'
+    assign regionZeroIndexSize = allRegionCodes.size | minus: 1
+
+    assign canonical_path = canonical_url | remove: shop.url
+  -%}
+
+
+  {%- comment -%}If enabled in settings, output hreflang links{%- endcomment -%}
+  {%- if settings.enable_hreflangs and request.path == canonical_path -%}
+    {%- render 'hreflang',
+      regionZeroIndexSize: regionZeroIndexSize,
+      allRegionDomains: allRegionDomains,
+      allRegionCountries: allRegionCountries,
+      canonical_path: canonical_path,
+      allRegionDefaults: allRegionDefaults
+    -%}
+  {%- endif -%}
+
+  {%- comment -%}
+    Conditionally load MaxMind if auto-redirects are enabled
+  {%- endcomment -%}
+  {%- if settings.enable_autoredirects -%}
+    <script defer src="https://geoip-js.com/js/apis/geoip2/v2.1/geoip2.js"></script>
+  {%- endif -%}
+
+  {%- if settings.enable_autoredirects or settings.enable_currency_selector -%}
+    <script>
+      document.addEventListener("DOMContentLoaded", function(event) {
+        const isCrawler = /bot|googlebot|crawler|spider|robot|crawling|Googlebot|Googlebot-Image|Googlebot-News|Googlebot-Video|Google-InspectionTool|Storebot-Google|GoogleOther|APIs-Google|AdsBot-Google|AdsBot-Google-Mobile|Mediapartners-Google|FeedFetcher-Google|GoogleProducer|Google-Read-Aloud|Google-Site-Verification/i.test(navigator.userAgent);
+        {%- comment -%}
+          /*
+          * Create a js array from the region data.
+          */
+        {%- endcomment -%}
+        {%- assign default_region_code = '' -%}
+        {%- assign current_region_code = '' -%}
+
+        {%- assign current_region_name = '' -%}
+        const regionArray = [
+          {%- for index in (0..regionZeroIndexSize) -%}
+            {%- liquid
+              assign regionCode = allRegionCodes[index]
+              assign regionName = allRegionNames[index]
+              assign regionDomain = allRegionDomains[index]
+              assign regionCountryList = allRegionCountries[index]
+              assign regionCurrencyList = allRegionCurrencies[index]
+              assign regionDefault = allRegionDefaults[index]
+              assign regionCurrent = allRegionCurrents[index]
+              if regionDefault == 'true'
+                assign default_region_code = regionCode
+              endif
+              if regionCurrent == 'true'
+                assign current_region_code = regionCode
+                assign current_region_name = regionName
+              endif
+            -%}
+            {
+              name: {{ regionName | json }},
+              code: {{ regionCode | json }},
+              domain: {{ regionDomain | json }},
+              countryList: {{ regionCountryList | json }},
+              currencyList: {{ regionCurrencyList | json }}
+            }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ];
+
+        {%- comment -%}
+          /*
+          * Assign js variables with region information relating to the current store.
+          */
+        {%- endcomment -%}
+        const defaultRegionCode = {%- if default_region_code != blank -%}{{ default_region_code | json }}{%- else -%}null{%- endif -%};
+        const currentRegionCode = {{ current_region_code | json }};
+        const canonicalPath = {{ canonical_path | json }};
+
+        const currencyArray = regionArray
+          .flatMap((store) => {
+            return store.currencyList.split(',').map((currency, index) => ({
+              currency: currency,
+              isCurrent:
+                store.code === currentRegionCode &&
+                window.theme &&
+                window.theme.cart &&
+                window.theme.cart.currency &&
+                window.theme.cart.currency === currency,
+              region: {
+                code: store.code,
+                domain: store.domain,
+                name: store.name,
+              },
+            }));
+          })
+          .sort(function (a, b) {
+            const currencyA = a.currency;
+            const currencyB = b.currency;
+            if (currencyA < currencyB) {
+              return -1;
+            }
+            if (currencyA > currencyB) {
+              return 1;
+            }
+            // currencies must be equal
+            return 0;
+          });
+
+
+        {%- if settings.prevent_redirect_param -%}
+        const preventRedirectParam = {{ settings.prevent_redirect_param | json }};
+        {%- endif -%}
+
+        var validCountryCodes = regionArray.reduce(function(acc, region) {
+          acc.push(region.code);
+          if (hasOtherCountries(region)) {
+            acc = acc.concat(region.countryList.split(','));
+          }
+          return acc
+        }, []);
+
+        function codeMatchesRegion(code, region) {
+          if (region === null) {
+            return false;
+          }
+
+          if (hasOtherCountries(region)) {
+            var countryListArray = region.countryList.split(',');
+            return code === region.code || countryListArray.indexOf(code) > -1;
+          }
+
+          return code === region.code;
+        };
+
+        function hasOtherCountries(region) {
+          return region.countryList !== null;
+        }
+
+        function isValidCountryCode(code) {
+          return validCountryCodes.indexOf(code) > -1;
+        }
+
+        {%- if settings.enable_autoredirects -%}
+          const findRegionMatch = function(value, regions) {
+            if (!value) { return null };
+
+            const codeMatch = regions.find(function(region) {
+              return region.code === value;
+            });
+
+            if (codeMatch) { return codeMatch };
+
+            const countryMatch = regions.find(function(region) {
+              if (!region.countryList) { return };
+              return region.countryList.indexOf(value) >= 0;
+            });
+
+            if (countryMatch) { return countryMatch };
+
+            return null;
+          };
+
+          const redirectToTargetRegion = function(targetRegion, manualMode) {
+            const targetDomain = targetRegion.domain;
+            const targetDomainUrlObject = new URL(targetDomain);
+            if (targetDomainUrlObject.host === window.location.host) {
+              return false;
+            };
+            let targetURL = new URL(location.pathname, targetDomain);
+            if (manualMode) {
+              const targetRegionCode = targetRegion.code;
+              targetURL.searchParams.set("region", targetRegionCode);
+            };
+            window.location = targetURL.href;
+          };
+
+          const initAutoRedirect = function() {
+            {%- comment -%}
+              /*
+              * If we're in the Theme Editor, or the userAgent is a known bot,
+              * exit.
+              */
+            {%- endcomment -%}
+            if (window.top.ThemeEditor || window.top.ThemeEditorAPI || window.Shopify.designMode) { return };
+
+            const isRobot = function() {
+              const robotList = '(360spider|a6-indexer|aboundex|acoonbot|addthis|adidxbot|admantx|adsbot-google|adsbot-google-mobile|advbot|ahrefsbot|aihitbot|aisearchbot|antibot|apis-google|applebot|arabot|archive.org_bot|backlinkcrawler|baiduspider|bibnum.bnf|biglotron|bingbot|binlar|blekkobot|blexbot|bnf.fr_bot|brainobot|bubing|buzzbot|careerbot|cc metadata scaper|ccbot|changedetection|chrome-lighthouse|citeseerxbot|coccoc|commons-httpclient|content crawler spider|convera|crawler4j|crystalsemanticsbot|curl|cxensebot|cyberpatrol|discobot|domain re-animator bot|domaincrawler|dotbot|drupact|duckduckbot|duplexweb-google|ec2linkfinder|edisterbot|elisabot|europarchive.org|exabot|ezooms|facebookexternalhit|facebot|fast enterprise crawler|fast-webcrawler|feedfetcher-google|findlink|findthatfile|findxbot|fluffy|fr-crawler|g00g1e.net|gigablast|gingercrawler|gnam gnam spider|google favicon|google-read-aloud|googlebot|googlebot-image|googlebot-mobile|googlebot-news|googlebot-video|googleweblight|grapeshotcrawler|grub.org|gslfbot|heritrix|httpunit|httrack|ia_archiver|ichiro|integromedb|intelium_bot|interfaxscanbot|ioi|ip-web-crawler.com|ips-agent|it2media-domain-crawler|java|jyxobot|lb-spider|libwww|linguee bot|linkdex|lipperhey|lipperhey seo service|livelapbot|lssbot|lssrocketcrawler|ltx71|mail.ru_bot|mediapartners-google|megaindex|memorybot|mj12bot|mlbot|msnbot|msrbot|nerdbynature.bot|nerdybot|netresearchserver|ngbot|niki-bot|nutch|openindexspider|orangebot|page2rss|panscient|phpcrawl|postrank|proximic|psbot|ptst|purebot|python-urllib|qwantify|retrevopageanalyzer|rogerbot|scribdbot|seekbot|semanticscholarbot|semrushbot|seokicks-robot|seznambot|simplecrawler|sistrix crawler|sitebot|siteexplorer.info|slurp|smtbot|sogou|spbot|speedy|summify|tagoobot|teoma|toplistbot|turnitinbot|tweetmemebot|twengabot|twitterbot|urlappendbot|usinenouvellecrawler|voilabot|voyager|wbsearchbot|web-archive-net.com.bot|webcompanycrawler|webcrawler|webmon|wesee:search|wget|wocbot|woriobot|wotbox|xovibot|y!j-asr|yacybot|yandexbot|yanga|yeti|yoozbot)';
+              const regex = new RegExp(robotList, 'i');
+              const userAgent = navigator.userAgent;
+              const isGooglebot = /(googlebot\/|googlebot-image\/|googlebot-news\/|googlebot-video\/|googlebot-mobile\/|mediapartners-google|adsbot-google-mobile|adsbot-google|googleweblight|Google-InspectionTool|Storebot-Google|GoogleOther|APIs-Google|FeedFetcher-Google|GoogleProducer|Google-Read-Aloud|Google-Site-Verification)/i.test(userAgent);
+              return (regex.test(userAgent) || isGooglebot) ? true : false;
+            };
+            if (isRobot()) {
+              return
+            };
+
+            {%- comment -%}
+              /*
+              * If a 'prevent redirect param' has been provided in settings,
+              * check if the parameter exists in the URL. If so, return.
+              */
+            {%- endcomment -%}
+            const searchParams = new URLSearchParams(window.location.search);
+            if (preventRedirectParam && searchParams.get(preventRedirectParam)) {
+              return
+            };
+
+            {%- comment -%}
+              /*
+              * Check for a manual region parameter in the URL. Most commonly,
+              * this is due to region switches using the region selector.
+              */
+            {%- endcomment -%}
+            const manualRegionParam = searchParams.get("region") ? (searchParams.get("region")).toLowerCase() : null;
+
+            if (manualRegionParam) {
+              {%- comment -%}
+                /*
+                * If the manual region param matches the current store region,
+                * save the preference in localStorage and exit.
+                */
+              {%- endcomment -%}
+              if (currentRegionCode === manualRegionParam) {
+                localStorage.setItem("region", currentRegionCode);
+                return;
+              };
+
+              {%- comment -%}
+                /*
+                * Otherwise, we need to redirect to the correct region.
+                * 1. Find a match with a store region. If there's no match using
+                * the region code, check for a match with a country code instead.
+                *
+                * 2. Retrieve the target region's domain.
+                *
+                * 3. If there's no match with anything, exit.
+                */
+              {%- endcomment -%}
+              const targetRegion = findRegionMatch(manualRegionParam, regionArray);
+              if (!targetRegion) { return };
+
+              {%- comment -%}
+                /*
+                * 1. Save the target region as the preferred region in localStorage.
+                * 2. Check if the target domain is equal to the current domain.
+                * 3. If so, exit. If not, redirect the user to the target domain.
+                */
+              {%- endcomment -%}
+              localStorage.setItem("region", targetRegion.code);
+
+              if(redirectToTargetRegion(targetRegion, true) === false) { return };
+            };
+
+            {%- comment -%}
+              /*
+              * If there's no manual region set, check if there's a saved
+              * region preference in localStorage.
+              */
+            {%- endcomment -%}
+            const localStorageRegionCode = localStorage.getItem("region") ? localStorage.getItem("region").toLowerCase() : null;
+
+            if (localStorageRegionCode) {
+              {%- comment -%}
+                /*
+                * If the saved region code matches the current store region,
+                * do nothing.
+                */
+              {%- endcomment -%}
+              if (currentRegionCode === localStorageRegionCode) { return };
+
+              {%- comment -%}
+                /*
+                * Otherwise, we need to redirect to the correct region.
+                * 1. Find a match with a store region. If there's no match using
+                * the region code, check for a match with a country code instead.
+                *
+                * 2. Retrieve the target region's domain.
+                *
+                * 3. If there's no match, do nothing.
+                */
+              {%- endcomment -%}
+              const targetRegion = findRegionMatch(localStorageRegionCode, regionArray);
+
+              if (targetRegion) {
+                {%- comment -%}
+                  /*
+                  * 1. Save the target region as the preferred region in localStorage.
+                  * 2. Check if the target domain is equal to the current domain.
+                  * 3. If so, exit. If not, redirect the user to the target domain.
+                  */
+                {%- endcomment -%}
+                localStorage.setItem("region", targetRegion.code);
+
+                if(redirectToTargetRegion(targetRegion) === false) { return };
+              };
+            };
+
+            {%- comment -%}
+              /*
+              * If there's no valid region parameter, and no valid saved
+              * preference in local storage, we need to look up the user's
+              * location with MaxMind.
+              *
+              * 1. Retrieve the user's location in ISO country code format
+              *
+              * 2. Find a match with a store region. If there's no match using
+              * the region code, check for a match with a country code instead.
+              *
+              * 3. If there's no match, assign the Default Store as the target.
+              *
+              * 4. Retrieve the target region's domain.
+              */
+            {%- endcomment -%}
+            const onGeoIpSuccess = function(response) {
+              let targetRegion;
+
+              // If it's a crawler, set the default region
+              if (isCrawler) {
+                targetRegion = findRegionMatch(defaultRegionCode, regionArray);
+              } else {
+                const geoIpCountryCode = (response.country.iso_code).toLowerCase();
+                targetRegion = findRegionMatch(geoIpCountryCode, regionArray) ? findRegionMatch(geoIpCountryCode, regionArray) : findRegionMatch(defaultRegionCode, regionArray);
+              }
+
+              if (targetRegion) {
+                localStorage.setItem("region", targetRegion.code);
+                if(redirectToTargetRegion(targetRegion) === false) { return };
+              };
+            };
+
+            const onGeoIpError = function(error) {
+              console.error('Error retrieving user location', error);
+            };
+
+            geoip2.country(onGeoIpSuccess, onGeoIpError);
+          };
+          initAutoRedirect();
+        {%- endif -%}
+
+        {%- if settings.enable_currency_selector -%}
+          {%- comment -%}
+            /*
+            * 1. Select the currency selectors from the DOM -- exit if none exist.
+            * 2. Use javascript to create the currency selector options
+            * 3. Add the options to the currency selector element.
+            * 4. Add an event listener to handle user selections.
+            */
+          {%- endcomment -%}
+          const initCurrencySelector = function() {
+            /*
+              * Identify the selector elements and the current store currency
+            */
+            const currencySelectors = document.querySelectorAll('.currency-form [data-currencies-list]');
+            const currentStoreCurrency = {{ cart.currency.iso_code | json }};
+            window.localStorage.setItem('conversionRate', window.Shopify.currency.rate);
+
+            /*
+              * Bail if no selectors found
+            */
+            if (currencySelectors.length === 0) {
+              return;
+            };
+
+            /*
+              * Loop over the currencyArray to set the url params and build the selector options
+            */
+            let currencySelectorOptions = '';
+            currencyArray.forEach(({ isCurrent, currency, region }) => {
+              const currentCurrency = isCurrent ? ' checked="checked"' : '';
+              const currencySymbol = window.getSymbolFromCurrency(`${currency.toUpperCase()}`);
+              const targetURL = new URL(location.pathname, region.domain);
+
+              /*
+                * Set region and currency parameters for targetURL
+              */
+              if (currentRegionCode !== region.code) {
+                targetURL.searchParams.set("region", region.code);
+              }
+              targetURL.searchParams.set("currency", currency);
+
+              targetURL.searchParams.set("no_rule", "true");
+
+              /*
+                * Build the selector options for both the native select and the custom select
+              */
+              currencySelectorOptions += `<input type="radio" class="currency-option-select" name="currency" id="${currency.toUpperCase()}" value="${targetURL.href}" ${currentCurrency} data-currency="${currency}" data-code="${region.code}" data-region-name="${region.name}" /><label for="${currency.toUpperCase()}">${currencySymbol} ${currency.toUpperCase()}</label>`;
+            });
+
+            const handleCurrencySelection = function(evt) {
+              const selectedOption = evt.target;
+              const optionCode = selectedOption.dataset.code;
+              const optionRegionName = selectedOption.dataset.region;
+              const currentRegionName = {{ current_region_name | json }};
+              window.location = selectedOption.value;
+              window.localStorage.setItem('conversionRate', window.Shopify.currency.rate);
+            };
+
+            /*
+              * Populates the select elements and adds the event listener for change.
+            */
+            currencySelectors.forEach(function(currencySelector) {
+              currencySelector.innerHTML = currencySelectorOptions;
+              const currencyRadios = currencySelector.querySelectorAll('input[name="currency"]');
+              currencyRadios.forEach((radio) => {
+                radio.addEventListener('change', handleCurrencySelection);
+              });
+            });
+          };
+          initCurrencySelector();
+        {%- endif -%}
+      });
+    </script>
+  {%- endif -%}
+{%- endif -%}

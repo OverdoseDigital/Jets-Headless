@@ -1,0 +1,27 @@
+{% if settings.enable_currency_selector %}
+  {% capture currencyClasses %}currency{% endcapture %}
+  {% capture currencyLabel %}header-currency--label{% endcapture %}
+  {% capture currencyDesc %}Modal dialog for currency changer{% endcapture %}
+  {% capture currencyPopupContent %}
+  <div class="modal__content">
+    <div class="currency-popup__wrapper">
+      {% form 'currency', class: 'currency-form' %}
+        <div class="currencies-list" data-currencies-list></div>
+      {% endform %}
+      {% if settings.currency_popup_link != blank and settings.currency_popup_link_text != blank %}
+      <hr />
+      <p><a href="{{ settings.currency_popup_link }}" class="btn__text btn__text--icon-right btn__link">{{ settings.currency_popup_link_text }}{%- render 'use-svg', title: 'Chevron down right', svg_id: 'iconChevronRight', class: 'icon icon-chevron-right', viewbox: '0 0 24 24' -%}</a></p>
+      {% endif %}
+    </div>
+  </div>
+  {% endcapture %}
+  {% render 'component-modal-dialog',
+    modal_class: currencyClasses,
+    modal_id: 'currency',
+    modal_label: currencyLabel,
+    modal_desc: currencyDesc,
+    modal_content: currencyPopupContent,
+    modal_sticky_header: true,
+    modal_header: 'Select your currency'
+  %}
+{% endif %}

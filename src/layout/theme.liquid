@@ -1,0 +1,389 @@
+{%- comment %}<locksmith:4486>{% endcomment -%}
+  {%- include 'locksmith' -%}
+{%- comment %}</locksmith:4486>{% endcomment -%}
+
+<!doctype html>
+<html class="no-js supports-no-cookies" lang="{{ shop.locale }}">
+<head>
+  {{ locksmith_initializations }}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="facebook-domain-verification" content="s2xs7cch3obmyb9m4m7dq9xphx57o6" />
+  <meta name="theme-color" content="{{ settings.color_accent }}">
+
+  {%- capture contentForQuerystring -%}{{ content_for_header }}{%- endcapture -%}
+
+  {% comment %} Use string splitting to pull the value from content_for_header and apply some string clean up {% endcomment %}
+  {%- assign pageUrl = contentForQuerystring | split:'"pageurl":"' | last | split:'"' | first | split:'.myshopify.com' | last |
+       replace:'\/','/' | 
+       replace:'%20',' ' | 
+       replace:'\u0026','&'
+    -%}
+
+  {%- assign pageQuerystring = pageUrl | split:'?' | last -%}
+
+  {%- if pageQuerystring contains "q=" -%}
+    <meta name="robots" content="noindex, nofollow">
+  {%- endif -%}
+
+  {%- if request.page_type == 'collection' -%}
+    <link rel="canonical" href="{{ shop.secure_url | append: collection.url }}">
+  {%- elsif request.page_type == 'search' -%}
+    <link rel="canonical" href="{{ shop.secure_url | append: routes.search_url }}">
+  {%- else -%}
+    <link rel="canonical" href="{{ canonical_url }}">
+  {%- endif -%}
+
+  {%- render 'dns-preconnects' -%}
+
+  {% liquid
+    render 'css-variables'
+    render 'style-tags'
+    render 'okendo-assets'
+    render 'brightedge-assets'
+    render 'abtest-script'
+  %}
+
+  {%- capture seo_title -%}
+    {% if request.page_type == 'search' %}
+      {% if search.performed %}
+        {{ 'general.search.heading' | t: count: search.results_count }}: {{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}
+      {% else %}
+        {{ 'general.search.title' | t }}
+      {% endif %}
+    {% else %}
+      {{ page_title }}
+      {%- if current_tags -%}{%- assign meta_tags = current_tags | join: ', ' -%} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}{%- endif -%}
+      {% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}
+      {%- assign escaped_page_title = page_title | escape -%}
+      {% unless escaped_page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    {% endif %}
+  {%- endcapture -%}
+
+  <title>{{ seo_title | strip }}</title>
+
+  {%- if page_description -%}
+    {%- comment %}<locksmith:3867>{% endcomment -%}
+      {%- capture var %}{% render 'locksmith-variables', variable: 'transparent', hiding_scope: 'resource' %}{% endcapture %}{% if var == 'true' %}<meta name="description" content="{{ page_description | escape }}">{% endif -%}
+      {%- comment %}original: <meta name="description" content="{{ page_description | escape }}">{%- endcomment %}
+    {%- comment %}</locksmith:3867>{% endcomment -%}
+  {%- endif -%}
+
+  {%- if settings.favicon != blank -%}
+    <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32, crop: 'center' }}" type="image/png">
+  {%- endif -%}
+
+  {% render 'script-tags' %}
+  {% if settings.load_jquery %}
+    <script defer src="{{ 'jquery-351.min.js' | asset_url }}"></script>
+  {% endif %}
+  {%- render 'regionalisation' -%}
+
+  <script>
+    document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    window.theme = {
+      ecommerce: {{ settings.enable_ecommerce | json }},
+      strings: {
+        selectSize: {{ 'products.product.select_size' | t | json }},
+        addToCart: {{ 'products.product.add_to_cart' | t | json }},
+        addedMessage: {{ 'products.product.added_message' | t | json }},
+        soldOut: {{ 'products.product.sold_out' | t | json }},
+        unavailable: {{ 'products.product.unavailable' | t | json }},
+        cartTitle: {{ 'cart.general.title' | t | json }},
+        sideCartTitle: {{ 'layout.cart.title' | t | json }},
+        subtotal: {{ 'cart.general.subtotal' | t | json }},
+        total: {{ 'cart.general.total' | t | json }},
+        cartDiscounts:  {{ 'cart.general.savings' | t | json }},
+        shipping: {{ 'cart.general.shipping' | t | json }},
+        edit: {{ 'cart.general.edit' | t | json }},
+        update: {{ 'cart.general.update' | t | json }},
+        editSize: {{ 'cart.general.edit_size_title' | t | json }},
+        selectSize: {{ 'cart.general.select_size_btn' | t | json }},
+        checkout: {{ 'cart.general.checkout' | t | json }},
+        viewCart: {{ 'cart.general.view_cart' | t | json }},
+        closeCart: {{ 'cart.general.close_cart' | t | json }},
+        cartEmpty: {{ 'cart.general.empty_html' | t | json }},
+        cartContinueShopping: {{ 'cart.general.continue_shopping' | t | json }},
+        itemQuantity: {{ 'cart.general.item_quantity' | t | json }},
+        dismissErrorMessage: {{ 'cart.general.dismiss_error_message' | t | json }},
+        freeShippingBar: {
+          remaining: {{ 'cart.freeShippingBar.remaining' | t | json }},
+          reached: {{ 'cart.freeShippingBar.reached' | t | json }},
+        },
+        addToWishlist: {{ 'wishlist.wishlist_add' | t | json }},
+        addedToWishlist: {{ 'wishlist.wishlist_added' | t | json }},
+        removeFromWishlist: {{ 'wishlist.wishlist_remove' | t | json }},
+        removedFromWishlist: {{ 'wishlist.wishlist_removed' | t | json }},
+        addAllToCart: {{ 'wishlist.add_all_wishlist' | t | json }},
+        addingAllToCart: {{ 'wishlist.adding_all_wishlist' | t | json }},
+        collection: {
+          readMore: {{ 'collections.general.read_more' | t | json }},
+          readLess: {{ 'collections.general.read_less' | t | json }},
+        },
+        product: {
+          inStockLabel: {{ 'products.product.in_stock' | t | json }},
+          lowStockLabel: {{ 'products.product.low_stock' | t | json }},
+          outOfStockLabel: {{ 'products.product.out_of_stock' | t | json }},
+          shippingTimesTitle: {{ 'shipping_times.title' | t | json }},
+          shippingTimesPlaceholder:  {{ 'shipping_times.placeholder' | t | json }},
+          shippingTimesButton:  {{ 'shipping_times.button' | t | json }},
+          shippingTimesMessageTemplate:  {{ 'shipping_times.message_template' | t | json }},
+          shippingTimesDefaultDays:  {{ 'shipping_times.default_days' | t | json }},
+          shippingTimesErrorMessage: {{ 'shipping_times.error' | t | json }},
+          shippingTimesReset: {{ 'shipping_times.reset' | t | json }}
+        },
+        {% if page.url == '/pages/rewards' %}
+        accountRewards: {
+          anniversaryTitle: {{ 'customer.rewards.anniversary_title' | t | json }},
+          availableCTA: {{ 'customer.rewards.available_cta' | t | json }},
+          availableTitle: {{ 'customer.rewards.available_title' | t | json }},
+          loading: {{ 'customer.rewards.loading' | t | json }},
+          nextReward: {{ 'customer.rewards.next_reward' | t | json }},
+          rewardsTableTitle: {{ 'customer.rewards.table_title' | t | json }},
+          tableColDescription: {{ 'customer.rewards.table_col_description' | t | json }},
+          tableColExpiry: {{ 'customer.rewards.table_col_expiry' | t | json }},
+          tableColRemaining: {{ 'customer.rewards.table_col_remaining' | t | json }},
+          spendBronze: {{ settings.rewards_spend_tier_1 | json }},
+          spendGold: {{ settings.rewards_spend_tier_3 | json }},
+          spendSilver: {{ settings.rewards_spend_tier_2 | json }},
+          spendTo: {{ 'customer.rewards.spend_to' | t | json }},
+          spendForNextReward: {{ 'customer.rewards.spend_for_next_reward' | t | json }},
+          title: {{ 'customer.rewards.title' | t | json }},
+          titleBronze: {{ settings.rewards_tier_1 | json }},
+          titleGold: {{ settings.rewards_tier_3 | json }},
+          titleSilver: {{ settings.rewards_tier_2 | json }},
+          yearlySpend: {{ 'customer.rewards.yearly_spend' | t | json }},
+          error: {{ 'customer.rewards.error_html' | t | json }}
+        },
+        {% endif %}
+      },
+      moneyFormat: {{ shop.money_with_currency_format | json }},
+      moneyFormatWithoutCurrency: {{ shop.money_format | json }},
+      moneyFormatWithoutDecimals: {{ shop.money_with_currency_format | replace: 'amount', 'amount_no_decimals' | json }},
+      moneyFormatWithoutDecimalsOrCurrency: {{ shop.money_format | replace: 'amount', 'amount_no_decimals' | json }},
+      shippingTimes: {
+        shippingTimesCsv: {{ settings.shipping_times_csv | json }},
+        shippingTimesRegion: {{ settings.shipping_times_region | json }}
+      },
+      cart: {{ cart | json }},
+      {% if customer %}
+        customer: {
+          name: {{ customer.first_name | json }},
+          surname: {{ customer.last_name | json }},
+          email: {{ customer.email | json }},
+          phone: {{ customer.phone | json }},
+          location: {{ customer.addresses[0].province_code | json }},
+        },
+      {% endif %}
+      freeShippingBar: {
+        enabled: {{ settings.free_shipping_bar_enabled | json }},
+        serviceOne: {{ settings.free_shipping_bar_service_1 | json }},
+        thresholdOne: {{ settings.free_shipping_bar_threshold_1 | default: 0 | json }},
+      },
+      showShippingInCart: {{ settings.show_shipping_in_cart | json }},
+      shippingPrice: {{ settings.cart_shipping_price | json }},
+      indicators: {
+        {%- if settings.indicator_text_1 != blank -%}
+        text1: {{ settings.indicator_text_1 | json }},
+        {%- endif -%}
+        {%- if settings.indicator_link_1 != blank -%}
+        link1: {{ settings.indicator_link_1 | json }},
+        {%- endif -%}
+        icon1: {{ settings.trust_icon_1 | json }},
+        {%- if settings.indicator_text_2 != blank -%}
+        text2: {{ settings.indicator_text_2 | json }},
+        {%- endif -%}
+        {%- if settings.indicator_link_2 != blank -%}
+        link2: {{ settings.indicator_link_2 | json }},
+        {%- endif -%}
+        icon2: {{ settings.trust_icon_2 | json }},
+        {%- if settings.indicator_text_3 != blank -%}
+        text3: {{ settings.indicator_text_3 | json }},
+        {%- endif -%}
+        {%- if settings.indicator_link_3 != blank -%}
+        link3: {{ settings.indicator_link_3 | json }},
+        {%- endif -%}
+        icon3: {{ settings.trust_icon_3 | json }},
+      },
+      cartIncludeAfterpay: {{ settings.include_afterpay_cart | json }},
+      cartContinueShoppingLink: {{ settings.continue_shopping_link | json }},
+      cartEmptyLinks: [
+        {%- for item in linklists[settings.empty_cart_list].links %}
+          {%- comment %}<locksmith:9404>{% endcomment -%}
+            {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: item, subject_parent: linklists[settings.empty_cart_list], variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+          {%- comment %}</locksmith:9404>{% endcomment -%}
+          {
+            "title": {{ item.title | json }},
+            "url": {{ item.url | json }}
+          },
+        {%- endfor -%}
+      ],
+      cartUpsells: {
+        enabled: {{ settings.enable_cart_upsells | json }},
+        heading: {{ settings.cart_upsells_heading | json }},
+        viewDetail: {{ settings.cart_upsells_view_details_text | json }},
+        addToBag: {{ 'cart.label.add' | t | json }}
+      },
+      cartRewards: {
+        rewardsBlurbHeader: {{ settings.rewards_blurb_header | json }},
+        rewardsBlurb: {{ settings.rewards_blurb | json }}
+      },
+      {% liquid
+        assign rewards_enabled = false
+        if settings.rewards_enabled and settings.rewards_store_country_code
+          assign rewards_enabled = true
+        endif
+      %}
+      customerId: "{{ customer.id }}",
+      rewards: {
+        enabled: {{ rewards_enabled | json }},
+        detailsEndpoint: {{ settings.rewards_details_endpoint | json }},
+        detailsEndpointCached: {{ settings.rewards_details_endpoint_cached | json }},
+        reserveEndpoint: {{ settings.rewards_reserve_endpoint | json }},
+        releaseEndpoint: {{ settings.rewards_release_endpoint | json }},
+        yourRewardsBalance: {{ 'loyalty_rewards.your_rewards_balance' | t | json }},
+        storeCountryCode: {{ settings.rewards_store_country_code | json }},
+        error: {{ 'customer.rewards.error_html' | t | json }},
+      },
+      giftCard: {
+        enabled: {{ settings.enable_custom_gift_cards | json }},
+        balanceEndpoint: {{ settings.giftcard_balance_endpoint | json }},
+        reserveEndpoint: {{ settings.giftcard_reserve_endpoint | json }},
+        releaseEndpoint: {{ settings.giftcard_release_endpoint | json }},
+        storeCountryCode: {{ settings.rewards_store_country_code | json }}
+      },
+      breakpoints: {
+        small: {{ settings.grid_small | json }},
+        medium: {{ settings.grid_medium | json }},
+        large: {{ settings.grid_large | json }},
+        widescreen: {{ settings.grid_widescreen | json }},
+      },
+      locale: {
+        endonymName: {{ request.locale.endonym_name | json }},
+        isoCode: {{ request.locale.iso_code | json }},
+        name: {{ request.locale.name | json }},
+        primary: {{ request.locale.primary | json }},
+        rootUrl: {{ request.locale.root_url | json }},
+      },
+      urlPatterns: {
+        assetUrl: {{ '_name_.js' | asset_url | json }},
+        fileUrl: {{ '_name_.js' | file_url | json }},
+      },
+      routes: {
+        cartUrl: {{ routes.cart_url | json }}
+      },
+      klaviyo: {
+        saveCartFormID: {{ settings.klaviyo_save_cart_form_id | json }}
+      },
+      searchspring: {
+        storeId: {{ settings.ss_site_id | json }},
+        cartRecsProfileTag: {{ settings.ss_cart_recs_tag | json }}
+      }
+    };
+  </script>
+
+  {{ content_for_header }}
+
+  {% liquid
+    render 'social-meta-tags'
+    render 'gtm', position: 'head'
+  %}
+  {% if template contains 'product' or template.suffix contains 'okendo-reviews' %}
+    <script src="{{ 'okendo-reviews.js' | asset_url }}" defer></script>
+  {% endif %}
+
+  {% liquid
+    render 'wair-head-script'
+    render 'marker-script'
+    render 'analyzify-gtm-body'
+
+    if settings.ss_enable
+      render 'ss-script'
+    endif
+
+    if settings.enable_digital_darts
+      render 'multi-store-hreflang-tags'
+    endif
+
+    render 'onetrust-script'
+    if settings.onetrust_gdpr_enabled
+      render 'onetrust-shopify-api'
+    endif
+
+  %}
+
+</head>
+
+<body id="{{ page_title | handle }}" class="template-{{ request.page_type | handle }} {% if settings.ss_enable and collection.handle and collection.handle == settings.ss_collection_handle %} ss-shop{% endif %}">
+  {% render 'gtm', position: 'body' %}
+
+  {%- if settings.enable_fader -%}<div id="fader"></div>{%- endif -%}
+
+  <a class="in-page-link visually-hidden skip-link" href="#MainContent" aria-label="{{ 'general.accessibility.skip_to_content' | t }}">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+  {% liquid
+    section 'timer-hero-announcement'
+    section 'announcement'
+    section 'header'
+    render 'search-form', inputId: 'SearchMobile', wrapperClasses: 'search__form-wrapper--mobile large-up--hide'
+    if request.page_type == 'collection'
+      section 'swatches'
+    endif
+  %}
+
+  <main id="MainContent">
+    {{ content_for_layout }}
+  </main>
+
+  {% liquid
+    section 'footer'
+    section 'popup'
+    section 'exit-intent-popup'
+
+    render 'stitching-swatches'
+    render 'component-side-cart'
+    render 'klaviyo-bis'
+    render 'swymSnippet'
+    render 'json-ld'
+    render 'instant-page'
+    render 'gorgias-chat'
+    render 'svg-sprite'
+  %}
+
+  <script type="application/json" data-gift-with-purchase>
+    {% render 'gift-with-purchase-json' %}
+  </script>
+
+  {% capture quickShopModal %}
+  <div data-quick-shop>
+  </div>
+  {% endcapture %}
+
+  {% render 'component-modal-dialog',
+    modal_class: 'quickshop',
+    modal_id: 'quickshop',
+    modal_content: quickShopModal,
+    modal_sticky_header: true
+  %}
+
+  {% render 'equalweb-script' %}
+
+  {% if settings.ss_enable %}
+    {% render 'ss-intellisuggest' %}
+  {% endif %}
+
+  {%- if customer -%}
+    <script>
+      var _learnq = _learnq || [];
+      _learnq.push(['identify', {
+        '$email' : '{{ customer.email }}'
+      }]);
+    </script>
+  {%- endif -%}
+
+
+{% include 'swymSnippet' %}
+
+</body>
+</html>

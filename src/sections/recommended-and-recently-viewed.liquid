@@ -1,0 +1,173 @@
+{% liquid
+  assign show_recommended_products = section.settings.show_recommended_products
+  assign show_recently_viewed = section.settings.show_recently_viewed
+  assign is_tabs = false
+
+  if show_recently_viewed and show_recommended_products
+    assign is_tabs = true
+  endif
+%}
+
+{% comment %}
+  This section is rendered twice per page load - but must return different content each time:
+    - the section content
+    - the recommendations content when called by the recommendations api
+{% endcomment %}
+{% unless recommendations.performed %}
+  <div
+    class="rec-and-rec"
+    data-section-type="recommended-and-recently-viewed"
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ product.id }}"
+    data-product-handle="{{ product.handle }}"
+    data-recommended-limit="{{ section.settings.max_recommended_products }}"
+    data-recently-viewed-limit="{{ section.settings.max_recently_viewed_products }}"
+  >
+    {% if is_tabs %}
+    <div class="js-tabs" data-tabs-prefix-class="product-cards-carousel">
+
+      {% comment %}
+        Tabs controls - buttons.
+      {% endcomment %}
+      <div class="product-cards-carousel__scroll-wrapper">
+        <ul class="js-tablist list-inline">
+          <li class="js-tablist__item">
+            <a class="js-tablist__link" href="#may-also-like" data-selected="1">{{ section.settings.recommended_products_title }}</a>
+          </li>
+          <li class="js-tablist__item js-recently-viewed-tab">
+            <a class="js-tablist__link" href="#recently-viewed">{{ section.settings.recently_viewed_title }}</a>
+          </li>
+        </ul>
+      </div>
+    {% endif %}
+
+      {% comment %}
+        Tab: "You may also like"
+      {% endcomment %}
+      {% if show_recommended_products %}
+      <div id="may-also-like" class="js-tabcontent">
+        <div class="container container--flush--medium-down js-product-recommendations-container">
+          {% comment %}
+            --> Recommendation slider markup as returned by the api response to be inserted here.
+          {% endcomment %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% comment %}
+        Tab: "Recently viewed"
+      {% endcomment %}
+      {% if show_recently_viewed %}
+      <div id="recently-viewed" class="js-tabcontent js-recently-viewed-tab-content">
+        {% unless is_tabs %}
+          <div class="container text-center">
+            <h3 class="product-cards-carousel__title">{{ section.settings.recently_viewed_title }}</h3>
+          </div>
+        {% endunless %}
+        <div class="container container--flush--medium-down">
+          <div class="product-cards-carousel__slider carousel js-recently-viewed-slider">
+              {% comment %}
+              --> Product cards as per recently viewed products callouts to be injected here
+              {% endcomment %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+  {% if is_tabs %}
+    </div>
+  {% endif %}
+  </div>
+
+{% comment %}
+  Else recommendations api response
+{% endcomment %}
+{% elsif recommendations.products_count > 0 %}
+  <div class="js-recommended-api-response-wrapper">
+    {% unless is_tabs %}
+      <div class="container text-center">
+        <h3 class="product-cards-carousel__title">{{ section.settings.recommended_products_title }}</h3>
+      </div>
+    {% endunless %}
+
+    <div class="product-cards-carousel__slider carousel js-product-recommendations-slider">
+      {% for product in recommendations.products %}
+        {%- comment %}<locksmith:b568>{% endcomment -%}
+          {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: product, subject_parent: recommendations, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+        {%- comment %}</locksmith:b568>{% endcomment -%}
+        {% render 'product-card',
+          product: product,
+          card_class: 'slide product-cards-slider-quarter',
+          sizes: '(max-width: 47rem) 80vw, (max-width: 60.875rem) 40vw, (min-width: 77.5rem) calc(77.5rem / 4), calc(100vw / 4)'
+        %}
+      {% endfor %}
+    </div>
+  </div>
+{% endunless %}
+
+
+{% schema %}
+  {
+    "name": "Recommended & Viewed",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Recommended Products Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_recommended_products",
+        "label": "Show recommended products",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "max_recommended_products",
+        "label": "Max products to show",
+        "min": 4,
+        "max": 10,
+        "step": 1,
+        "default": 6
+      },
+      {
+        "type": "text",
+        "id": "recommended_products_title",
+        "label": "Button label",
+        "default": "You may also like"
+      },
+      {
+        "type": "header",
+        "content": "Recently Viewed Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_recently_viewed",
+        "label": "Show recently viewed products",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "max_recently_viewed_products",
+        "label": "Max products to show",
+        "min": 4,
+        "max": 10,
+        "step": 1,
+        "default": 6
+      },
+      {
+        "type": "text",
+        "id": "recently_viewed_title",
+        "label": "Button Label",
+        "default": "Recently viewed"
+      }
+    ],
+    "templates": [
+      "product"
+    ],
+    "presets": [
+      {
+        "name": "Recommended & Viewed",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}

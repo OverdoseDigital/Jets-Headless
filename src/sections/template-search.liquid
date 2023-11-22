@@ -1,0 +1,110 @@
+{% paginate search.results by section.settings.collection_paginate %}
+<div
+  id="SearchSection"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection-template"
+  data-default-sort-by="{{ collection.default_sort_by }}">
+
+  {% render 'collection-banner', templateObject: search, paginate_items: paginate.items %}
+
+  <div class="container">
+    {% render 'search-form', inputId: 'SearchPage', wrapperClasses: 'search-form--page medium-down--hide' %}
+    {% if search.performed %}
+      {% if search.results_count == 0 %}
+        <p class="search-results__notice">{{ 'general.search.no_results_html' | t: terms: search.terms }}</p>
+      {% else %}
+        <form class="collection-navbar" data-collection-navbar>
+          <input type="hidden" name="q" value="{{ search.terms | escape }}" />
+          <div class="collection-navbar__row">
+            <div>
+              <button type="button" class="btn__text btn__text--icon-right collection-filter__toggle" data-filters-modal-trigger>
+                {%- render 'use-svg', title: 'Plus icon', svg_id: 'iconPlusSm', class: 'icon icon-plus-sm', viewbox: '0 0 20 20' -%}
+                {%- render 'use-svg', title: 'Minus icon', svg_id: 'iconMinusSm', class: 'icon icon-minus-sm', viewbox: '0 0 20 20' -%}
+                {{ 'collections.filtering.title' | t }}
+              </button>
+            </div>
+
+            {% if section.settings.include_layout_switcher == true %}
+              <div class="layout-switch__button-group">
+                <button type="button" class="layout-switch layout-switch--default is-selected" disabled="disabled" aria-label="{{ 'accessibility_labels.display_two_products_per_grid_row' | t }}" aria-pressed="true" data-collection-layout-switch="default"><span class="visually-hidden">{{ 'collections.layout.default_grid' | t }}</span>{% render 'icon-layout-default' %}</button>
+                <button type="button" class="layout-switch layout-switch--alt" aria-label="{{ 'accessibility_labels.display_one_product_per_grid_row' | t }}" aria-pressed="false" data-collection-layout-switch="alt"><span class="visually-hidden">{{ 'collections.layout.alternate_grid' | t }}</span>{% render 'icon-layout-alt' %}</button>
+              </div>
+            {% endif %}
+
+          </div>
+
+          {% render 'collection-filters-drawer', results: search %}
+
+        </form>
+        <ul class="collection-grid collection-grid--default" data-collection-grid>
+          {% for product in search.results %}
+            {%- comment %}<locksmith:e2af>{% endcomment -%}
+              {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: product, subject_parent: search, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+            {%- comment %}</locksmith:e2af>{% endcomment -%}
+            <li class="collection-grid__tile">
+              {% render 'product-card',
+                product: product,
+                sizes: '(max-width: 60.875rem) calc(100vw / 2), calc(100vw / 4)',
+                slider_mob: true
+              %}
+            </li>
+          {% endfor %}
+        </ul>
+        <div data-collection-pagination>
+          {% render 'pagination', paginate: paginate, show_prev_next: true, include_show_all: true %}
+        </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
+</div>
+
+{% endpaginate %}
+
+{% schema %}
+  {
+    "name": "Search",
+    "class": "search-template",
+    "settings": [
+      {
+        "type": "range",
+        "id": "collection_paginate",
+        "label": "Products per page",
+        "default": 12,
+        "min": 4,
+        "max": 50,
+        "step": 1
+      },
+      {
+        "type": "header",
+        "content": "Search navbar settings"
+      },
+      {
+        "type": "header",
+        "content": "Layout switcher"
+      },
+      {
+        "type": "checkbox",
+        "id": "include_layout_switcher",
+        "label": "Include layout switcher",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Filters"
+      },
+      {
+        "type": "checkbox",
+        "id": "include_filter_count",
+        "label": "Include filter counts",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "include_facet_clears",
+        "label": "Include facet clear buttons",
+        "default": true
+      }
+    ]
+  }
+{% endschema %}

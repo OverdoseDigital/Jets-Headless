@@ -1,0 +1,28 @@
+<div class="account__address" data-address-container>
+  {% if address == customer.default_address %}
+    <h5>{{ 'customer.addresses.default' | t }}</h5>
+  {% endif %}
+  <div class="address__summary">
+    {{ address | format_address }}
+  </div>
+  <div class="button-container">
+    <button type="button" class="btn__text btn__text--icon-left" data-address-toggle>
+      {% render 'icon-pencil' %}
+      <span>{{- 'customer.addresses.edit' | t -}}</span>
+    </button>
+
+    <form
+      class="address__delete"
+      data-address-delete-form method="post"
+      action="{{ routes.account_addresses_url }}/{{ address.id }}"
+      data-confirm-message="{{ 'customer.addresses.delete_confirm' | t }}"
+    >
+      <input type="hidden" name="_method" value="delete"/>
+      <button type="submit" class="btn__text btn__text--icon-left">
+        {% render 'icon-cross' %}
+        <span>{{- 'customer.addresses.delete' | t -}}</span>
+      </button>
+    </form>
+  </div>
+  {%- render 'address-form', type: 'edit', address: address, classes: 'address__form address__form--edit hide' -%}
+</div>

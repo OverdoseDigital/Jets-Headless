@@ -1,0 +1,205 @@
+html,
+body {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-size: rem(16px);
+  font-size: 16px;
+  line-height: 1.5;
+  font-style: normal;
+  color: var(--color-black);
+
+  b,
+  strong {
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+%hero,
+%h1,
+%h2,
+%h3,
+%h4 {
+  font-family: var(--font-headings);
+  font-weight: var(--font-headings-weight);
+  text-transform: uppercase;
+  margin: 0 0 1rem;
+}
+
+%h1 {
+  font-size: rem(32px);
+  line-height: 1.2;
+  letter-spacing: rem(-1px);
+}
+
+%h2 {
+  font-size: rem(26px);
+  line-height: 1.24;
+  letter-spacing: rem(-0.5px);
+}
+
+%h3 {
+  font-size: rem(21px);
+  line-height: 1.33;
+  letter-spacing: rem(-0.2px);
+}
+
+%h4 {
+  font-size: rem(16px);
+  line-height: 1.33;
+  letter-spacing: 0;
+}
+
+%h5 {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-size: rem(14px);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: rem(1px);
+  margin: 0 0 1rem;
+}
+
+%h6 {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-size: rem(12px);
+  line-height: 1.33;
+  text-transform: uppercase;
+  letter-spacing: rem(1px);
+  margin: 0 0 1rem;
+}
+
+%hero {
+  font-size: rem(32px);
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: rem(-1px);
+
+  @include media-query($medium-up) {
+    font-size: rem(48px);
+  }
+}
+
+%paragraph-large {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-size: rem(16px);
+  line-height: 1.5;
+  letter-spacing: rem(0.4px);
+}
+
+%paragraph {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-size: rem(14px);
+  line-height: 1.5;
+  letter-spacing: rem(0.4px);
+  margin: 0 0 1rem;
+}
+
+// Small paragraph, labels, captions
+%small {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-size: rem(12px);
+  line-height: 1.33;
+  letter-spacing: rem(0.4px);
+}
+
+%smallcaps {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  text-transform: uppercase;
+  font-size: rem(12px);
+  line-height: 1.33;
+  letter-spacing: rem(1px);
+}
+
+h1,
+.h1 {
+  @extend %h1;
+}
+
+h2,
+.h2 {
+  @extend %h2;
+}
+
+h3,
+.h3 {
+  @extend %h3;
+}
+
+h4,
+.h4 {
+  @extend %h4;
+}
+
+h5,
+.h5 {
+  @extend %h5;
+}
+
+h6,
+.h6 {
+  @extend %h6;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: var(--font-body);
+  font-style: normal;
+}
+
+body,
+input,
+textarea,
+button,
+select {
+  text-size-adjust: 100%;
+}
+
+p,
+ol,
+ul {
+  @extend %paragraph;
+
+  b,
+  strong {
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+small,
+.small {
+  @extend %small;
+}
+
+a {
+  color: var(--color-black);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:focus {
+    color: var(--color-grey-5);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-grey-5);
+    }
+  }
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--color-grey-2);
+  margin: $spacing-md 0;
+}
+
+sup {
+  top: -0.3em;
+}

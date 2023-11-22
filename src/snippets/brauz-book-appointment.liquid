@@ -1,0 +1,7 @@
+{% if settings.brauz_app_id != blank %}
+<script defer src="{{ settings.brauz_book_appointment_script }}"></script>
+<button class="btn__text btn__text--icon-left" data-book-appointment data-brauz-id="{{ settings.brauz_app_id }}">
+  {% render 'icon-calendar-sm' %}
+  {{ 'products.product.book_appointment' | t }}
+</button>
+{% endif %}

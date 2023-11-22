@@ -1,0 +1,83 @@
+.collection__tabs-row-wrapper {
+  position: relative;
+  display: block;
+  margin: 0 auto $spacing-xxl;
+  width: 100%;
+  max-width: $page-width;
+}
+
+.collection__tabs-row-scroll-wrapper {
+  text-align: center;
+  width: 100%;
+  overflow: scroll;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding: 1px 0;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
+.collection__tabs-row {
+  list-style: none;
+  display: inline-flex;
+  align-items: baseline;
+  padding: $spacing-xxs ($outer-margin-sm + rem(1px)) 0;
+  margin: 0;
+
+  @include media-query($large-up) {
+    padding: $spacing-xxs $outer-margin-lg 0;
+  }
+}
+
+.collection__tabs-row-item {
+  display: inline-block;
+  margin: 0 $spacing-xs 0 0;
+  flex-shrink: 0;
+
+  &:not(:last-child) {
+    position: relative;
+    margin-right: $spacing-md;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: rem(-12px);
+      display: block;
+      width: rem(3px);
+      height: rem(3px);
+      margin-top: rem(-1.5px);
+      background: var(--collection-color);
+    }
+  }
+}
+
+.collection__tabs-row-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  width: auto;
+  text-align: center;
+  white-space: nowrap;
+  text-decoration: none;
+  user-select: none;
+  appearance: none;
+  padding: 0;
+  @extend %smallcaps;
+  min-height: $tab-button-height;
+  color: var(--color-black);
+  @include link-style(var(--color-black), transparent, var(--color-black), var(--collection-color), 0);
+  cursor: pointer;
+
+  &.is-current {
+    @include link-style(var(--color-black), var(--collection-color), var(--collection-color), var(--color-black), 0);
+  }
+}

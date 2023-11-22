@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
+    <meta name="theme-color" content="{{ settings.color_accent }}">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32, crop: 'center' }}" type="image/png">
+    {%- endif -%}
+
+    <title>{{ page_title }}</title>
+
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+
+    <script>
+      {% liquid
+        assign rewards_enabled = false
+        if settings.enable_custom_rewards_checkout and settings.rewards_enabled and settings.rewards_store_country_code
+          assign rewards_enabled = true
+        endif
+      %}
+      window.theme = {
+        checkoutAttributes: {{ checkout.attributes | json }},
+        checkoutId: "{{ checkout.id }}",
+        customerId: "{{ customer.id }}",
+        rewards: {
+          enabled: {{ rewards_enabled | json }},
+          detailsEndpoint: {{ settings.rewards_details_endpoint | json }},
+          detailsEndpointCached: {{ settings.rewards_details_endpoint_cached | json }},
+          reserveEndpoint: {{ settings.rewards_reserve_endpoint | json }},
+          title: {{ 'checkout.rewards.title' | t | json }},
+          balanceTitle: {{ 'checkout.rewards.balance_title' | t | json }},
+          inputLabel: {{ 'checkout.rewards.input_label' | t | json }},
+          redeemBtn: {{ 'checkout.rewards.redeem_btn' | t | json }},
+          insufficientBalance: {{ 'checkout.rewards.insufficient_balance_error' | t | json }},
+          storeCountryCode: {{ settings.rewards_store_country_code | json }},
+          signInPromptHTML: {{ 'checkout.rewards.sign_in_prompt_html' | t | json }}
+        },
+        giftCard: {
+          enabled: {{ settings.enable_custom_gift_cards | json }},
+          balanceEndpoint: {{ settings.giftcard_balance_endpoint | json }},
+          reserveEndpoint: {{ settings.giftcard_reserve_endpoint | json }},
+          releaseEndpoint: {{ settings.giftcard_release_endpoint | json }},
+          title: {{ 'checkout.gift_card.title' | t | json }},
+          storeCountryCode: {{ settings.rewards_store_country_code | json }},
+          cardNumberLabel: {{ 'checkout.gift_card.card_number_label' | t | json }},
+          pinLabel: {{ 'checkout.gift_card.pin_label' | t | json }},
+          applyBtn: {{ 'checkout.gift_card.apply_btn' | t | json }},
+          warningMessage: {{ 'checkout.gift_card.warning' | t | json }},
+        },
+      };
+    </script>
+
+    {% liquid
+      render 'css-variables', layout: 'checkout'
+      render 'style-tags'
+      render 'script-tags'
+      render 'gtm', position: 'head'
+      render 'onetrust-script'
+      render 'analyzify-gtm-checkout'
+    %}
+  </head>
+  <body>
+    {% render 'gtm', position: 'body' %}
+
+    {{ skip_to_content_link }}
+
+    <header class="banner" data-header role="banner">
+      <div class="wrap">
+        <a href="{{ shop.url }}" class="logo-image" aria-label="{{ 'accessibility_labels.header_logo_home_label' | t }}">
+          {% render 'logo', title: shop.name %}
+        </a>
+
+      </div>
+    </header>
+
+    {{ order_summary_toggle }}
+    <div class="content" data-content>
+      <div class="wrap">
+        <div class="main">
+          <header class="main__header" role="banner">
+            <a href="{{ shop.url }}" class="logo-image" aria-label="{{ 'accessibility_labels.header_logo_home_label' | t }}">
+              {% render 'logo', title: shop.name %}
+            </a>
+            {{ breadcrumb }}
+            {{ alternative_payment_methods }}
+          </header>
+          <main class="main__content" role="main">
+            {{ content_for_layout }}
+          </main>
+          <footer class="main__footer" role="contentinfo">
+            {{ content_for_footer }}
+          </footer>
+        </div>
+        <aside class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {% comment %}
+              Use larger product images
+            {% endcomment %}
+            {% assign product_image_size = '_130x.' %}
+            {{ content_for_order_summary | replace: '_small.', product_image_size }}
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    {{ tracking_code }}
+  </body>
+</html>

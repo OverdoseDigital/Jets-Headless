@@ -1,0 +1,390 @@
+{% liquid
+  assign banner_blocks = section.blocks | where: 'type', 'icons-row'
+  assign tab_blocks = section.blocks | where: 'type', 'tabs-row'
+
+  assign disruptorTileMobImg = collection.metafields.disruptor_tile.mob_image
+  assign disruptorTileDeskImg = collection.metafields.disruptor_tile.desk_image
+  assign disruptorTileColor = collection.metafields.disruptor_tile.text_color | default: '#ffffff'
+  assign disruptorTileBgColor = collection.metafields.disruptor_tile.background_color | default: '000000'
+  assign disruptorTileVerticalPos = collection.metafields.disruptor_tile.content_vertical_position | default: 'middle' | handleize
+  assign disruptorButtonSetting = collection.metafields.disruptor_tile.button_color | default: 'white' | handleize
+%}
+
+{% capture disruptorTile %}
+  {% if collection.metafields.disruptor_tile.button_link != blank %}
+  <li class="collection-grid__tile collection-grid__promo-tile " data-mobile-width="{{ collection.metafields.disruptor_tile.mobile_width | default: '2' }}" data-desktop-width="{{ collection.metafields.disruptor_tile.desktop_width }}" data-mobile-row="{{ collection.metafields.disruptor_tile.mobile_row_number }}" data-desktop-row="{{ collection.metafields.disruptor_tile.desktop_row_number }}" data-mobile-position-{{ collection.metafields.disruptor_tile.mobile_position | handleize }} data-desk-position-{{ collection.metafields.disruptor_tile.desktop_position | handleize }}>
+    <a class="promo-tile" href="{{ collection.metafields.disruptor_tile.button_link }}">
+      <div class="promo-tile__bg">
+      {% if disruptorTileMobImg != blank or disruptorTileDeskImg != blank %}
+        {%- render 'component-picture',
+          image_mobile: disruptorTileMobImg,
+          image_desktop: disruptorTileDeskImg,
+          max_width_mobile: 800,
+          lazy: true
+        -%}
+        {% endif %}
+      </div>
+      <div class="promo-tile__content promo-tile__content-align-{{ disruptorTileVerticalPos }}">
+        {% if collection.metafields.disruptor_tile.title != blank %}
+          <h2 class="h2-caps">{{ collection.metafields.disruptor_tile.title }}</h2>
+        {% endif %}
+        {% if collection.metafields.disruptor_tile.paragraph != blank %}
+          <p>{{ collection.metafields.disruptor_tile.paragraph }}</p>
+        {% endif %}
+        {% if collection.metafields.disruptor_tile.button_text != blank %}
+          <div><span class="btn {% if disruptorButtonSetting == 'black' %}btn--tertiary{% elsif disruptorButtonSetting == 'white' %}btn--white{% endif %}">{{ collection.metafields.disruptor_tile.button_text }}</span></div>
+        {% endif %}
+      </div>
+    </a>
+  </li>
+  {% endif %}
+{% endcapture %}
+
+{% paginate collection.products by section.settings.collection_paginate %}
+<div
+  id="CollectionSection-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection-template"
+  data-default-sort-by="{{ collection.default_sort_by }}">
+
+  {% render 'collection-banner', templateObject: collection, paginate_items: paginate.items %}
+
+  {% assign inThisCollection = false %}
+
+  {% for block in banner_blocks %}
+    {% if banner_blocks.size > 0 %}
+      {% capture iconCells %}
+      {%- comment %}<locksmith:a4d5>{% endcomment -%}
+        {%- assign locksmith_632d_forloop__size = 0 %}{% for item in linklists[block.settings.list].links %}{% capture var %}{% render 'locksmith-variables', scope: 'subject', subject: item, subject_parent: linklists[block.settings.list], variable: 'transparent' %}{% endcapture %}{% if var == 'true' %}{% assign locksmith_632d_forloop__size = locksmith_632d_forloop__size | plus: 1 %}{% endif %}{% endfor %}{% assign locksmith_632d_forloop__index = nil -%}
+      {%- comment %}</locksmith:a4d5>{% endcomment -%}
+      {% for item in linklists[block.settings.list].links %}
+        {%- comment %}<locksmith:c3ed>{% endcomment -%}
+          {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: item, subject_parent: linklists[block.settings.list], variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% if locksmith_632d_forloop__index == nil %}{% assign locksmith_632d_forloop__index = 1 %}{% assign locksmith_632d_forloop__index0 = 0 %}{% else %}{% assign locksmith_632d_forloop__index = locksmith_632d_forloop__index | plus: 1 %}{% assign locksmith_632d_forloop__index0 = locksmith_632d_forloop__index0 | plus: 1 %}{% endif %}{% if locksmith_632d_forloop__index == 1 %}{% assign locksmith_632d_forloop__first = true %}{% else %}{% assign locksmith_632d_forloop__first = false %}{% endif %}{% if locksmith_632d_forloop__index == locksmith_632d_forloop__size %}{% assign locksmith_632d_forloop__last = true %}{% else %}{% assign locksmith_632d_forloop__last = false %}{% endif %}{% assign locksmith_632d_forloop__rindex = locksmith_632d_forloop__size | minus: locksmith_632d_forloop__index | minus: 1 %}{% assign locksmith_632d_forloop__rindex0 = locksmith_632d_forloop__size | minus: locksmith_632d_forloop__index0 | minus: 1 %}{% else %}{% continue %}{% endif -%}
+        {%- comment %}</locksmith:c3ed>{% endcomment -%}
+        {% liquid
+          assign itemCollection = item.url | remove: '/collections/'
+          assign itemCollection = collections[itemCollection]
+          if itemCollection == collection
+            assign inThisCollection = true
+          endif
+        %}
+        <div class="collection__icons-row-item {% if itemCollection == collection %}is-current{% endif %}" data-cell-index="{{ locksmith_632d_forloop__index0 }}">
+          <a href="{{ itemCollection.url }}">
+            <div class="collection__icons-row-image">
+              <img src="{{ itemCollection.metafields.meta.collection_icon | file_url }}" loading="lazy" width="80" height="80" alt="{{ item.title }}" />
+            </div>
+            <span>{{ item.title }}</span>
+          </a>
+        </div>
+      {% endfor %}
+      {% endcapture %}
+      {% if collection == collections[block.settings.collection] or inThisCollection %}
+        {% capture iconsRow %}
+        <div class="collection__icons-row-wrapper">
+          <div class="collection__icons-row" id="collection__icons-row-{{ section.id }}">
+            {{ iconCells }}
+          </div>
+        </div>
+        {% endcapture %}
+        {{ iconsRow }}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% for block in tab_blocks %}
+    {% if tab_blocks.size > 0 %}
+      {% capture tabCells %}
+      {%- comment %}<locksmith:caea>{% endcomment -%}
+        {%- assign locksmith_e24c_forloop__size = 0 %}{% for item in linklists[block.settings.list].links %}{% capture var %}{% render 'locksmith-variables', scope: 'subject', subject: item, subject_parent: linklists[block.settings.list], variable: 'transparent' %}{% endcapture %}{% if var == 'true' %}{% assign locksmith_e24c_forloop__size = locksmith_e24c_forloop__size | plus: 1 %}{% endif %}{% endfor %}{% assign locksmith_e24c_forloop__index = nil -%}
+      {%- comment %}</locksmith:caea>{% endcomment -%}
+      {% for item in linklists[block.settings.list].links %}
+        {%- comment %}<locksmith:a4b2>{% endcomment -%}
+          {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: item, subject_parent: linklists[block.settings.list], variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% if locksmith_e24c_forloop__index == nil %}{% assign locksmith_e24c_forloop__index = 1 %}{% assign locksmith_e24c_forloop__index0 = 0 %}{% else %}{% assign locksmith_e24c_forloop__index = locksmith_e24c_forloop__index | plus: 1 %}{% assign locksmith_e24c_forloop__index0 = locksmith_e24c_forloop__index0 | plus: 1 %}{% endif %}{% if locksmith_e24c_forloop__index == 1 %}{% assign locksmith_e24c_forloop__first = true %}{% else %}{% assign locksmith_e24c_forloop__first = false %}{% endif %}{% if locksmith_e24c_forloop__index == locksmith_e24c_forloop__size %}{% assign locksmith_e24c_forloop__last = true %}{% else %}{% assign locksmith_e24c_forloop__last = false %}{% endif %}{% assign locksmith_e24c_forloop__rindex = locksmith_e24c_forloop__size | minus: locksmith_e24c_forloop__index | minus: 1 %}{% assign locksmith_e24c_forloop__rindex0 = locksmith_e24c_forloop__size | minus: locksmith_e24c_forloop__index0 | minus: 1 %}{% else %}{% continue %}{% endif -%}
+        {%- comment %}</locksmith:a4b2>{% endcomment -%}
+        {% liquid
+          assign itemCollection = item.url | remove: '/collections/'
+          assign itemCollection = collections[itemCollection]
+          if itemCollection == collection
+            assign inThisCollection = true
+          endif
+        %}
+        <li class="collection__tabs-row-item" data-cell-index="{{ locksmith_e24c_forloop__index0 }}">
+          <a href="{{ itemCollection.url }}" class="collection__tabs-row-link {% if itemCollection == collection %}is-current{% endif %}">
+            <span>{{ item.title }}</span>
+          </a>
+        </li>
+      {% endfor %}
+      {% endcapture %}
+      {% if collection == collections[block.settings.collection] or inThisCollection %}
+        {% capture tabsRow %}
+        <div class="collection__tabs-row-wrapper" style="--collection-color: {{ block.settings.collection_color_scheme }};">
+          <div class="collection__tabs-row-scroll-wrapper">
+            <ul class="collection__tabs-row" id="collection__tabs-row-{{ section.id }}">
+              {{ tabCells }}
+            </ul>
+          </div>
+        </div>
+        {% endcapture %}
+        {{ tabsRow }}
+        <style>
+          #CollectionSection-{{ section.id }} h1.h3 {
+            color: {{ block.settings.collection_color_scheme }};
+          }
+          #CollectionSection-{{ section.id }} .layout-switch:not([disabled]) {
+            color: {{ block.settings.collection_color_scheme }};
+          }
+        </style>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  <div class="container">
+    {% if settings.ss_enable %}
+    	{% render 'collection-filters-drawer', results: collection %}
+    	{% if settings.ss_enable and collection.handle and collection.handle == settings.ss_collection_handle %}
+    	<div class="search-form--page medium-down--hide">
+    		<form class="search__form" action="/collections/{{ settings.ss_collection_handle }}" method="get" role="search">
+        		<input class="search__input" type="search" name="q" id="SearchPage" value=""
+            		placeholder="Search" aria-label="Search for products on our site" spellcheck="false" autocomplete="off">
+        		<button type="submit" class="search__button btn__icon" aria-label="Search">
+            		<svg aria-label="Search icon" class="icon icon-search" width="24" height="24" viewBox="0 0 24 24"
+                		fill="none" xmlns="http://www.w3.org/2000/svg">
+                		<path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" vector-effect="non-scaling-stroke"
+                    		d="M14.193 5.582a5.97 5.97 0 11-8.444 8.444 5.97 5.97 0 018.444-8.444M14.15 14.06l4.69 4.69"></path>
+            		</svg>
+        		</button>
+    		</form>
+      </div>
+    	{% endif %}
+      <div id="searchspring-toolbar"></div>
+      <div class="ss-skeleton ss-skeleton--toolbar collection-navbar"></div>
+      <div class="ss-skeleton ss-skeleton--grid collection-grid--default">
+        {% for i in (1..section.settings.collection_paginate) %}
+          {% render 'product-card--skeleton' %}
+        {% endfor %}
+      </div>
+      <div id="searchspring-content"></div>
+      <div id="searchspring-pagination"></div>
+    {% else %}
+
+    <form class="collection-navbar" data-collection-navbar>
+      <div class="collection-navbar__row">
+        <div>
+          <button type="button" class="btn__text btn__text--icon-left collection-filter__toggle" data-filters-modal-trigger>
+            {%- render 'use-svg', title: 'Plus icon', svg_id: 'iconPlusSm', class: 'icon icon-plus-sm', viewbox: '0 0 20 20' -%}
+            {%- render 'use-svg', title: 'Minus icon', svg_id: 'iconMinusSm', class: 'icon icon-minus-sm', viewbox: '0 0 20 20' -%}
+            {{ 'collections.filtering.title' | t }}
+          </button>
+        </div>
+
+        {% if section.settings.include_layout_switcher == true %}
+          <div class="layout-switch__button-group">
+            <button type="button" class="layout-switch layout-switch--default is-selected" disabled="disabled" aria-label="{{ 'accessibility_labels.display_two_products_per_grid_row' | t }}" aria-pressed="true" data-collection-layout-switch="default"><span class="visually-hidden">{{ 'collections.layout.default_grid' | t }}</span>{% render 'icon-layout-default' %}</button>
+            <button type="button" class="layout-switch layout-switch--alt" aria-label="{{ 'accessibility_labels.display_one_product_per_grid_row' | t }}" aria-pressed="false" data-collection-layout-switch="alt"><span class="visually-hidden">{{ 'collections.layout.alternate_grid' | t }}</span>{% render 'icon-layout-alt' %}</button>
+          </div>
+        {% endif %}
+
+        {% if section.settings.include_collection_sort == true %}
+          {%- render 'collection-sort', templateObject: collection -%}
+        {% endif %}
+
+      </div>
+
+      {% render 'collection-filters-drawer', results: collection %}
+
+    </form>
+
+    <ul class="collection-grid collection-grid--default" data-collection-grid>
+      {% for product in collection.products %}
+        {%- comment %}<locksmith:e902>{% endcomment -%}
+          {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: product, subject_parent: collection, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+        {%- comment %}</locksmith:e902>{% endcomment -%}
+        <li class="collection-grid__tile">
+          {% render 'product-card',
+            product: product,
+            sizes: '(max-width: 60.875rem) calc(100vw / 2), calc(100vw / 4)',
+            slider_mob: true
+          %}
+        </li>
+      {% else %}
+        {% if collection.handle == 'all' and collection.all_vendors.size == 0 and collection.all_types.size == 0 %}
+          {% for i in (1..8) %}
+            <li>
+              <a href="#">
+                {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg placeholder-svg--small' }}
+              </a>
+
+              <p>
+                <a href="#">{{ 'homepage.onboarding.product_title' | t }}</a>
+              </p>
+
+              <p>
+                {{ 1999 | money }}
+              </p>
+            </li>
+          {% endfor %}
+        {% else %}
+          <li class="collection-grid__tile collection-grid__tile-full">
+            <p>{{ 'collections.general.no_matches' | t }}</p>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if disruptorTileMobImg != blank or disruptorTileDeskImg != blank or collection.metafields.disruptor_tile.title != blank or collection.metafields.disruptor_tile.paragraph != blank %}
+        {{ disruptorTile }}
+      {% endif %}
+    </ul>
+
+    <div data-collection-pagination>
+      {% render 'pagination', paginate: paginate, show_prev_next: true, include_show_all: true %}
+    </div>
+
+    {% endif %}
+
+    {% render 'collection-truncated-desc' %}
+
+  </div>
+
+{% if disruptorTileMobImg != blank or disruptorTileDeskImg != blank or collection.metafields.disruptor_tile.title != blank or collection.metafields.disruptor_tile.paragraph != blank %}
+<style>
+  .collection-grid__promo-tile,
+  .collection-grid__promo-tile a:not(.btn) {
+    color: {{ disruptorTileColor }};
+  }
+
+  .promo-tile__bg {
+    {% if disruptorTileBgColor != blank %}
+      background-color: {{ disruptorTileBgColor }};
+    {% endif %}
+  }
+</style>
+{% endif %}
+
+</div>
+
+{% if settings.ss_enable %}
+  <script>
+    const searchspringWrapper = document.querySelector('#searchspring-content');
+    const skeletonGrid = document.querySelector('.ss-skeleton--grid');
+    const ssHeaderCount = document.querySelector('#searchspring-header-count');
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList') {
+          const ssContent = document.querySelector('.ss__content')
+          if (ssContent) {
+            skeletonGrid.classList.add('hide')
+            ssHeaderCount.style.height = 'auto'
+            observer.disconnect();
+          }
+        }
+      }
+    });
+    observer.observe(searchspringWrapper, {childList: true});
+  </script>
+{% endif %}
+
+{% endpaginate %}
+
+{% schema %}
+  {
+    "name": "Collection",
+    "class": "collection-template",
+    "settings": [
+      {
+        "type": "range",
+        "id": "collection_paginate",
+        "label": "Products per page",
+        "default": 12,
+        "min": 4,
+        "max": 50,
+        "step": 1
+      },
+      {
+        "type": "header",
+        "content": "Collection navbar settings"
+      },
+      {
+        "type": "header",
+        "content": "Sorting"
+      },
+      {
+        "type": "checkbox",
+        "id": "include_collection_sort",
+        "label": "Include collection sorting",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Layout switcher"
+      },
+      {
+        "type": "checkbox",
+        "id": "include_layout_switcher",
+        "label": "Include layout switcher",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Filters"
+      },
+      {
+        "type": "checkbox",
+        "id": "include_filter_count",
+        "label": "Include filter counts",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "include_facet_clears",
+        "label": "Include facet clear buttons",
+        "default": true
+      }
+    ],
+    "blocks": [
+      {
+        "type": "icons-row",
+        "name": "Icons Row",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection",
+            "info": "Where you want the row of icons to be shown, eg. All Swimwear"
+          },
+          {
+            "type": "link_list",
+            "id": "list",
+            "label": "Collection List",
+            "info": "Specify the navigation list with the relevant collections"
+          }
+        ]
+      },
+      {
+        "type": "tabs-row",
+        "name": "Tabs Row",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection",
+            "info": "Where you want the row of icons to be shown, eg. All Swimwear"
+          },
+          {
+            "type": "link_list",
+            "id": "list",
+            "label": "Collection List",
+            "info": "Specify the navigation list with the relevant collections"
+          },
+          {
+            "type": "color",
+            "id": "collection_color_scheme",
+            "label": "Color scheme",
+            "default": "#57BBE6",
+            "info": "Will change the colour of the Collection title, and the text within the tabs"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

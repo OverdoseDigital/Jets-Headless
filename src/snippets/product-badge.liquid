@@ -1,0 +1,82 @@
+{%- comment %}
+  Parameters
+  product: Product object
+  includeIconBadge: (boolean) Determines if Icon Badge should be rendered
+{% endcomment -%}
+{% liquid
+assign hasCustomBadge1 = false
+assign hasCustomBadge2 = false
+assign hasCustomBadgeIcon = false
+
+if product.metafields.badges.badge_1_text != blank
+  assign hasCustomBadge1 = true
+  assign badge1 = product.metafields.badges.badge_1_text
+  assign badgeStyle1 = product.metafields.badges.badge_1_color | default: 'grey'
+  assign badgeStyle1 = badgeStyle1 | downcase
+  assign badgeClass1 = ''
+  case badgeStyle1
+    when 'red'
+      assign badgeClass1 = 'product__label--sale'
+    when 'black'
+      assign badgeClass1 = 'product__label--black'
+    else
+      assign badgeClass1 = ''
+    endcase
+endif
+
+if product.metafields.badges.badge_2_text != blank
+  assign hasCustomBadge2 = true
+  assign badge2 = product.metafields.badges.badge_2_text
+  assign badgeStyle2 = product.metafields.badges.badge_2_color | default: 'grey'
+  assign badgeStyle2 = badgeStyle2 | downcase
+  assign badgeClass2 = ''
+  case badgeStyle2
+    when 'red'
+      assign badgeClass2 = 'product__label--sale'
+    when 'black'
+      assign badgeClass2 = 'product__label--black'
+    else
+      assign badgeClass2 = ''
+    endcase
+endif
+
+if product.metafields.badges.badge_icon != blank
+  assign hasCustomBadgeIcon = true
+  assign badgeIconTitle = false
+  assign badgeIconTitle = product.metafields.badges.badge_icon
+  assign badgeIconDowncase = badgeIconTitle | downcase
+  if badgeIconDowncase contains 'regenerated fibers'
+    capture badgeIcon
+      render 'icon-regenerated-fibers'
+    endcapture
+  elsif badgeIconDowncase contains 'maternity'
+    capture badgeIcon
+      render 'icon-bump-friendly'
+    endcapture
+  elsif badgeIconDowncase contains 'sustainable' or badgeIconDowncase contains 'considered'
+    capture badgeIcon
+      render 'icon-considered'
+    endcapture
+  else
+    assign badgeIcon = false
+    assign hasCustomBadgeIcon = false
+  endif
+endif
+%}
+
+{% if hasCustomBadge1 or hasCustomBadge2 %}
+  <div class="product__labels">
+    {% if hasCustomBadge1 %}
+      <span class="product__label {{ badgeClass1 }}">{{ badge1 }}</span>
+    {% endif %}
+    {% if hasCustomBadge2 %}
+      <span class="product__label product__label--second {{ badgeClass2 }}">{{ badge2 }}</span>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if includeIconBadge and hasCustomBadgeIcon %}
+  <span class="product__badge-icon" title="{{ badgeIconTitle }}">
+    {{ badgeIcon }}
+  </span>
+{% endif %}

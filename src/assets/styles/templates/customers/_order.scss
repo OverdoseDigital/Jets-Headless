@@ -1,0 +1,158 @@
+.account__header--order {
+  margin-bottom: $spacing-xxs;
+}
+
+.account__order-summary {
+  text-align: left;
+  margin-bottom: $spacing-xl;
+
+  h2,
+  p {
+    margin: 0;
+  }
+}
+
+.account__order-table {
+  margin-bottom: rem(100px);
+}
+
+.account__order-table-header {
+  @extend %smallcaps;
+  display: grid;
+  grid-template-columns: rem(106px) 2fr repeat(3, 1fr);
+  gap: $spacing-sm;
+  margin: 0 auto $spacing-lg;
+
+  div {
+    padding: $spacing-xs 0;
+    border-bottom: 1px solid var(--color-grey-2);
+    text-align: right;
+
+    &:first-child {
+      grid-column: span 2;
+      text-align: left;
+    }
+  }
+}
+
+.account__order-table-line-items {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  text-align: left;
+
+  @include media-query($medium-up) {
+    border-top: none;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: rem(106px) 1fr;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+
+    @include media-query($medium-up) {
+      border-bottom: 1px solid var(--color-grey-2);
+      grid-template-columns: rem(106px) 5fr;
+      gap: $spacing-xs;
+      padding-bottom: $spacing-lg;
+      margin-bottom: $spacing-lg;
+    }
+  }
+
+  .component-image__wrapper {
+    overflow: hidden;
+  }
+}
+
+.account__order-item-detail {
+  @include media-query($medium-up) {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr);
+    gap: $spacing-sm;
+  }
+
+  p {
+    @extend %smallcaps;
+    margin: 0;
+  }
+}
+
+.account__order-item-detail-meta {
+  margin-bottom: $spacing-sm;
+
+  @include media-query($medium-up) {
+    padding-left: $spacing-sm;
+  }
+
+  dl {
+    @extend %small;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: $spacing-xs $spacing-sm;
+  }
+
+  dt {
+    color: var(--color-grey-5);
+    white-space: nowrap;
+  }
+
+  dd {
+    margin-left: 0;
+  }
+}
+
+.account__order-item-description {
+  a {
+    text-decoration: none;
+  }
+}
+
+.account__order-item-description--light {
+  color: var(--color-grey-5);
+}
+
+.account__order-item-cell {
+  @extend %smallcaps;
+
+  &::before {
+    @include media-query($small-down) {
+      content: attr(data-label);
+      display: inline;
+    }
+  }
+
+  @include media-query($medium-up) {
+    text-align: right;
+  }
+}
+
+.account__order-totals {
+  margin: 0 auto;
+
+  @include media-query($medium-up) {
+    max-width: calc(50% - 8px);
+    margin-left: auto;
+    margin-right: 0;
+  }
+}
+
+.account__order-totals-row {
+  @extend %smallcaps;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-xs;
+
+  &.is-bold {
+    font-weight: 600;
+  }
+}
+
+.account__order-footer {
+  text-align: center;
+
+  @include media-query($small-down) {
+    display: none;
+  }
+}

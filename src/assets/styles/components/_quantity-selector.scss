@@ -1,0 +1,60 @@
+.quantity-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  gap: 0;
+  width: rem(96px);
+  height: rem(32px);
+
+  input[type='number'] {
+    appearance: textfield;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: 0;
+    width: rem(32px);
+    min-height: rem(32px);
+    padding: $spacing-xxs 0;
+    font-weight: 400;
+    line-height: 1;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+.quantity-selector__btn {
+  width: rem(32px);
+  height: rem(32px);
+
+  &:active {
+    color: var(--color-grey-5);
+    background-color: transparent;
+  }
+
+  &:focus {
+    color: var(--color-black);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
+  .icon {
+    display: block;
+    width: rem(16px);
+    height: rem(16px);
+  }
+
+  &.is-minus {
+    margin-left: auto;
+  }
+
+  &.is-plus {
+    margin-right: auto;
+  }
+}

@@ -1,0 +1,9 @@
+{%- if settings.enable_preconnects -%}
+  {%- for link in linklists[settings.dns_preconnects_linklist].links %}
+    {%- comment %}<locksmith:ad85>{% endcomment -%}
+      {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: link, subject_parent: linklists[settings.dns_preconnects_linklist], variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+    {%- comment %}</locksmith:ad85>{% endcomment -%}
+    <link rel="preconnect" href="{{ link.url }}" crossorigin>
+    <link rel="dns-prefetch" href="{{ link.url }}">
+  {% endfor -%}
+{%- endif -%}

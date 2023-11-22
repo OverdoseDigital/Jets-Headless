@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="page-header">
+    <h1>{{ page.title }}</h1>
+  </div>
+</div>
+<div class="oke-widget-container">
+<div class="reviews__write-a-review text-center">
+  <div class="container">
+    <a class="okeReviews-emptyWidget-button" href="{{ settings.okendo_site_reviews_link }}" target="_blank">Write a Review</a>
+  </div>
+</div>
+<div class="okeReviews-widget-holder review-page">
+   <div class="reviews-page-wrapper">
+  <div class="Container">
+      <div class="orc-allReviewsCollections">
+          <div id="orc-collection-control" style="display: none">
+              <div id="orc-collection-controls-label" class="orc-collectionControlsLabel">Select a product range</div>
+              <div class="orc-collectionControls" role="radiogroup" aria-labelledby="orc-collection-controls-label">
+                  <div class="orc-collectionControls-item">
+                      <input
+                          id="orc-reviews-control-0"
+                          class="orc-collectionControls-item-input orc-collectionControls-item-input--checked js-orc-collectionRadio"
+                          type="radio"
+                          checked
+                          value="{{ settings.okendo_reviews_collection_id }}"
+                          name="orc-reviews-collection-control"
+                      />
+                      <label for="orc-reviews-control-0" class="orc-collectionControls-item-label">
+                          <span class="orc-collectionControls-item-label-heading">Product Reviews</span>
+                      </label>
+                  </div>
+                  <div class="orc-collectionControls-item">
+                      <input
+                          id="orc-reviews-control-1"
+                          class="orc-collectionControls-item-input js-orc-collectionRadio"
+                          type="radio"
+                          value="70cb52ea-ac8f-475a-9c10-b60fc957b6d0"
+                          name="orc-reviews-collection-control"
+                      />
+                      <label for="orc-reviews-control-1" class="orc-collectionControls-item-label">
+                          <span class="orc-collectionControls-item-label-heading">Site Reviews</span>
+                      </label>
+                  </div>
+              </div>
+          </div>
+          <!-- SET THE data-oke-reivews-group-id to the GUID you wish to default the widget to when the page loads (usually the first radio value in the list above -->
+          <div id="orc-widget-snippet" class="drp-okendo-reviews" data-oke-widget data-oke-reviews-group-id="{{ settings.okendo_reviews_collection_id }}"></div>
+      </div>
+  </div>
+</div>
+  </div>
+</div>

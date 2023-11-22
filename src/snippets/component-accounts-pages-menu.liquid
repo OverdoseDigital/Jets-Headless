@@ -1,0 +1,57 @@
+{% comment %}
+  Parameters
+  linklist: link list object from settings
+  parent_class: Class for the outer wrapper for modifiers
+{% endcomment %}
+
+
+{% assign list_items = '' %}
+
+{% for link in linklist.links %}
+  {%- comment %}<locksmith:8a97>{% endcomment -%}
+    {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: link, subject_parent: linklist, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+  {%- comment %}</locksmith:8a97>{% endcomment -%}
+  {% liquid
+    assign is_active = false
+    if request.path contains '/account'
+      if request.page_type == 'customers/order' and link.url contains 'view=orders'
+        assign is_active = true
+      elsif request.page_type == 'customers/account'
+        if template.suffix
+          assign param = template.suffix | prepend: 'view='
+          if link.url contains param
+            assign is_active = true
+          endif
+        elsif link.url == routes.account_url and link.url != routes.account_logout_url and link.url != routes.account_addresses_url
+          assign is_active = true
+        endif
+      elsif request.page_type == 'customers/addresses' and request.path == link.url
+        assign is_active = true
+      endif
+    elsif request.page_type == 'page'
+      if page.url == link.url
+        assign is_active = true
+      endif
+    else
+      assign is_active = true
+    endif
+  %}
+
+  {% capture list_items %}
+    {{- list_items -}}
+    <li class="tab-menu__item">
+      <a
+        class="tab-menu__link{% if is_active == true %} is-active{% endif %}"
+        href="{{ link.url }}"
+      >
+        {{ link.title }}
+      </a>
+    </li>
+  {% endcapture %}
+{% endfor %}
+
+<div class="tab-menu__scroll-wrapper tab-menu__scroll-wrapper--contained dragscroll">
+  <ul class="tab-menu__list list-inline">
+    {{ list_items }}
+  </ul>
+</div>

@@ -1,0 +1,69 @@
+{%- unless 'password,gift_card' contains request.page_type or checkout %}
+<script defer="defer" src="{{ 'vendor.theme.js' | asset_url }}"></script>
+{% endunless -%}
+{%- unless 'password,gift_card' contains request.page_type or checkout %}
+<script defer="defer" src="{{ 'layout.theme.js' | asset_url }}"></script>
+{% endunless -%}
+{%- unless 'password,gift_card' contains request.page_type or checkout %}
+<script defer="defer" src="{{ 'app.4a8bfac9ef9c4a5230f7.js' | asset_url }}"></script>
+{% endunless -%}
+{%- if request.page_type == 'password' %}
+<script defer="defer" src="{{ 'layout.password.js' | asset_url }}"></script>
+{% endif -%}
+{%- if checkout %}
+<script defer="defer" src="{{ 'layout.checkout.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == '404' %}
+<script defer="defer" src="{{ 'template.404.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'article.alt' %}
+<script defer="defer" src="{{ 'template.article.alt.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'article' %}
+<script defer="defer" src="{{ 'template.article.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'blog' %}
+<script defer="defer" src="{{ 'template.blog.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'cart' %}
+<script defer="defer" src="{{ 'template.cart.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'collection.alt' %}
+<script defer="defer" src="{{ 'template.collection.alt.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'collection' %}
+<script defer="defer" src="{{ 'template.collection.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'index' %}
+<script defer="defer" src="{{ 'template.index.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'page.alt' %}
+<script defer="defer" src="{{ 'template.page.alt.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'page.custom-wishlist' %}
+<script defer="defer" src="{{ 'template.page.custom-wishlist.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'page' %}
+<script defer="defer" src="{{ 'template.page.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'product.alt' %}
+<script defer="defer" src="{{ 'template.product.alt.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'product' %}
+<script defer="defer" src="{{ 'template.product.js' | asset_url }}"></script>
+{% endif -%}
+{%- assign sanitisedTemplate = template | split: '_' | first -%} {%- if sanitisedTemplate == 'search' %}
+<script defer="defer" src="{{ 'template.search.js' | asset_url }}"></script>
+{% endif -%}
+{%- if template == 'customers/account' %}
+<script defer="defer" src="{{ 'template.customer.account.js' | asset_url }}"></script>
+{% endif -%}
+{%- if template == 'customers/addresses' %}
+<script defer="defer" src="{{ 'template.customer.addresses.js' | asset_url }}"></script>
+{% endif -%}
+{%- if template == 'customers/login' %}
+<script defer="defer" src="{{ 'template.customer.login.js' | asset_url }}"></script>
+{% endif -%}
+{%- if template == 'customers/register' %}
+<script defer="defer" src="{{ 'template.customer.register.js' | asset_url }}"></script>
+{% endif -%}

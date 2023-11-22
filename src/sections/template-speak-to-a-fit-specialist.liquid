@@ -1,0 +1,156 @@
+{% if settings.brauz_app_id != blank and settings.brauz_book_appointment_script != blank %}
+  <script defer src="{{ settings.brauz_book_appointment_script }}"></script>
+{% endif %}
+<div
+  data-section-id="{{ section.id }}"
+  data-section-type="speak-to-a-fit-specialist"
+  data-section-settings='{{ section.settings | json }}'
+  class="speak-to speak-to--{{ section.id }}"
+>
+  <div class="container">
+    <div class="page-header">
+      <h1 class="h3">{{ page.title }}</h1>
+    </div>
+    <div class="speak-to__tiles">
+      {% if settings.brauz_app_id != blank and section.settings.book_enabled == true and settings.brauz_book_appointment_script != blank %}
+        <div class="speak-to__tile speak-to__tile--book">
+          <div class="speak-to__tile-icon">
+            {% render 'icon-calendar' %}
+          </div>
+          <h4 class="speak-to__tile-title">
+            {{ section.settings.book_title }}
+          </h4>
+          <div class="rte speak-to__tile-text">
+            {{ section.settings.book_text }}
+          </div>
+          <button class="btn speak-to__tile-cta" data-book-appointment-{{ section.id }} data-brauz-id="{{ settings.brauz_app_id }}">
+            {{ section.settings.book_cta_text }}
+          </button>
+        </div>
+      {% endif %}
+      {% if settings.enable_gorgias_chat == true and settings.gorgias_app_id != blank %}
+        <div class="speak-to__tile speak-to__tile--chat">
+          <div class="speak-to__tile-icon">
+            {% render 'icon-chat' %}
+          </div>
+          <h4 class="speak-to__tile-title">
+            {{ section.settings.chat_title }}
+          </h4>
+          <div class="rte speak-to__tile-text">
+            {{ section.settings.chat_text }}
+          </div>
+          <button onclick="openLiveChat()" class="btn speak-to__tile-cta">
+            {{ section.settings.chat_cta_text }}
+          </button>
+        </div>
+      {% endif %}
+      <div class="speak-to__tile speak-to__tile--call">
+        <div class="speak-to__tile-icon">
+          {% render 'icon-phone' %}
+        </div>
+        <h4 class="speak-to__tile-title">
+          {{ section.settings.call_title }}
+        </h4>
+        <h5 class="speak-to__tile-subtitle">
+          {{ section.settings.call_subtitle }}
+        </h5>
+        <div class="rte speak-to__tile-text">
+          {{ section.settings.call_text }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Speak to a Fit Specialist",
+    "templates": [
+      "page"
+    ],
+    "settings": [
+      {
+        "type": "header",
+        "content": "Book"
+      },
+      {
+        "type": "checkbox",
+        "id": "book_enabled",
+        "label": "Booking enabled",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "book_title",
+        "label": "Title",
+        "default": "Book an appointment",
+        "placeholder": "Book an appointment"
+      },
+      {
+        "type": "richtext",
+        "id": "book_text",
+        "label": "Text"
+      },
+      {
+        "type": "text",
+        "id": "book_cta_text",
+        "label": "CTA",
+        "default": "Book now",
+        "placeholder": "Book now"
+      },
+      {
+        "type": "header",
+        "content": "Chat"
+      },
+      {
+        "type": "text",
+        "id": "chat_title",
+        "label": "Title",
+        "default": "Chat with us",
+        "placeholder": "Chat with us"
+      },
+      {
+        "type": "richtext",
+        "id": "chat_text",
+        "label": "Text"
+      },
+      {
+        "type": "text",
+        "id": "chat_cta_text",
+        "label": "CTA",
+        "default": "Chat Now",
+        "placeholder": "Chat Now"
+      },
+      {
+        "type": "header",
+        "content": "Call"
+      },
+      {
+        "type": "text",
+        "id": "call_title",
+        "label": "Title",
+        "default": "Give us a call",
+        "placeholder": "Give us a call"
+      },
+      {
+        "type": "text",
+        "id": "call_subtitle",
+        "label": "Subtitle",
+        "default": "JETS Australia",
+        "placeholder": "JETS Australia"
+      },
+      {
+        "type": "html",
+        "id": "call_text",
+        "label": "HTML",
+        "info": "You can make telephone numbers clickable on mobile with e.g. <a href=\"tel:+6123\">+61 23</a>"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Speak to a Fit Specialist",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}

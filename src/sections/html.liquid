@@ -1,0 +1,134 @@
+{% if section.settings.content_width == 'contained' %}
+  {% assign containerClasses = 'container' %}
+{% elsif section.settings.content_width == 'narrow' %}
+  {% assign containerClasses = 'container container--narrow' %}
+{% endif %}
+<section class="rich-text section-spacer--{{ section.settings.section_bottom_margin }}">
+  <div
+    class="{{ containerClasses }}
+    {% if section.settings.padding_size != 'none' %}vert-padding padding-{{ section.settings.padding_size }}{% endif %}"
+  >
+    {%- if section.settings.title != blank -%}
+      <div class="section__title">
+        <h2 class="h3">{{ section.settings.title }}</h2>
+      </div>
+    {%- endif -%}
+    {%- if section.settings.html != blank -%}
+      {{ section.settings.html }}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "HTML",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "A style for every body"
+      },
+      {
+        "type": "html",
+        "id": "html",
+        "label": "HTML"
+      },
+      {
+        "type": "header",
+        "content": "Layout options"
+      },
+      {
+        "type": "radio",
+        "id": "content_width",
+        "label": "Content width",
+        "options": [
+          {
+            "value": "full-width",
+            "label": "Full width"
+          },
+          {
+            "value": "contained",
+            "label": "Contained"
+          },
+          {
+            "value": "narrow",
+            "label": "Narrow"
+          }
+        ],
+        "default": "contained"
+      },
+      {
+        "type": "select",
+        "id": "padding_size",
+        "label": "Choose vertical padding spacing",
+        "options": [
+          {
+            "label": "None",
+            "value": "none"
+          },
+          {
+            "label": "Small",
+            "value": "small"
+          },
+          {
+            "label": "Regular",
+            "value": "regular"
+          },
+          {
+            "label": "Large",
+            "value": "large"
+          },
+          {
+            "label": "Extra-Large",
+            "value": "xlarge"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "templates": [
+      "index",
+      "product",
+      "page",
+      "collection",
+      "article",
+      "404",
+      "customers/register"
+    ],
+    "presets": [
+      {
+        "name": "HTML",
+        "category": "Text"
+      }
+    ]
+  }
+{% endschema %}

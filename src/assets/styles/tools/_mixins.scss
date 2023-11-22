@@ -1,0 +1,157 @@
+/* stylelint-disable declaration-no-important */
+
+/**
+ * Sets a media query for the specified breakpoint
+ *
+ * Accepts:
+ * - $media-query: {String} Breakpoint variable (list found in variables.scss)
+ *
+ * Usage:
+ * .selector {
+ *   @include media-query($medium-up) {
+ *     color: red;
+ *   }
+ * }
+ */
+@mixin media-query($media-query) {
+  $breakpoint-found: false;
+
+  @each $breakpoint in $media-breakpoints {
+    $name: nth($breakpoint, 1);
+    $declaration: nth($breakpoint, 2);
+
+    @if $media-query == $name and $declaration {
+      $breakpoint-found: true;
+
+      @media only screen and #{$declaration} {
+        @content;
+      }
+    }
+  }
+}
+
+/**
+ * Forces an element to self-clear its children
+ *
+ * Usage:
+ * .selector {
+ *   @include clearfix;
+ * }
+ */
+@mixin clearfix() {
+  &::after {
+    content: '';
+    display: table; // stylelint-disable-line declaration-property-value-disallowed-list
+    clear: both;
+  }
+
+  *zoom: 1; // stylelint-disable-line declaration-empty-line-before
+}
+
+/**
+ * Hide element but make it accessible to screen readers
+ *
+ * Usage:
+ * .selector {
+ *   @include visually-hidden;
+ * }
+ */
+@mixin visually-hidden() {
+  position: absolute !important;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+}
+
+/**
+ * Reverse the properties applied by @mixin visually-hidden
+ *
+ * Accepts:
+ * - $position: {String} Positioning method for element
+ *
+ * Usage:
+ * .selector {
+ *   @include visually-shown(relative);
+ * }
+ */
+@mixin visually-shown($position: inherit) {
+  position: $position !important;
+  width: auto;
+  height: auto;
+  margin: 0;
+  clip: auto;
+}
+
+/* Responsive Show/Hide Helper */
+@mixin responsive-display-helper($grid-breakpoint-type: '') {
+  .#{$grid-breakpoint-type}show {
+    display: block !important;
+  }
+
+  .#{$grid-breakpoint-type}hide {
+    display: none !important;
+  }
+}
+
+@include responsive-display-helper;
+
+/* Build Responsive Grid Classes */
+@each $breakpoint in $grid-breakpoints {
+  @include media-query($breakpoint) {
+    @include responsive-display-helper('#{$breakpoint}--');
+  }
+}
+
+@mixin link-style($link-color, $link-underline, $link-color-hover, $link-underline-hover, $bottom: rem(2px)) {
+  text-decoration: none;
+  position: relative;
+  display: inline-flex;
+  color: $link-color;
+  transition: color 0.2s;
+  transition-timing-function: var(--transition-timing-flick);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: $bottom;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: $link-underline;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: $bottom;
+    left: 0;
+    display: block;
+    width: 0;
+    height: 1px;
+    background-color: $link-underline-hover;
+    transition: width 0.2s;
+    transition-timing-function: var(--transition-timing-flick);
+  }
+
+  &:focus {
+    color: $link-color-hover;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: $link-color-hover;
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+}
+
+/* stylelint-enable declaration-no-important */

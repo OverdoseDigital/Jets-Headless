@@ -1,0 +1,337 @@
+/* Jobs Widget */
+
+/* (Disabling linter because we don't have control over class names) */
+/* stylelint-disable selector-max-specificity, selector-max-compound-selectors, max-nesting-depth */
+.ja-jobs-widget {
+  position: relative;
+
+  .rte + & {
+    margin-top: $spacing-xxl;
+
+    @include media-query($large-up) {
+      margin-top: $spacing-page-top-large;
+    }
+  }
+}
+
+.ja-loading {
+  display: block;
+  width: rem(20px);
+  margin: 0 auto;
+}
+
+/* Forms */
+.ja-job-search {
+  .ja-form {
+    margin-bottom: $spacing-xxl;
+    padding: $spacing-sm;
+    background: var(--color-grey-1);
+
+    @include media-query($medium-up) {
+      grid-template-columns: repeat(3, 1fr);
+      padding: $spacing-lg;
+
+      .ja-field-container:nth-child(5),
+      .ja-submit {
+        grid-column: span 3;
+      }
+    }
+
+    @include media-query($large-up) {
+      margin-bottom: $spacing-page-top-large;
+    }
+
+    .ja-field-container:nth-child(4) {
+      display: none;
+    }
+  }
+}
+
+.ja-form {
+  display: grid;
+  gap: $spacing-sm $spacing-sm;
+
+  label {
+    display: block;
+    margin-bottom: $spacing-xs;
+    color: var(--color-grey-5);
+  }
+
+  select,
+  textarea,
+  input[type='text'],
+  input[type='password'],
+  input[type='datetime'],
+  input[type='datetime-local'],
+  input[type='date'],
+  input[type='month'],
+  input[type='time'],
+  input[type='week'],
+  input[type='number'],
+  input[type='email'],
+  input[type='url'],
+  input[type='search'],
+  input[type='tel'],
+  input[type='color'] {
+    width: 100%;
+  }
+
+  .checkbox {
+    display: block;
+
+    &::after {
+      content: '.';
+      display: block;
+      height: 0;
+      clear: both;
+      visibility: hidden;
+    }
+
+    br {
+      clear: left;
+    }
+
+    input {
+      float: left;
+    }
+
+    label {
+      float: left;
+      margin: 0;
+      padding: rem(2px) $spacing-sm 0 $spacing-xs;
+    }
+  }
+
+  .ja-submit {
+    margin-top: $spacing-sm;
+
+    .ja-loading {
+      position: relative;
+      top: 0;
+      left: 0;
+      margin-left: rem(10px);
+      vertical-align: middle;
+    }
+
+    .ja-button {
+      width: 100%;
+    }
+  }
+
+  .ja-field-container {
+    .error {
+      color: var(--color-signal-error);
+      border-color: var(--color-signal-error);
+    }
+
+    .validation-error {
+      display: block;
+      clear: both;
+      margin-top: $spacing-xs;
+      color: var(--color-signal-error);
+    }
+  }
+
+  .ja-error-container {
+    color: var(--color-signal-error);
+    margin-top: $spacing-lg;
+
+    p {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.ja-button {
+  @extend %btn;
+}
+
+/* Job list */
+.ja-job-list,
+.ja-job-details {
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: $spacing-xs;
+    color: var(--color-grey-5);
+
+    ul,
+    p {
+      @extend %smallcaps;
+    }
+
+    p {
+      margin-bottom: $spacing-xs;
+    }
+
+    .classifications {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 $spacing-sm $spacing-xs 0;
+      padding: 0;
+      list-style-position: inside;
+      list-style-type: square;
+
+      li {
+        margin-right: $spacing-xs;
+
+        &:first-child {
+          list-style: none;
+        }
+      }
+    }
+  }
+}
+
+.ja-job-list {
+  margin-bottom: $spacing-xxl;
+
+  .job {
+    margin-bottom: $spacing-xxl;
+    padding-top: $spacing-xxl;
+    border-top: 1px solid var(--color-grey-2);
+
+    @include media-query($large-up) {
+      margin-bottom: $spacing-page-top-large;
+      padding-top: $spacing-page-top-large;
+    }
+
+    &:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .title {
+      @extend %h3;
+
+      a {
+        text-decoration: none;
+      }
+    }
+
+    .view-details {
+      margin-top: -$spacing-xs;
+      @extend %btn__text;
+    }
+  }
+}
+
+/* Pager */
+.ja-pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  font-size: rem(12px);
+
+  a,
+  span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    margin: 0 $spacing-xxs;
+  }
+
+  a,
+  .current-page {
+    width: rem(24px);
+    height: rem(24px);
+    padding: rem(2px);
+    color: var(--color-black);
+  }
+
+  a {
+    text-decoration: none;
+    @include link-style(var(--color-black), transparent, var(--color-black), var(--color-black), 0);
+  }
+
+  .current-page {
+    @include link-style(var(--color-black), var(--color-black), var(--color-black), var(--color-black), 0);
+  }
+
+  .previous,
+  .next {
+    width: rem(40px);
+    background: var(--icon-chevron-left) no-repeat center center;
+    background-size: rem(16px) rem(16px);
+    text-indent: rem(-999px);
+    overflow: hidden;
+
+    &::before,
+    &::after {
+      content: normal;
+    }
+  }
+
+  .next {
+    background-image: var(--icon-chevron-right);
+  }
+}
+
+.ja-pager-summary {
+  display: none;
+}
+
+/* Job details */
+.ja-job-details {
+  padding-top: $spacing-xxl;
+  border-top: 1px solid var(--color-grey-2);
+
+  @include media-query($large-up) {
+    padding-top: $spacing-page-top-large;
+  }
+
+  .description {
+    @extend %paragraph;
+  }
+
+  .apply {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-top: $spacing-xxl;
+
+    .back-link {
+      margin-top: $spacing-sm;
+      @extend %btn__text;
+    }
+  }
+}
+
+/* Application form iframe (external app forms) */
+.ja-apply-iframe {
+  iframe {
+    width: 100%;
+    height: rem(500px);
+    border: none;
+  }
+
+  .apply {
+    margin-top: $spacing-xs;
+    text-align: center;
+  }
+
+  .back-link {
+    @extend %btn__text;
+  }
+}
+
+/* Application form */
+.ja-job-apply {
+  .ja-submit {
+    text-align: center;
+
+    .back-link {
+      margin-top: $spacing-sm;
+      @extend %btn__text;
+    }
+  }
+}
+
+/* Powered by JobAdder */
+.powered-by-jobadder {
+  display: none;
+}
+/* stylelint-enable selector-max-specificity, selector-max-compound-selectors, max-nesting-depth */

@@ -1,0 +1,26 @@
+.account.account--gcbc {
+  max-width: rem(448px);
+
+  @include media-query($small-down) {
+    margin-bottom: $spacing-xxxs;
+  }
+}
+
+.gcbc__card-balance-information {
+  text-align: left;
+  margin-bottom: $spacing-lg;
+}
+
+.gcbc__info-item:not(:last-child) {
+  margin-bottom: $spacing-lg;
+}
+
+.gcbc__info-label {
+  color: var(--color-grey-5);
+  margin-bottom: $spacing-xxxs;
+}
+
+.gcbc__info-value {
+  @extend %paragraph-large;
+  margin-bottom: 0;
+}

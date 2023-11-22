@@ -1,0 +1,30 @@
+{%- render 'article-comments' -%}
+
+{% schema %}
+  {
+    "name": "Comments",
+    "class": "article-comments-section",
+    "limit": 1,
+    "templates": [
+      "article"
+    ],
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Please note – comments will only display if they have been enabled in the blog settings (Online Store > Blog posts > Mangage blogs)."
+      },
+      {
+        "type": "checkbox",
+        "id": "remove_top_margin",
+        "label": "Remove top margin",
+        "default": false
+      }
+    ],
+    "presets": [
+      {
+        "name": "Comments",
+        "category": "Blog"
+      }
+    ]
+  }
+{% endschema -%}

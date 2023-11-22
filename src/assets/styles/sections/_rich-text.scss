@@ -1,0 +1,19 @@
+.rich-text {
+  .vert-padding {
+    &.padding-large {
+      padding-top: $spacing-page-top-small;
+      padding-bottom: $spacing-page-top-small;
+
+      @include media-query($large-up) {
+        padding-top: $spacing-page-top-large;
+        padding-bottom: $spacing-page-top-large;
+      }
+    }
+  }
+
+  p {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

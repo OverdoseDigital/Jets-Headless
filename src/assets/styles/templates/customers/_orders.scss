@@ -1,0 +1,29 @@
+.account__header--orders {
+  margin-bottom: $spacing-md;
+}
+
+.account__orders {
+  list-style: none;
+  padding: 0;
+}
+
+.account__address,
+.account__order {
+  padding-top: $spacing-sm;
+
+  &:not(:last-child) {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-grey-2);
+    margin-bottom: 1rem;
+  }
+
+  &:first-child {
+    padding-top: 0;
+  }
+}
+
+.account__order {
+  &:not(:last-child) {
+    padding-bottom: $spacing-lg;
+  }
+}

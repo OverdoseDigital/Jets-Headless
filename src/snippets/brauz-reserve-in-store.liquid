@@ -1,0 +1,5 @@
+<script defer src="{{ settings.brauz_reserve_script }}"></script>
+<button class="btn__text btn__text--icon-left" data-reserve-in-store data-brauz-id={{ settings.brauz_app_id }}>
+  {% render 'icon-store-sm' %}
+  {{ 'products.product.reserve' | t }}
+</button>

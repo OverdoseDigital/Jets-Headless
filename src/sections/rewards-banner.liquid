@@ -1,0 +1,102 @@
+<section class="rewards-banner">
+  <div class="common-banner">
+    <div class="common-banner__wrapper">
+      {% liquid
+        capture img_alt
+          if section.settings.mobile_image.alt != blank
+            echo section.settings.mobile_image.alt
+          elsif section.settings.desktop_image.alt != blank
+            echo section.settings.desktop_image.alt
+          endif
+        endcapture
+      %}
+
+      {%- render 'component-picture',
+        image_mobile: section.settings.mobile_image,
+        image_desktop: section.settings.desktop_image,
+        img_alt: img_alt,
+        max_width_mobile: 1600,
+        sizes: '100vw'
+      -%}
+      <div class="common-banner__container justify-center desktop-justify-center">
+        <header class="common-banner__content">
+          <h1 class="visually-hidden">{{ page.title }}</h2>
+          {% render 'icon-sunlounge' %}
+          {% render 'logo', title: shop.name %}
+        </header>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  {%- if section.settings.overlay_level > 0 -%}
+    #shopify-section-{{ section.id }} .common-banner__container::after {
+      background-color: rgba(0, 0, 0, {{ section.settings.overlay_level | divided_by: 100.0 }})
+    }
+  {%- endif -%}
+
+  {%- if section.settings.text_color != blank -%}
+    #shopify-section-{{ section.id }} .common-banner__content {
+      color: {{ section.settings.text_color }};
+    }
+  {%- endif -%}
+
+  {%- if section.settings.text_color_desktop != blank -%}
+    @media only screen and (min-width: {{ settings.grid_medium }}px) {
+      #shopify-section-{{ section.id }} .common-banner__content {
+        color: {{ section.settings.text_color_desktop }};
+      }
+    }
+  {%- endif -%}
+</style>
+
+{% schema %}
+  {
+    "name": "Rewards - Banner",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "mobile_image",
+        "label": "Mobile image",
+        "info": "Minimum size 1600px wide"
+      },
+      {
+        "type": "image_picker",
+        "id": "desktop_image",
+        "label": "Desktop image",
+        "info": "Minimum size 2560px wide"
+      },
+      {
+        "type": "range",
+        "id": "overlay_level",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "%",
+        "label": "Image darkening",
+        "default": 0
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "text_color_desktop",
+        "label": "Text color - desktop",
+        "default": "#ffffff"
+      }
+    ],
+    "templates": [
+      "page"
+    ],
+    "presets": [
+      {
+        "name": "Rewards - Banner",
+        "category": "Rewards"
+      }
+    ]
+  }
+{% endschema %}

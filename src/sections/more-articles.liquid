@@ -1,0 +1,142 @@
+{%- liquid
+  assign article_count = 0
+  assign articles_to_show = 3
+
+  comment
+    See article-card.liquid for explanation on square_image_sizes
+
+    Correct sizes attribute:
+    '(min-width: 61.875rem) 18.375rem, (min-width: 48rem) 40vw, 86vw'
+  endcomment
+
+  assign image_sizes = '(min-width: 61.875rem) 36.75rem, (min-width: 48rem) 80vw, 172vw'
+  assign square_image_sizes = '(min-width: 61.875rem) 22rem, (min-width: 48rem) 48vw, 104vw'
+
+  capture related_articles
+    paginate blog.articles by 100
+
+      comment
+        Show articles with the same tag
+      endcomment
+      for related_article in blog.articles
+        if related_article.handle == article.handle
+          continue
+        endif
+
+        for tag in related_article.tags
+          if article.tags contains tag
+            echo '<li class="slide third">'
+              render 'article-card', article: related_article, sizes: image_sizes, square_image_sizes: square_image_sizes, show_excerpt: false
+            echo '</li>'
+
+            assign article_count = article_count | plus: 1
+            break
+          endif
+        endfor
+
+        if article_count == articles_to_show
+          break
+        endif
+      endfor
+
+      comment
+        If there's not enough articles with the same tag, fill up the remaining space with the newest articles
+      endcomment
+      if article_count != articles_to_show
+        for related_article in blog.articles
+          assign skip_article = false
+
+          if related_article.handle == article.handle
+            continue
+          endif
+
+          for tag in related_article.tags
+            if article.tags contains tag
+              assign skip_article = true
+              break
+            endif
+          endfor
+
+          if skip_article
+            continue
+          endif
+
+          echo '<li class="slide third">'
+            render 'article-card', article: related_article, sizes: image_sizes, square_image_sizes: square_image_sizes, show_excerpt: false
+          echo '</li>'
+
+          assign article_count = article_count | plus: 1
+
+          if article_count == articles_to_show
+            break
+          endif
+        endfor
+      endif
+    endpaginate
+  endcapture
+-%}
+
+<div data-section-id="{{ section.id }}" data-section-type="featured-articles">
+  <div class="container container--wide--large-up">
+
+    {%- if section.settings.title != blank -%}
+      <div class="section__title">
+        <h2 class="h4">{{ section.settings.title }}</h2>
+      </div>
+    {%- endif -%}
+
+  </div>
+  <div class="container container--wide--large-up container--flush--medium-down">
+
+    {%- comment -%}
+      Due to accessibility requirements, the Blog entries list functions
+      as a list of content items. Non-visual users will expect lists of content
+      to appear in a list structure, allowing for easier understanding and navigation of list items.
+    {%- endcomment -%}
+    <ul class="articles articles__slider carousel" id="articles__slider--{{ section.id }}">
+      {{ related_articles }}
+    </ul>
+
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "More Stories",
+    "tag": "aside",
+    "class": "featured-articles featured-articles--more-articles",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "More Stories"
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_author",
+        "label": "Show author",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_date",
+        "label": "Show date",
+        "default": false
+      }
+    ],
+    "templates": [
+      "article"
+    ],
+    "presets": [
+      {
+        "name": "More Stories",
+        "category": "Blog"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,13 @@
+{% if shop.metafields.okendo.settings.isWidgetPlusEnabled == true %}
+	{% assign renderWidgetPlusContent = true %}
+{% elsif shop.metafields.okendo.settings.isWidgetPlusAdminEnabled == true and theme.role == "unpublished" %}
+	{% if request.design_mode or theme.role == "unpublished" %}
+		{% assign renderWidgetPlusContent = true %}
+	{% endif %}
+{% endif %}
+
+{% if renderWidgetPlusContent == true %}
+{{ shop.metafields.okendo.ThemeHeaderContent }}
+{{ shop.metafields.okendo.WidgetPreRenderStyleTags }}
+<script async id="okendo-reviews-script" src="https://d3hw6dc1ow8pp2.cloudfront.net/reviews-widget-plus/js/okendo-reviews.js"></script>
+{% endif %}

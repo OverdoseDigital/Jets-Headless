@@ -1,0 +1,46 @@
+<div
+  class="container"
+  data-section-id="{{ section.id }}"
+  data-section-type="template-rewards-account"
+  data-next-reward-amount="{{ settings.rewards_spend_reward_amount }}"
+>
+  <div class="account account--rewards">
+    {% if customer %}
+      <header class="account__header">
+        {% capture title %}{{ 'customer.rewards.title' | t }}{% endcapture %}
+        {% render 'account-greeting', title: title %}
+        {% render 'component-accounts-pages-menu', linklist: linklists[settings.account_links], parent_class: 'account__top-nav' %}
+      </header>
+
+      <div class="account__rewards">
+        <section class="account__tier-status-wrapper" id="react-account-rewards">
+        </section>
+      </div>
+    {% else %}
+      <header class="page-header">
+        <h1 class="h3">{{ 'customer.rewards.title' | t }}</h1>
+      </header>
+
+      <div class="rte text-center">
+        <p>{{ 'customer.rewards.login_html' | t }}</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Rewards - Account",
+    "class": "rewards-account-template",
+    "templates": [
+      "page"
+    ],
+    "presets": [
+      {
+        "name": "Rewards - Account",
+        "category": "Rewards"
+      }
+    ]
+  }
+{% endschema %}

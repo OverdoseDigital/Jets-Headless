@@ -1,0 +1,219 @@
+/*
+  Shared classes (all account pages)
+*/
+.account {
+  display: block;
+  width: 100%;
+  margin: 0 auto rem(100px);
+  max-width: rem(910px);
+  text-align: center;
+  padding-top: $spacing-page-top-small;
+
+  @include media-query($medium-up) {
+    text-align: left;
+  }
+
+  @include media-query($large-up) {
+    padding-top: rem(64px);
+  }
+
+  &.account--overview {
+    margin-bottom: 3.5rem;
+
+    @include media-query($medium-up) {
+      margin-bottom: 5rem;
+    }
+
+    @include media-query($medium-down) {
+      .account__greeting {
+        display: block;
+      }
+
+      .account__page-title {
+        display: none;
+      }
+    }
+  }
+
+  // register, logout, login, activate etc.
+  &.account--narrow {
+    max-width: rem(451px);
+  }
+
+  &.account--rewards {
+    margin-bottom: $spacing-xxl;
+
+    @include media-query($medium-up) {
+      margin-bottom: rem(64px);
+    }
+  }
+
+  .btn__text--icon-left,
+  .btn__text--icon-right {
+    text-decoration: none;
+    :not(svg) {
+      text-decoration: underline;
+    }
+    .icon {
+      width: rem(12px);
+      height: rem(12px);
+    }
+  }
+
+  .page-header {
+    padding-top: 0;
+  }
+}
+
+.account__logout {
+  margin-bottom: $spacing-xl;
+  color: var(--color-grey-5);
+}
+
+.account__header {
+  margin-bottom: rem(18px);
+}
+
+.account__header-matter {
+  display: flex;
+  flex-direction: column;
+}
+
+.account__greeting {
+  display: none;
+  text-align: center;
+
+  @include media-query($medium-up) {
+    display: block;
+  }
+}
+
+.account__greeting-title {
+  margin-bottom: 0;
+}
+
+.account__page-title {
+  margin-bottom: 3rem;
+  @include media-query($medium-up) {
+    display: none;
+  }
+}
+
+.account__introduction {
+  margin-bottom: $spacing-lg;
+}
+
+.address__addresses,
+.account__summary,
+.account__orders {
+  // layout
+  display: block;
+  margin: 0 auto;
+  text-align: left;
+  width: 100%;
+  max-width: rem(451px);
+
+  // Typography
+  p,
+  a,
+  .btn__text {
+    margin: 0;
+  }
+
+  a,
+  .btn__text {
+    font-size: rem(12px);
+    letter-spacing: 0;
+    text-transform: none;
+    text-underline-offset: 1px; // firefox & chrome handle this differently 🤦 - ideally would be 0.
+  }
+}
+
+.account__order-card {
+  display: grid;
+  grid-template-columns: rem(106px) 1fr;
+  gap: $spacing-sm;
+
+  @include media-query($medium-up) {
+    padding-bottom: $spacing-lg;
+    border-bottom: 1px solid var(--color-grey-2);
+  }
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .account__order-card--text {
+    div {
+      margin-bottom: $spacing-sm;
+    }
+  }
+}
+
+.account__order-number {
+  .account__order-card &,
+  .account__order-summary & {
+    @extend %smallcaps;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+/*
+  Account Summary page
+*/
+.account__rewards-balance {
+  text-align: left;
+  padding: rem(12px) $spacing-sm;
+  background: var(--color-offwhite);
+  margin-bottom: $spacing-md;
+
+  h5 {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $spacing-xxxs;
+  }
+
+  p {
+    margin-bottom: $spacing-xs;
+  }
+
+  a {
+    // expand clickable area
+    margin-block: -$spacing-xs;
+    padding-block: $spacing-xs;
+  }
+}
+
+.account__summary-order {
+  margin-bottom: $spacing-lg;
+}
+
+.account__summary-no-orders {
+  @extend %paragraph;
+}
+
+.account__items {
+  @include media-query($medium-up) {
+    flex: 1;
+  }
+}
+
+.account__summary-item {
+  margin-bottom: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 1px solid var(--color-grey-2);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/*
+  Activate account page
+*/
+.activate__buttons {
+  display: grid;
+  gap: $spacing-sm;
+  grid-template-columns: 1fr;
+}

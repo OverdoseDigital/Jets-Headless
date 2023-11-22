@@ -1,0 +1,313 @@
+<div class="featured-catalogues container container--flush--medium-down shopify-section--{{ section.id }} section-spacer--{{ section.settings.section_bottom_margin }}" data-section-id="{{ section.id }}" data-section-type="featured-catalogues">
+  {%- assign block_count = section.blocks.size -%}
+
+  {%- if section.settings.title != blank or section.settings.text != blank -%}
+    <div class="featured-catalogues__heading container">
+      {%- if section.settings.title != blank -%}
+        <h2 class="featured-catalogues__main-title h3">{{ section.settings.title }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="featured-catalogues__intro rte">
+          {{ section.settings.text }}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div class="featured-catalogues__catalogues{% if block_count == 2 %} featured-catalogues__catalogues--two-column{%- endif -%}">
+    {% if block_count >= 2 %}
+      {% for block in section.blocks %}
+        <div class="featured-catalogues__catalogue">
+          {% liquid
+            assign paddingTopManual = block.settings.aspect_ratio
+            if paddingTopManual == "natural"
+              assign paddingTopManual = null
+            endif
+            assign paddingTopDesktopManual = block.settings.aspect_ratio_desktop
+            if paddingTopDesktopManual == "natural"
+              assign paddingTopDesktopManual = null
+            elsif paddingTopDesktopManual == "sameAsMobile"
+              assign paddingTopDesktopManual = paddingTopManual
+            endif
+
+            capture img_alt
+              if section.settings.image.alt != blank
+                echo section.settings.image.alt
+              elsif section.settings.image_desktop.alt != blank
+                echo section.settings.image_desktop.alt
+              elsif section.settings.title != blank
+                echo section.settings.title
+              elsif section.settings.button_label != blank
+                echo section.settings.button_label
+              endif
+            endcapture
+
+            capture image_sizes
+              case block_count
+                when 2
+                  echo '(min-width: 90rem) 42.875rem, (min-width: 48rem) calc(100vw / 2), 100vw'
+                when 3
+                  echo '(min-width: 90rem) 28.5rem, (min-width: 48rem) calc(100vw / 3), 100vw'
+              endcase
+            endcapture
+          %}
+
+          {%- render 'component-picture',
+            image_mobile: block.settings.image,
+            image_desktop: block.settings.image_desktop,
+            paddingTopManual: paddingTopManual,
+            paddingTopDesktopManual: paddingTopDesktopManual,
+            sizes: image_sizes,
+            img_alt: img_alt,
+            placeholderType: 'image'
+          -%}
+          <div class="featured-catalogues__overlay featured-catalogues__overlay--{{ block.settings.content_position }}">
+            <div>
+              <h2 class="featured-catalogues__title h1" style="color: var(--color-{{ block.settings.title_color }})">
+                {{ block.settings.title }}
+              </h2>
+              {% if block.settings.button_url != blank and block.settings.button_label != blank %}
+                <a
+                  href="{{ block.settings.button_url }}"
+                  {% if block.settings.link_new_tab %}target="_blank"{% endif %}
+                  class="btn btn--{{ block.settings.button_style }}">
+                    {{ block.settings.button_label | escape }}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Featured Catalogues",
+    "class": "featured-catalogues",
+    "max_blocks": 3,
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Showcase two or three catalogues/collections."
+      },
+      {
+        "type": "paragraph",
+        "content": "They are displayed in a column layout on desktop and on mobile they are stacked (two catalogues) or displayed as a horizontal scroll-reveal (three catalogues)."
+      },
+      {
+        "type": "paragraph",
+        "content": "Please note: mobile scroll reveal is only enabled for touch devices. Desktop users retain a three column layout at all screen sizes when three catalogues are specified."
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text"
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "catalogue",
+        "name": "Catalogue",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Mobile Image"
+          },
+          {
+            "id": "image",
+            "label": "Image",
+            "type": "image_picker",
+            "info": "Minimum recommended image width is 1600"
+          },
+          {
+            "type": "select",
+            "id": "aspect_ratio",
+            "label": "Aspect ratio",
+            "options": [
+              {
+                "value": "natural",
+                "label": "Natural"
+              },
+              {
+                "value": "143",
+                "label": "7:10"
+              },
+              {
+                "value": "125",
+                "label": "4:5"
+              },
+              {
+                "value": "116",
+                "label": "4.3:5"
+              }
+            ]
+          },
+          {
+            "type": "header",
+            "content": "Desktop Image (optional)"
+          },
+          {
+            "id": "image_desktop",
+            "label": "Image",
+            "type": "image_picker",
+            "info": "Minimum recommended image width is 960"
+          },
+          {
+            "type": "select",
+            "id": "aspect_ratio_desktop",
+            "label": "Aspect ratio",
+            "options": [
+              {
+                "value": "sameAsMobile",
+                "label": "Same as mobile"
+              },
+              {
+                "value": "natural",
+                "label": "Natural"
+              },
+              {
+                "value": "143",
+                "label": "7:10"
+              },
+              {
+                "value": "125",
+                "label": "4:5"
+              },
+              {
+                "value": "116",
+                "label": "4.3:5"
+              }
+            ]
+          },
+          {
+            "type": "header",
+            "content": "Headline"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Text"
+          },
+          {
+            "type": "radio",
+            "id": "title_color",
+            "label": "Color",
+            "options": [
+              {
+                "value": "white",
+                "label": "White"
+              },
+              {
+                "value": "black",
+                "label": "Black"
+              }
+            ],
+            "default": "white"
+          },
+          {
+            "type": "header",
+            "content": "Button"
+          },
+          {
+            "type": "text",
+            "id": "button_label",
+            "label": "Label",
+            "default": "Shop Now"
+          },
+          {
+            "type": "url",
+            "id": "button_url",
+            "label": "URL"
+          },
+          {
+            "type": "radio",
+            "id": "button_style",
+            "label": "Style",
+            "options": [
+              {
+                "value": "white",
+                "label": "White"
+              },
+              {
+                "value": "primary",
+                "label": "Black"
+              }
+            ],
+            "default": "white"
+          },
+          {
+            "type": "checkbox",
+            "label": "Open link in new tab?",
+            "id": "link_new_tab",
+            "default": false
+          },
+          {
+            "type": "radio",
+            "id": "content_position",
+            "label": "Headline and button position",
+            "options": [
+              {
+                "value": "top",
+                "label": "Top"
+              },
+              {
+                "value": "middle",
+                "label": "Middle"
+              },
+              {
+                "value": "bottom",
+                "label": "Bottom"
+              }
+            ],
+            "default": "middle"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured Catalogues",
+        "blocks": [
+          {
+            "type": "catalogue"
+          },
+          {
+            "type": "catalogue"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

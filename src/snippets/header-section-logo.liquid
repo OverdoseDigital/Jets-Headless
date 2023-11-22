@@ -1,0 +1,5 @@
+{% if request.page_type == 'index' %}<h1>{% else %}<div class="h1">{% endif %}
+  <a href="{{ routes.root_url }}" class="logo-image" aria-label="{{ 'accessibility_labels.header_logo_home_label' | t }}">
+    {% render 'logo', title: shop.name %}
+  </a>
+{% if request.page_type == 'index' %}</h1>{% else %}</div>{% endif %}

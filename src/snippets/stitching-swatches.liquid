@@ -1,0 +1,29 @@
+<style>
+  {%- for meta_block in shop.metafields.globals.color -%}
+
+  {%- if shop.metafields.globals.swatch_image[forloop.index0] != blank -%}
+    .swatch--{{ shop.metafields.globals.color_name[forloop.index0] | handleize }} {
+      {%- if shop.metafields.globals.color_hex[forloop.index0] != blank -%}
+        background-color: {{ shop.metafields.globals.color_hex[forloop.index0] }};
+        color: {{ shop.metafields.globals.color_hex[forloop.index0] }};
+      {%- endif -%}
+      background-image: url('{{ shop.metafields.globals.swatch_image[forloop.index0][0].src }}');
+      background-size: cover;
+      color: #000;
+    }
+    {%- if shop.metafields.globals.color_hex[forloop.index0] != blank -%}
+    .swatch--{{ shop.metafields.globals.color[forloop.index0] | handleize }}:hover {
+      color: {{ shop.metafields.globals.color_hex[forloop.index0] }};
+    }
+    {%- endif -%}
+  {%- elsif shop.metafields.globals.color[forloop.index0] -%}
+    .swatch--{{ shop.metafields.globals.color_name[forloop.index0] | handleize }} {
+      background-color: {{ shop.metafields.globals.color[forloop.index0] }};
+      color: {{ shop.metafields.globals.color[forloop.index0] }};
+    }
+    .swatch--{{ shop.metafields.globals.color_name[forloop.index0] | handleize }}:hover {
+      color: {{ shop.metafields.globals.color[forloop.index0] }};
+    }
+  {%- endif -%}
+{%- endfor -%}
+</style>

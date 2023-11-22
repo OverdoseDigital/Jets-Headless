@@ -1,0 +1,34 @@
+.text-with-cta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  .btn:not(.btn__text) {
+    margin-top: $spacing-sm;
+  }
+
+  .btn + .btn,
+  .btn__text + .btn__text {
+    margin-left: $spacing-sm;
+  }
+
+  &.text-with-cta--contain {
+    @extend %container;
+  }
+}
+
+.text-with-cta__pre-title {
+  margin-bottom: rem(12px);
+}
+
+.text-with-cta__title {
+  margin-bottom: $spacing-lg;
+
+  .title-size-large & {
+    @include media-query($medium-up) {
+      font-size: rem(32px);
+    }
+  }
+}

@@ -1,0 +1,56 @@
+<div class="container">
+    <div class="account account--wishlist">
+    {% if customer %}
+      <header class="account__header">
+        {% capture wishlistTitle %}{{ 'wishlist.wishlist_title' | t }}{% endcapture %}
+        {% render 'account-greeting', title: wishlistTitle %}
+        {% render 'component-accounts-pages-menu', linklist: linklists[settings.account_links], parent_class: 'account__top-nav' %}
+      </header>
+    {% else %}
+      <header class="page-header">
+        <h1 class="h3">{{ 'wishlist.wishlist_title' | t }}</h1>
+      </header>
+    {% endif %}
+
+    {% if page.content != blank %}
+    <div class="rte">
+      {{ page.content }}
+    </div>
+    {% endif %}
+
+    <div class="wishlist-container" data-item-count="loading" data-available-count="loading">
+      <div class="loading-spinner wishlist-loader">
+        <p>{{ 'wishlist.wishlist_loading' | t }}</p>
+      </div>
+      <div class="wishlist__empty-message">
+        <p class="text-center h4">
+          {{ 'wishlist.wishlist_empty' | t }}
+        </p>
+
+        {% if settings.wishlist_empty_links != blank %}
+          {% assign wishlistEmptyLinks = linklists[settings.wishlist_empty_links].links %}
+          {% if wishlistEmptyLinks.size > 0 %}
+          <p class="text-center">
+            {{ 'wishlist.wishlist_empty_cta_intro' | t }}
+          </p>
+          <ul class="cart__empty-links">
+            {% for link in wishlistEmptyLinks %}
+            {%- comment %}<locksmith:a585>{% endcomment -%}
+              {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: link, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+            {%- comment %}</locksmith:a585>{% endcomment -%}
+            <li><a href="{{ link.url }}" class="btn btn--secondary btn--block">{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        {% endif %}
+      </div>
+      <div class="container--fluid container--flush--small">
+        <div class="collection__wrapper">
+          <div class="wishlist__items"></div>
+        </div>
+      </div>
+      <div class="wishlist__add-all-container">
+        <button data-wishlist-add-all class="btn btn--secondary wishlist__add-all">{{ 'wishlist.add_all_wishlist' | t }}</button>
+      </div>
+    </div>
+</div>

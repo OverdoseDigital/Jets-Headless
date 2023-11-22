@@ -1,0 +1,63 @@
+{%- comment %}
+  Parameters
+  image: Liquid object - Shopify media object.
+  img_alt (optional): string - Text for the alt attribute. Defaults to media alt.
+  max_width: (optional): number|string - maximum width used for srcset.
+  img_class (optional): string - Class(es) for the <img> element.
+  img_attributes (optional): string - Attribute(s) for the <img> element.
+  lazy: (optional) boolean - Defaults to true (lazy-load).
+  sizes (optional) : string - sizes attribute for <img>. Defaults to empty.
+  aspect_ratio (optional): string - Defaults to empty, which uses image intrinsic aspect ratio.
+  check_aspect_ratio: (boolean): If true, will check if image is landscape and if so product card will show object-fit: contain
+{% endcomment -%}
+
+{%- liquid
+  assign lazy = lazy | default: true, allow_false: true
+-%}
+
+{%- if aspect_ratio != blank -%}
+  <div class="component-image__wrapper aspect-ratio aspect-ratio--{{ aspect_ratio }} {% if check_aspect_ratio == true and image.aspect_ratio > 1 %}aspect--contain{% endif %}"{% if aspect_ratio == 'natural' %} style="padding-top: {% if image != blank %}{{ 100 | divided_by: image.aspect_ratio | append: '%' }}{% else %}100%{% endif %}"{% endif %}>
+{%- endif -%}
+
+{%- unless image == blank -%}
+  {%- comment -%}
+    Handle preview images of non-image media objects (eg. 3D models, videos)
+    Handle Accentuate Custom Fields MediaV2 images through cloudinary_src property
+  {%- endcomment -%}
+  {%- liquid
+    if image.media_type and image.media_type != 'image'
+      assign image = image.preview_image
+    endif
+    if image.cloudinary_src == blank
+      assign src_fallback = image | image_url: width: 600
+      assign src_template = image | image_url: width: 100 | replace: 'width=100', 'width={width}'
+    else
+      assign src_fallback = image.cloudinary_src | append: 'w_600'
+      assign src_template = image.cloudinary_src | append: 'w_{width}'
+    endif
+    assign img_alt = img_alt | default: image.alt
+
+    capture srcset
+      render 'srcset', img_url: src_template, max_width: max_width
+    endcapture
+
+    assign imgIndex = imgIndex | default: false, allow_false: true
+
+  -%}
+    <img data-media-id="{{ image.id }}" {% if imgIndex != false %}data-media-index="{{ imgIndex }}"{% endif %} class="component-image__image{% if img_class != blank %} {{ img_class }}{% endif %}"
+      srcset="{{ srcset }}"
+      src="{{ src_fallback }}"
+      loading="{% if lazy %}lazy{% else %}eager{% endif %}"
+      sizes="{{ sizes }}"
+      width="{{ image.width }}"
+      height="{{ image.height }}"
+      alt="{{ img_alt | strip_html | escape }}"
+      {{ img_attributes }}
+    />
+{%- else -%}
+  {{ 'image' | placeholder_svg_tag: 'component-image__image placeholder-svg' }}
+{%- endunless -%}
+
+{%- if aspect_ratio != blank -%}
+</div>
+{%- endif -%}

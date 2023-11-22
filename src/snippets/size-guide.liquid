@@ -1,0 +1,20 @@
+{% capture modalId %}size-guide--{{ product.id }}{% endcapture %}
+{% capture label %}size-guide-modal--label{% endcapture %}
+{% capture header %}{{ section.settings.size_guide_drawer_header }}{% endcapture %}
+{% capture content %}
+<div class="size-guide-modal__content rte">
+  {% if size_guide_page != blank %}
+    <div class="size-guides__content-block">
+      {{ pages[size_guide_page].content | replace: '<img ', '<img loading="lazy" width="368" height="520" ' }}
+    </div>
+  {% endif %}
+  {% if measure_page != blank %}
+    <div class="size-guides__content-block">
+      <h4>{{ pages[measure_page].title }}</h4>
+      {{ pages[measure_page].content }}
+    </div>
+  {% endif %}
+</div>
+{% endcapture %}
+
+{% render 'component-modal-dialog', modal_class: 'size-guide', modal_id: modalId, modal_header: header, modal_sticky_header: true, modal_label: label, modal_content: content %}

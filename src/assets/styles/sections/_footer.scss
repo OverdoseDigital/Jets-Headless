@@ -1,0 +1,256 @@
+footer {
+  background: var(--color-white);
+  color: var(--color-black);
+  margin-top: $spacing-xxl;
+  border-top: 1px solid var(--color-grey-1);
+
+  @include media-query($medium-up) {
+    margin-top: rem(64px);
+    border: none;
+  }
+
+  /* stylelint-disable selector-no-qualifying-type */
+  &.footer--no-margin {
+    margin-top: 0;
+
+    .template-page & {
+      margin-top: 0;
+    }
+  }
+  /* stylelint-enable selector-no-qualifying-type */
+
+  a,
+  .btn__text {
+    color: var(--color-black);
+
+    &::after {
+      background-color: var(--color-black);
+    }
+  }
+}
+
+.footer__grid {
+  padding: $spacing-xxl 0;
+
+  @include media-query($large-up) {
+    border-top: 1px solid var(--color-grey-1);
+    padding: rem(64px) 0 rem(96px);
+    display: grid;
+    grid-template-columns: rem(436px) 1fr;
+    grid-template-areas: 'newsletter navigation';
+    grid-auto-flow: column;
+    grid-gap: $spacing-sm;
+  }
+}
+
+.footer__navigation {
+  grid-area: navigation;
+
+  @include media-query($medium-up) {
+    display: grid;
+    grid-gap: $spacing-lg $spacing-xs;
+    grid-template-columns: repeat(auto-fit, minmax(rem(190px), rem(213px)));
+  }
+
+  @include media-query($large-up) {
+    justify-content: end;
+  }
+}
+
+.footer__newsletter {
+  grid-area: newsletter;
+  margin-bottom: $spacing-xxl;
+  text-align: center;
+
+  @include media-query($medium-up) {
+    text-align: left;
+    margin-bottom: $spacing-md;
+    max-width: rem(332px);
+  }
+}
+
+.footer-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.accordion__body.rte {
+  .footer-menu__list {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.footer-menu__list-item {
+  display: block;
+
+  @include media-query($medium-up) {
+    margin-bottom: $spacing-xs;
+  }
+
+  a,
+  button {
+    @extend %smallcaps;
+    display: block;
+    text-decoration: none;
+    padding: $spacing-xs 0;
+
+    @include media-query($medium-up) {
+      padding: $spacing-xxs 0;
+    }
+  }
+
+  button {
+    line-height: 1.6;
+    font-weight: inherit;
+    background: none;
+    color: inherit;
+    border: none;
+    cursor: pointer;
+    outline: inherit;
+    &:hover {
+      color: var(--color-malibu-dark);
+    }
+  }
+}
+
+.footer-base {
+  color: var(--color-black);
+  padding: $spacing-md 0;
+
+  svg {
+    height: rem(14px);
+  }
+}
+
+.template-page {
+  footer {
+    margin-top: rem(64px);
+
+    @include media-query($medium-up) {
+      margin-top: rem(80px);
+    }
+  }
+}
+
+.subscribe-form__wrapper {
+  position: relative;
+  margin-top: $spacing-lg;
+  margin-bottom: $spacing-xxl;
+
+  .btn {
+    position: absolute;
+    right: rem(4px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  input[type='email'] {
+    padding-right: rem(108px);
+    background-color: var(--color-white);
+
+    &::placeholder {
+      color: var(--color-black);
+    }
+  }
+}
+
+.footer__social {
+  @include media-query($medium) {
+    margin-bottom: $spacing-xxl;
+  }
+}
+
+.footer__social-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+
+  li {
+    margin-right: rem(18px);
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .icon {
+    width: rem(20px);
+    height: rem(20px);
+  }
+}
+
+.footer__copyright {
+  @extend %smallcaps;
+  font-size: rem(10px);
+  padding-bottom: $spacing-lg;
+
+  @include media-query($medium-up) {
+    padding-bottom: $spacing-sm;
+  }
+}
+
+.footer__base {
+  display: flex;
+
+  @include media-query($medium-up) {
+    margin: 0 0 $spacing-lg 0;
+  }
+}
+
+.footer__base-flex,
+.payment-icons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.payment-icons {
+  li {
+    padding: 0 rem(5px);
+    @include media-query($medium-up) {
+      padding: 0 rem(10px);
+    }
+  }
+
+  svg:not(.icon-shopify-payment-icon) {
+    path,
+    rect,
+    polygon {
+      fill: var(--color-grey-4);
+    }
+  }
+
+  .icon-shopify-payment-icon {
+    mix-blend-mode: luminosity;
+    opacity: 0.6;
+  }
+}
+
+.footer__customer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: $spacing-lg;
+  margin-bottom: $spacing-xxl;
+
+  @include media-query($medium-up) {
+    justify-content: space-between;
+  }
+
+  p {
+    margin-right: $spacing-sm;
+    margin-bottom: 0;
+  }
+
+  .btn {
+    flex: 0 0 auto;
+  }
+}
+
+/* stylelint-disable selector-max-id, selector-id-pattern, selector-max-specificity */
+#ot-sdk-btn-floating {
+  display: none;
+}

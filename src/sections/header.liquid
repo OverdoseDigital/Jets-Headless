@@ -1,0 +1,233 @@
+<header class="header" data-section-id="{{ section.id }}" data-section-type="header">
+
+  <div class="container {% if section.settings.contain_header_in_grid == false %}container--fluid{% endif %}">
+
+    <div class="header__grid">
+      <div class="header__grid-left">
+        <ul class="header__nav-secondary header__nav-secondary--left">
+          <li class="large-up--hide">
+            <button class="nav-toggle btn__icon large-up--hide" aria-label="Toggle menu" type="button">
+              {% render 'icon-menu' %}
+              {% render 'icon-cross' %}
+            </button>
+          </li>
+          {% if settings.enable_wishlist %}
+            <li class="large-up--hide">
+              <a href="{{ settings.wishlist_page_url }}" class="header__btn btn__icon" data-wishlist-link>{% render 'icon-heart' %}</a>
+            </li>
+          {% endif %}
+          {% if settings.enable_currency_selector %}
+          <li>
+            <div class="currency-selector-header-wrapper">
+              <button type="button" id="header-currency--label" class="header__btn btn__text medium-down--hide" data-currency-modal-trigger>{% render 'icon-globe' %}<span data-cart-currency>{{ cart.currency.symbol }} {{ cart.currency.iso_code }}</span>{% render 'use-svg', title: 'Chevron down icon', svg_id: 'iconChevronDown', class: 'icon icon-chevron-down', viewbox: '0 0 24 24' %}</button>
+              {% render 'currency-popup' %}
+            </div>
+          </li>
+          {% endif %}
+          {% if section.settings.help_url != blank %}
+            <li class="medium-down--hide">
+              <a href="{{ section.settings.help_url }}" class="header__btn">{% render 'icon-support' %}<span>{{ 'general.navigation.help' | t }}</span></a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="header__grid-centre">
+        {%- render 'header-section-logo' -%}
+      </div>
+      <div class="header__grid-right">
+        <ul class="header__nav-secondary header__nav-secondary--right">
+          <li class="medium-down--hide header__search-desktop">
+            <div class="header__btn--search">
+              {% render 'search-form', inputId: 'SearchDesktop', wrapperClasses: 'medium-down--hide' %}
+            </div>
+          </li>
+          {% if shop.customer_accounts_enabled %}
+            {% if settings.enable_wishlist %}
+              <li class="medium-down--hide">
+                <a href="{{ settings.wishlist_page_url }}" class="header__btn btn__icon" data-wishlist-link>{% render 'icon-heart' %}</a>
+              </li>
+            {% endif %}
+            {% if customer %}
+              <li>
+                <a href="{{ routes.account_url }}" class="header__btn btn__icon">{% render 'icon-account' %}<span class="visually-hidden">{{ 'layout.customer.account' | t }}</span></a>
+              </li>
+            {% else %}
+              <li>
+                <a href="{{ routes.account_login_url }}" class="header__btn btn__icon">{% render 'icon-account' %}<span class="visually-hidden">{{ 'layout.customer.log_in' | t }}</span></a>
+              </li>
+            {% endif %}
+
+          {% endif %}
+          <li>
+            {%- render 'header-section-cart-toggle' -%}
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="fader fader--nav" data-toggle-nav></div>
+  <nav class="nav-drawer">
+    {% render 'header-section-main-navigation' %}
+  </nav>
+</header>
+
+
+{% schema %}
+  {
+    "name": "Header",
+    "class": "header-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Header"
+      },
+      {
+        "type": "link_list",
+        "id": "menu",
+        "label": "Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "url",
+        "id": "help_url",
+        "label": "Help URL"
+      },
+      {
+        "type": "header",
+        "content": "Mobile Navigation Image Blocks"
+      },
+      {
+        "type": "image_picker",
+        "id": "feature_image_1",
+        "label": "Feature image 1"
+      },
+      {
+        "type": "text",
+        "id": "feature_image_text_1",
+        "label": "Feature image text 1"
+      },
+      {
+        "type": "url",
+        "id": "feature_image_url_1",
+        "label": "Feature image link 1"
+      },
+      {
+        "type": "checkbox",
+        "id": "feature_image_1_double_width",
+        "label": "Double width",
+        "default": false
+      },
+      {
+        "type": "image_picker",
+        "id": "feature_image_2",
+        "label": "Feature image 2"
+      },
+      {
+        "type": "text",
+        "id": "feature_image_text_2",
+        "label": "Feature image text 2"
+      },
+      {
+        "type": "url",
+        "id": "feature_image_url_2",
+        "label": "Feature image link 2"
+      },
+      {
+        "type": "checkbox",
+        "id": "feature_image_2_double_width",
+        "label": "Double width",
+        "default": false
+      }
+    ],
+    "blocks": [
+      {
+        "type": "set_nav_link_color",
+        "name": "Set Nav Link Color",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Menu label",
+            "info": "eg. Swimwear"
+          },
+          {
+            "type": "color",
+            "id": "link_color",
+            "label": "Link Color"
+          }
+        ]
+      },
+      {
+        "type": "subnav_columns",
+        "name": "Subnav columns",
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "Specify the number of columns the text links occupy, if none is specified then it will remain as one."
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Menu label",
+            "info": "eg. Swimwear"
+          },
+          {
+            "type": "select",
+            "id": "menu_columns",
+            "label": "Image proportions",
+            "default": "span-2",
+            "options": [
+              {
+                "value": "span-2",
+                "label": "Two columns"
+              },
+              {
+                "value": "span-3",
+                "label": "Three columns"
+              },
+              {
+                "value": "span-4",
+                "label": "Four columns"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "subnav_item",
+        "name": "Subnav image block",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Menu label",
+            "info": "eg. Swimwear"
+          },
+          {
+            "type": "text",
+            "id": "subnav_item_label",
+            "label": "Subnav item label"
+          },
+          {
+            "type": "url",
+            "id": "subnav_item_link",
+            "label": "Subnav item link"
+          },
+          {
+            "type": "image_picker",
+            "id": "subnav_item_image",
+            "label": "Subnav item image"
+          },
+          {
+            "type": "checkbox",
+            "id": "subnav_item_double_width",
+            "label": "Double width",
+            "default": false
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

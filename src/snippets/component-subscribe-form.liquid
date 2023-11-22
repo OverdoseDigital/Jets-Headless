@@ -1,0 +1,70 @@
+{%- comment -%}
+  Parameters:
+    register_flow: boolean. Will use the form to prefill the register form using query params
+    form_name: name of form e.g. 'customer'
+    class: class for form
+    placeholder: placeholder for input
+    value: value of form e.g. 'newsletter'
+    label: label for button
+    modifiers: (optional) space separated list of BEM modifiers without block name eg. "title-below no-image"
+{% endcomment -%}
+
+{% liquid
+  assign classes = 'subscribe-form'
+
+  if modifiers
+    assign split_modifiers = modifiers | split: ' '
+
+    for modifier in split_modifiers
+      assign classes = classes | append: ' subscribe-form--' | append: modifier
+    endfor
+  endif
+%}
+
+<div class="{{ classes }}">
+  {% if register_flow == true %}
+    <form action="{{ shop.url }}/account/register" method="GET">
+      <div class="subscribe-form__wrapper form__group">
+        <label for="{{ id }}__email" class="visually-hidden">{{ placeholder }}</label>
+        <input
+          type="email"
+          required
+          name="email"
+          id="{{ id }}__email"
+          class="subscribe-form__input"
+          autocorrect="off"
+          autocapitalize="off"
+          placeholder="{{ placeholder }}"
+        >
+        <button type="submit" class="btn subscribe-form__button" name="commit">
+          <span class="subscribe-form__button--text">{{ submit_label }}</span>
+        </button>
+      </div>
+    </form>
+  {% else %}
+    {%- form form_name, class: 'form', id: id -%}
+      {{ form.errors | default_errors }}
+      {%- if form.posted_successfully? -%}
+        <p class="form--success">{{ 'general.newsletter_form.confirmation' | t }}</p>
+      {%- else -%}
+        <div class="subscribe-form__wrapper form__group">
+          <label for="{{ id }}__email" class="visually-hidden">{{ placeholder }}</label>
+          <input type="hidden" name="contact[tags]" value="{{ value }}">
+          <input
+            type="email"
+            required
+            name="contact[email]"
+            id="{{ id }}__email"
+            class="subscribe-form__input"
+            autocorrect="off"
+            autocapitalize="off"
+            placeholder="{{ placeholder }}"
+          >
+          <button type="submit" class="btn subscribe-form__button" name="commit">
+            <span class="subscribe-form__button--text">{{ submit_label }}</span>
+          </button>
+        </div>
+      {%- endif -%}
+    {%- endform -%}
+  {% endif %}
+</div>

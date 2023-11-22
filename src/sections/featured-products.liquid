@@ -1,0 +1,129 @@
+{%- comment %}
+  Create grid class based on how many block articles got populated
+{% endcomment -%}
+{%- liquid
+  assign block_length = section.blocks | size
+  if block_length > 0
+    case block_length
+      when 2
+        assign blockWidth = 'half'
+        assign denominator = 2
+      when 3, 5, 6
+        assign blockWidth = 'third'
+        assign denominator = 3
+      when 4, 7, 8
+        assign blockWidth = 'quarter'
+        assign denominator = 4
+    endcase
+  endif
+-%}
+
+<div class="section" data-section-id="{{ section.id }}" data-section-type="featured-products">
+  <div class="container">
+
+    {%- if section.settings.title != blank -%}
+      <div class="section__title">
+        <h2 class="h3">{{ section.settings.title }}</h2>
+      </div>
+    {%- endif -%}
+
+  </div>
+    <div class="container container--flush--medium-down">
+      <div class="featured-products__slider carousel" id="featured-products__slider--{{ section.id }}">
+        {% for block in section.blocks %}
+          {% assign product = all_products[block.settings.product] %}
+
+          <div class="slide {{ blockWidth }}" {{ block.shopify_attributes }}>
+            {%- liquid
+              if product != empty
+                assign sizes = '(max-width: 47rem) 80vw, (min-width: 61.875rem) calc(100vw / ' | append: denominator | append: '), (min-width: 77.5rem) calc(77.5rem / ' | append: denominator | append: '), 40vw'
+
+                render 'product-card', product: product, modifiers: 'primary', sizes: sizes
+              else
+                render 'component-image'
+              endif
+            -%}
+          </div>
+        {% endfor %}
+      </div>
+
+  </div>
+</div>
+
+<style>
+#shopify-section-{{ section.id }} {
+  {%- if section.settings.background_color != blank -%}
+    background-color: {{ section.settings.background_color }};
+  {%- endif -%}
+  {%- if section.settings.text_color != blank -%}
+    color: {{ section.settings.text_color }};
+  {%- endif -%}
+}
+{%- if section.settings.link_color != blank -%}
+#shopify-section-{{ section.id }} a,
+#shopify-section-{{ section.id }} a:hover {
+  color: {{ section.settings.link_color }};
+}
+#shopify-section-{{ section.id }} a:after {
+  background-color: {{ section.settings.link_color }};
+}
+{%- endif -%}
+{% if section.settings.text_color != blank %}
+  #shopify-section-{{ section.id }} .section__title {
+    color: {{ section.settings.text_color }};
+  }
+{%- endif -%}
+</style>
+
+{% schema %}
+  {
+    "name": "Featured Products",
+    "class": "featured-products",
+    "max_blocks": 6,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color"
+      },
+      {
+        "type": "color",
+        "id": "link_color",
+        "label": "Link color"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "product",
+        "name": "Product",
+        "settings": [
+          {
+            "label": "Product",
+            "id": "product",
+            "type": "product"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured Products",
+        "category": "Product"
+      }
+    ]
+  }
+{% endschema %}

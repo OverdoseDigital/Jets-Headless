@@ -1,0 +1,75 @@
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: rem(24px);
+  height: rem(24px);
+  fill: none;
+  stroke: currentColor;
+
+  .no-svg & {
+    display: none;
+  }
+
+  &.icon--solid,
+  &.icon--social {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  &.icon--auto-size {
+    width: unset;
+    height: unset;
+  }
+}
+
+.icon-heart {
+  .icon-fill {
+    fill: currentColor;
+    transform: scaleX(0) scaleY(0) scaleZ(0);
+    transform-origin: center center;
+    transition: transform 0.2s var(--transition-timing-flick);
+  }
+
+  .icon-animate & {
+    .icon-fill {
+      transform: scaleX(1) scaleY(1) scaleZ(1);
+    }
+  }
+}
+
+.icon-bag {
+  .icon-bag--empty {
+    opacity: 1;
+    transition-property: opacity;
+    transition-timing-function: var(--transition-timing-flick);
+    transition-duration: 0.2s;
+  }
+
+  .icon-bag--full {
+    opacity: 0;
+    transition-property: opacity;
+    transition-timing-function: var(--transition-timing-flick);
+    transition-duration: 0.2s;
+  }
+
+  .icon-animate & {
+    .icon-bag--empty {
+      opacity: 0;
+    }
+
+    .icon-bag--full {
+      opacity: 1;
+    }
+  }
+}
+
+.icon-tick-sm {
+  width: rem(14px);
+  height: rem(10px);
+}
+
+// Payment icons
+.payment-icons {
+  user-select: none;
+  cursor: default;
+}

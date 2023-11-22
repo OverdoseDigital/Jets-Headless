@@ -1,0 +1,13 @@
+{% if settings.wair_brand_key != blank %}
+  <script type="text/javascript" async src="https://predict-v4.getwair.com/default/predict.js"></script>
+  <script type="text/javascript">
+    window.addEventListener("onPredictLoad", function (event) {
+      event.detail.predict.render({
+        brandKey: {{ settings.wair_brand_key | json }},
+        "onRecommendCallback": function(variantId) {
+          window.theme.setCurrentVariant(variantId);
+        }
+      });
+    });
+  </script>
+{% endif %}

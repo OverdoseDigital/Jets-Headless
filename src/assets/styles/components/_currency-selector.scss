@@ -1,0 +1,122 @@
+.currency-selector-header-wrapper {
+  position: relative;
+}
+
+.currency-popup__wrapper {
+  hr {
+    margin: $spacing-xs 0 0;
+  }
+
+  p {
+    margin: 0;
+    padding: $spacing-sm;
+
+    @include media-query($large-up) {
+      padding: $spacing-sm 0;
+    }
+  }
+}
+
+[data-currency-modal-trigger] {
+  text-decoration: none;
+  display: flex;
+  font-weight: var(--font-weight-body);
+
+  &:focus,
+  &:active {
+    color: var(--color-grey-5);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-grey-5);
+    }
+  }
+
+  span + .icon {
+    margin-left: $spacing-xxs;
+  }
+
+  .icon-globe {
+    width: rem(20px);
+    height: rem(20px);
+    vertical-align: middle;
+    margin-right: $spacing-xxs;
+  }
+
+  .icon-chevron-down {
+    width: rem(10px);
+    height: rem(10px);
+    vertical-align: middle;
+    margin-left: 0;
+  }
+}
+
+.currency-modal-js--open {
+  [data-currency-modal-trigger] {
+    @include media-query($large-up) {
+      position: relative;
+      z-index: 999999;
+    }
+  }
+}
+
+/* stylelint-disable max-nesting-depth, selector-max-specificity */
+.currencies-list {
+  display: flex;
+  flex-direction: column;
+  padding: $spacing-xs 0;
+
+  @include media-query($large-up) {
+    padding: 0;
+  }
+
+  input[type='radio'] {
+    @include visually-hidden;
+
+    &:checked {
+      + label {
+        &::after {
+          visibility: visible;
+          opacity: 1;
+        }
+      }
+    }
+
+    &:hover,
+    &:focus,
+    &:focus-visible {
+      + label {
+        color: var(--color-grey-5);
+      }
+    }
+
+    + label {
+      @extend %small;
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: rem(12px) $spacing-md rem(12px) $spacing-sm;
+      color: var(--color-black);
+
+      @include media-query($large-up) {
+        padding: rem(12px) $spacing-xs rem(12px) 0;
+      }
+
+      &::after {
+        content: '';
+        flex-shrink: 0;
+        width: rem(16px);
+        height: rem(16px);
+        margin-left: $spacing-xs;
+        background-size: rem(16px 16px);
+        background-repeat: no-repeat;
+        background-position: center center;
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+  }
+}
+/* stylelint-enable max-nesting-depth, selector-max-specificity */

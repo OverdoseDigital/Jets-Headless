@@ -1,0 +1,253 @@
+/* stylelint-disable declaration-no-important */
+/* stylelint-disable selector-max-compound-selectors */
+/* stylelint-disable selector-max-specificity */
+/* stylelint-disable selector-max-class */
+/* stylelint-disable selector-max-combinators */
+.shopify-section .okeReviews-reviewsCarousel-holder {
+  padding-bottom: 2.25rem;
+  @include media-query($medium-up) {
+    padding-bottom: 2rem;
+  }
+}
+
+.okeReviews.okeReviews--theme .okeReviews-reviewsCarousel-review-reviewer {
+  @extend %smallcaps;
+}
+
+.okeReviews-reviewsCarousel-holder .okeReviews {
+  .okeReviews-reviewsCarousel-slider {
+    max-width: rem(866px);
+    margin: 0 auto;
+  }
+
+  .okeReviews-reviewsCarousel.is-okeReviews-reviewsCarousel-large .okeReviews-reviewsCarousel-slider-slide {
+    width: 100%;
+  }
+
+  .okeReviews-reviewsCarousel-review-content-rating {
+    margin-bottom: 1.5rem;
+    @include media-query($medium-up) {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .okeReviews-reviewsCarousel-slider-slide-inner {
+    $padding: 1rem;
+    max-width: rem(564px) + $padding * 2;
+    padding-left: $padding;
+    padding-right: $padding;
+  }
+
+  &.okeReviews--theme .okeReviews-reviewsCarousel-heading {
+    @extend %h3;
+    margin: rem(20px) 0 0;
+  }
+
+  .okeReviews-reviewsCarousel-header {
+    margin-bottom: rem(10px);
+    @include media-query($medium-up) {
+      margin-bottom: rem(4px);
+    }
+  }
+
+  .okeReviews-reviewsCarousel-review-content-body {
+    font-family: var(--font-headings);
+    font-weight: var(--font-headings-weight);
+    font-size: rem(18px);
+    margin-bottom: 1.5rem;
+
+    @include media-query($medium-down) {
+      font-size: rem(21px);
+      line-height: 1.5;
+    }
+  }
+
+  &.okeReviews--theme .okeReviews-reviewsCarousel-review-product-name,
+  &.okeReviews--theme .okeReviews-reviewsCarousel-review-reviewer-name {
+    @extend %small;
+  }
+
+  .flickity-page-dots {
+    bottom: -1.25rem;
+
+    @include media-query($medium-up) {
+      bottom: rem(-12px);
+    }
+  }
+
+  .okeReviews-reviewsCarousel.is-okeReviews-reviewsCarousel-large
+    .okeReviews-reviewsCarousel-slider
+    .flickity-prev-next-button.previous {
+    left: 0;
+  }
+
+  .okeReviews-reviewsCarousel.is-okeReviews-reviewsCarousel-large
+    .okeReviews-reviewsCarousel-slider
+    .flickity-prev-next-button.next {
+    right: 0;
+  }
+
+  .okeReviews-reviewsCarousel:not(.is-okeReviews-reviewsCarousel-large):not(.is-okeReviews-reviewsCarousel-medium)
+    .flickity-prev-next-button.previous {
+    left: $outer-margin-sm;
+  }
+
+  .okeReviews-reviewsCarousel:not(.is-okeReviews-reviewsCarousel-large):not(.is-okeReviews-reviewsCarousel-medium)
+    .flickity-prev-next-button.next {
+    right: $outer-margin-sm;
+  }
+
+  .okeReviews-reviewsCarousel:not(.is-okeReviews-reviewsCarousel-large):not(.is-okeReviews-reviewsCarousel-medium)
+    .flickity-prev-next-button {
+    top: unset;
+    bottom: -3rem;
+    z-index: 1; // bring above slider dots
+    width: rem(34px);
+    height: rem(34px);
+  }
+
+  .flickity-prev-next-button {
+    width: rem(34px);
+    height: rem(34px);
+
+    @include media-query($medium-up) {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .flickity-button-icon {
+      @include media-query($medium-down) {
+        width: 34%;
+        height: 34%;
+      }
+    }
+  }
+}
+
+.okeReviews-widget-holder {
+  .okeReviews.okeReviews--theme {
+    .okeReviews-button,
+    .okeReviews-reviews-showMore {
+      @extend %smallcaps;
+    }
+
+    .okeReviews-review-date {
+      @extend %smallcaps;
+      font-size: rem(10px);
+    }
+
+    .okeReviews-review-reviewer-profile-details-inner {
+      @extend %h5;
+    }
+  }
+
+  .okeReviews {
+    .okeReviews-reviews-controls-select,
+    .okeReviews-select-input {
+      @extend %smallcaps;
+    }
+
+    .okeReviews-review-reviewer-profile-status {
+      @extend %smallcaps;
+      font-size: rem(10px);
+    }
+
+    .okeReviews-review-reviewer-product-details-heading {
+      @extend %h5;
+    }
+
+    .okeReviews-review-arguments,
+    .okeReviews-sectionedList-list {
+      @extend %smallcaps;
+      font-size: rem(10px);
+    }
+  }
+}
+
+// landing page
+.okeReviews-widget-holder.review-page {
+  padding: $spacing-lg 0 rem(64px);
+
+  .okeReviews.okeReviews--theme
+    .okeReviews-reviewsWidget:not(.is-okeReviews-reviewsWidget-large):not(.is-okeReviews-reviewsWidget-medium)
+    div:not(.okeReviews-review-arguments)
+    > .okeReviews-review-reviewer-attributes {
+    max-width: 10rem;
+    min-width: 8rem;
+    flex: 1;
+    padding-left: 1rem;
+  }
+
+  .okeReviews.okeReviews--theme
+    .okeReviews-reviewsWidget:not(.is-okeReviews-reviewsWidget-large):not(.is-okeReviews-reviewsWidget-medium)
+    div:not(.okeReviews-review-arguments)
+    > .okeReviews-review-reviewer {
+    flex: 2;
+  }
+
+  .okeReviews.okeReviews--theme
+    .okeReviews-reviewsWidget:not(.is-okeReviews-reviewsWidget-large):not(.is-okeReviews-reviewsWidget-medium)
+    .okeReviews-review-side-inner
+    > div {
+    width: auto;
+  }
+
+  .okeReviews .okeReviews-review-reviewer-product {
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 1rem 1rem 0 0;
+  }
+
+  .okeReviews .okeReviews-review-reviewer-product-thumbnail {
+    margin-top: 1rem;
+  }
+
+  .orc-allReviewsCollections {
+    max-width: rem(1100px);
+    padding: 0 $spacing-lg;
+    margin: 0 auto;
+
+    .orc-collectionControls-item {
+      flex: none;
+      padding: $spacing-xs;
+    }
+
+    .orc-collectionControls-item-input--checked + .orc-collectionControls-item-label,
+    .orc-collectionControls-item-input:checked + .orc-collectionControls-item-label {
+      border-width: 0 0 1px;
+    }
+  }
+
+  .orc-collectionControls {
+    .orc-collectionControls-item-label {
+      @extend %smallcaps;
+      padding: $spacing-xs 0;
+      border-width: 0 0 1px;
+    }
+  }
+
+  .orc-collectionControls-item-label-heading {
+    flex-basis: 100%;
+    @extend %smallcaps;
+  }
+}
+
+// Our styles for okendo page
+.reviews__write-a-review {
+  background: var(--color-grey-1);
+  padding: $spacing-xxxl $spacing-lg rem(64px);
+
+  a {
+    @extend %btn;
+    width: 100% !important;
+    display: block;
+
+    @include media-query($medium-up) {
+      width: auto !important;
+    }
+  }
+}
+
+.okeReviews-emptyWidget-button {
+  @extend %btn;
+}

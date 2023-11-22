@@ -1,0 +1,311 @@
+<section{% if section.settings.contain_section == true %} class="container container--flush--medium-down"{% endif %}>
+  <div class="text-with-cta section-spacer--{{ section.settings.section_bottom_margin }}">
+    <div class="container container--narrow text-center{% if section.settings.padding_size != 'none' %} vert-padding padding-{{ section.settings.padding_size }}{% endif %}{% if section.settings.title_size != 'regular' %} title-size-{{ section.settings.title_size }}{% endif %}">
+      {%- if section.settings.pre-title != blank -%}
+        <h3 class="h4 text-with-cta__pre-title">{{ section.settings.pre-title | escape }}</h3>
+      {%- endif -%}
+
+      {%- if section.settings.title != blank -%}
+        <h2 class="h3 text-with-cta__title">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="text-with-cta__text-body">
+          {{ section.settings.text }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.link_chat and section.settings.button_label != blank -%}
+        <button
+          onclick="openLiveChat()"
+          class="{% unless section.settings.button_style == '__text' %}btn {% endunless %}btn{{ section.settings.button_style }}">
+          {{ section.settings.button_label | escape }}
+        </button>
+      {%- elsif section.settings.button_link != blank and section.settings.button_label != blank -%}
+        <a
+          href="{{ section.settings.button_link }}"
+          {% if section.settings.link_new_tab %}target="_blank"{% endif %}
+          class="{% unless section.settings.button_style == '__text' %}btn {% endunless %}btn{{ section.settings.button_style }}"
+        >
+          {{ section.settings.button_label | escape }}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.link_chat_2 and section.settings.button_label_2 != blank -%}
+        <button
+          onclick="openLiveChat()"
+          class="{% unless section.settings.button_style_2 == '__text' %}btn {% endunless %}btn{{ section.settings.button_style_2 }}">
+          {{ section.settings.button_label_2 | escape }}
+        </button>
+      {%- elsif section.settings.button_link_2 != blank and section.settings.button_label_2 != blank -%}
+        <a
+          href="{{ section.settings.button_link_2 }}"
+          {% if section.settings.link_new_tab_2 %}target="_blank"{% endif %}
+          class="{% unless section.settings.button_style_2 == '__text' %}btn {% endunless %}btn{{ section.settings.button_style_2 }}"
+        >
+          {{ section.settings.button_label_2 | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .text-with-cta {
+    {%- if section.settings.background_color != blank -%}
+      background-color: {{ section.settings.background_color }};
+    {%- endif -%}
+  }
+
+  {%- if section.settings.text_color != blank -%}
+    #shopify-section-{{ section.id }} .text-with-cta,
+    #shopify-section-{{ section.id }} .text-with-cta .btn__text {
+      color: {{ section.settings.text_color }};
+    }
+
+    #shopify-section-{{ section.id }} .text-with-cta .btn__text {
+      text-decoration-color: {{ section.settings.text_color | color_modify: 'alpha', 0.4 }};
+    }
+
+    #shopify-section-{{ section.id }} .text-with-cta .btn__text:focus,
+    #shopify-section-{{ section.id }} .text-with-cta .btn__text:active {
+      text-decoration-color: {{ section.settings.text_color }};
+    }
+
+    @media (hover: hover) {
+      #shopify-section-{{ section.id }} .text-with-cta .btn__text:hover {
+        text-decoration-color: {{ section.settings.text_color }};
+      }
+    }
+  {%- endif -%}
+</style>
+
+{% schema %}
+  {
+    "name": "Text with CTA",
+    "settings": [
+      {
+        "type": "text",
+        "id": "pre-title",
+        "label": "Pre-Heading",
+        "info": "(Optional, leave blank to skip)"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Text with CTA"
+      },
+      {
+        "type": "radio",
+        "id": "title_size",
+        "label": "Title size (desktop)",
+        "options": [
+          {
+            "value": "regular",
+            "label": "Regular"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "regular"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>Welcome the sunshine in with JETS Australia’s range of elevated swimwear and resort styles. Build your capsule of warm weather essentials, with JETS considered collections of timeless, well executed swim and resort essentials that work seamlessly together to create the ultimate travel wardrobe for the modern woman. Each piece is carefully crafted at our in-house atelier and our Sydney design team ensure the perfect fit and feel every time. Discover the range of sophisticated summer silhouettes with modern one-piece swimsuits, bikinis and effortlessly chic resortwear.</p>"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color"
+      },
+      {
+        "type": "header",
+        "content": "Button 1"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button label",
+        "default": "Read More"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button URL"
+      },
+      {
+        "type": "checkbox",
+        "label": "Open link in new tab?",
+        "id": "link_new_tab",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "label": "Open live chat instead of link?",
+        "id": "link_chat",
+        "default": false
+      },
+      {
+        "type": "radio",
+        "id": "button_style",
+        "label": "Button style",
+        "options": [
+          {
+            "value": "--white",
+            "label": "White"
+          },
+          {
+            "value": "--primary",
+            "label": "Black"
+          },
+          {
+            "value": "--secondary",
+            "label": "Secondary"
+          },
+          {
+            "value": "__text",
+            "label": "Text"
+          }
+        ],
+        "default": "--secondary"
+      },
+      {
+        "type": "header",
+        "content": "Button 2"
+      },
+      {
+        "type": "text",
+        "id": "button_label_2",
+        "label": "Button label",
+        "default": "Read More"
+      },
+      {
+        "type": "url",
+        "id": "button_link_2",
+        "label": "Button URL"
+      },
+      {
+        "type": "checkbox",
+        "label": "Open link in new tab?",
+        "id": "link_new_tab_2",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "label": "Open live chat instead of link?",
+        "id": "link_chat_2",
+        "default": false
+      },
+      {
+        "type": "radio",
+        "id": "button_style_2",
+        "label": "Button style",
+        "options": [
+          {
+            "value": "--white",
+            "label": "White"
+          },
+          {
+            "value": "--primary",
+            "label": "Black"
+          },
+          {
+            "value": "--secondary",
+            "label": "Secondary"
+          },
+          {
+            "value": "__text",
+            "label": "Text"
+          }
+        ],
+        "default": "--secondary"
+      },
+      {
+        "type": "header",
+        "content": "Layout options"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Section background color"
+      },
+      {
+        "type": "checkbox",
+        "id": "contain_section",
+        "label": "Contain section",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "padding_size",
+        "label": "Choose vertical padding spacing",
+        "options": [
+          {
+            "label": "None",
+            "value": "none"
+          },
+          {
+            "label": "Small",
+            "value": "small"
+          },
+          {
+            "label": "Regular",
+            "value": "regular"
+          },
+          {
+            "label": "Large",
+            "value": "large"
+          },
+          {
+            "label": "Extra-Large",
+            "value": "xlarge"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "templates": [
+      "index",
+      "product",
+      "page",
+      "article",
+      "404",
+      "customers/register"
+    ],
+    "presets": [
+      {
+        "name": "Text with CTA",
+        "category": "Text"
+      }
+    ]
+  }
+{% endschema %}

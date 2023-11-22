@@ -1,0 +1,5 @@
+<svg aria-label="Lifesaver icon" class="icon icon-lifesaver" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 12a9.97 9.97 0 0 1-2.929 7.071A9.97 9.97 0 0 1 12 22a9.969 9.969 0 0 1-7.071-2.929A9.969 9.969 0 0 1 2 12a9.969 9.969 0 0 1 2.929-7.071A9.969 9.969 0 0 1 12 2a9.969 9.969 0 0 1 7.071 2.929A9.969 9.969 0 0 1 22 12Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" vector-effect="non-scaling-stroke"/>
+  <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" vector-effect="non-scaling-stroke"/>
+  <path d="m19 5-4 4M19 19l-4-4M5 5l4 4M5 19l4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" vector-effect="non-scaling-stroke"/>
+</svg>

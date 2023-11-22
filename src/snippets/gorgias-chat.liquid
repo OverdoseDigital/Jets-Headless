@@ -1,0 +1,83 @@
+{% if settings.enable_gorgias_chat and settings.gorgias_app_id != blank %}
+  <script>
+    {% comment %}
+      In order to improve loading performance, the loadLiveChat() function has
+      been created. This function is setup to be two by two event listeners that
+      wait for user input: scroll and click. The 'options' object, particularly
+      the 'passive' property, is feature-detected for compatibility with older
+      browsers.
+    {% endcomment %}
+    (() => {
+      window.liveChatInitialised = false;
+      initialiseListeners();
+
+      function initialiseListeners() {
+        {% comment %}
+          Load the live chat app automatically if it was interacted with during the browsing session.
+        {% endcomment %}
+        if (sessionStorage.getItem('livechat_opened')) {
+          loadLiveChat();
+        } else {
+          const passiveSupported = detectPassiveSupported();
+          document.addEventListener('scroll', loadLiveChat, passiveSupported ? { once: true, passive: true } : false);
+          document.addEventListener('click', loadLiveChat, passiveSupported ? { once: true } : false);
+        }
+      }
+
+      function detectPassiveSupported() {
+        let supported = false;
+
+        try {
+          const options = {
+            get passive() {
+              supported = true;
+              return false;
+            }
+          };
+          window.addEventListener("test", null, options);
+          window.removeEventListener("test", null, options);
+        } catch(err) {
+          supported = false;
+        };
+
+        return supported;
+      }
+
+      function loadLiveChat() {
+        return new Promise(resolve => {
+          if (window.liveChatInitialised) {
+            return resolve();
+          };
+
+          window.liveChatInitialised = true;
+
+          const script = document.createElement('script');
+          script.id = 'gorgias-chat-widget-install-v2';
+          script.src = 'https://config.gorgias.chat/gorgias-chat-bundle-loader.js?applicationId={{ settings.gorgias_app_id }}';
+          script.async = true;
+
+          script.addEventListener('load', async () => {
+            /**
+            * Use the Gorgias API to set a sessionStorage value if
+            * the user sends a message during the session.
+            */
+            await GorgiasChat.init()
+            GorgiasChat.on('message:sent', () => sessionStorage.setItem('livechat_opened', true));
+            resolve();
+          })
+
+          document.head.appendChild(script);
+        })
+      };
+
+      // Expose so other parts of the store can explicitly load the chat if needed.
+      window.openLiveChat = function openLiveChat() {
+        loadLiveChat().then(() => {
+          GorgiasChat.init().then(() => {
+            GorgiasChat.open();
+          })
+        });
+      };
+    })()
+  </script>
+{% endif %}

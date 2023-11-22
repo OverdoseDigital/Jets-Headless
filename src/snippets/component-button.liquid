@@ -1,0 +1,35 @@
+{%- comment %}
+  Parameters
+  label: text inside button
+  link: url link
+  type: if link, chose anchor else button
+  modifier: type of class e.g. primary
+  attr: pass in data attributes e.g. data-video="play"
+  modifiers: (optional) space separated list of BEM modifiers without block name eg. "title-below no-image"
+{% endcomment -%}
+
+{% liquid
+  assign classes = 'btn'
+
+  if modifiers
+    assign split_modifiers = modifiers | split: ' '
+
+    for modifier in split_modifiers
+      assign classes = classes | append: ' btn--' | append: modifier
+    endfor
+  endif
+%}
+
+{%- if type == 'link' -%}
+  <a href="{{ link }}" class="{{ classes }}" {% if attr %}{{ attr }}{% endif %}>
+    <span>{{ label }}</span>
+  </a>
+{% elsif type == 'span' %}
+  <span class="{{ classes }}" {% if attr %}{{ attr }}{% endif %}>
+    {{ label }}
+  </span>
+{% else %}
+  <button class="{{ classes }}" {% if attr %}{{ attr }}{% endif %}>
+    {{ label }}
+  </button>
+{%- endif -%}

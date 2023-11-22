@@ -1,0 +1,206 @@
+{%- liquid
+  assign isGiftCard = false
+  if product.type == 'Gift Cards'
+    assign isGiftCard = true
+  endif
+  assign current_variant = product.selected_or_first_available_variant
+  assign autoplay_setting = false
+  assign controls_setting = true
+
+  assign includesVideo = false
+  if product.metafields.video.video_url != blank
+    assign includesVideo = true
+    assign videoUrl = product.metafields.video.video_url
+  endif
+
+  if settings.video_controls == 'autoplay'
+    assign autoplay_setting = true
+    assign controls_setting = false
+  endif
+-%}
+
+{%- capture pricingClass -%}
+{%- if product.has_only_default_variant -%}
+  {%- if product.compare_at_price > product.price -%}
+    product__price--on-sale
+  {%- endif -%}
+  {%- else -%}
+  {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+    product__price--on-sale
+  {%- endif -%}
+{%- endif -%}
+{%- endcapture -%}
+
+<div
+  class="product product-modal"
+  data-section-id="product-modal"
+  data-enable-history-state="true"
+  data-section-type="product-modal"
+  data-first-variant="{{ current_variant.id }}"
+  data-product-id="{{ product.id }}"
+  data-selected-variant="{{ product.selected_or_first_available_variant.id }}"
+  data-stock-availability-threshold="{{ settings.stock_availability_threshold }}"
+>
+
+  <div class="product__header">
+    <div class="product__media">
+      <div class="product__slideshow-wrapper">
+        <div class="{% if product.media.size > 1 or includesVideo == true %}product__slideshow{% else %}product__singular{% endif %}" data-scroll-snap-arrow-left=".product__media-direction--prev" data-scroll-snap-arrow-right=".product__media-direction--next">
+          {% assign pagerDots = '' %}
+          {% if includesVideo %}
+            <div class="product__media-item" data-product-video-wrapper data-slide-index="0">
+              {% assign mediaId = product.id | append: '-video' %}
+              {%- render 'component-video',
+                video: videoUrl,
+                autoplay: true,
+                controls: false,
+                aspect_ratio: 'portrait',
+                mediaId: mediaId
+              -%}
+            </div>
+            {% capture pagerDots %}
+              {{ pagerDots }}
+              <button type="button" class="product__media-pager-dot" data-pager-index="0"></button>
+            {% endcapture %}
+          {% endif %}
+          {% for media in product.media %}
+            {% case media.media_type %}
+            {% when 'image' %}
+              <div class="product__media-item" data-product-image-wrapper data-slide-index="{% if includesVideo %}{{ forloop.index }}{% else %}{{ forloop.index0 }}{% endif %}">
+                {%- render 'component-image',
+                  image: media,
+                  max_width: 1120,
+                  aspect_ratio: 'natural',
+                  sizes: '(min-width: 48rem) 20.8125rem, 100vw',
+                  imgIndex: forloop.index,
+                  lazy: true
+                -%}
+              </div>
+            {% when 'external_video' %}
+              <div class="product__media-item" data-slide-index="{% if includesVideo %}{{ forloop.index }}{% else %}{{ forloop.index0 }}{% endif %}" >
+                <div class="product__media-responsive" style="padding-top: {{ 100 | divided_by: media.aspect_ratio }}%;" data-product-external-video data-video-index="{% if includesVideo %}{{ forloop.index }}{% else %}{{ forloop.index0 }}{% endif %}" data-video-id="{{ media.external_id }}">
+                  {% capture autoplay_yt %}{% if autoplay_setting %}1{% else %}0{% endif %}{% endcapture %}
+                  {% capture controls_yt %}{% if controls_setting %}1{% else %}0{% endif %}{% endcapture %}
+                  {{ media | external_video_url: autoplay: autoplay_yt, controls: controls_yt | external_video_tag: id: media.external_id }}
+                </div>
+              </div>
+            {% when 'video' %}
+              <div class="product__media-item video--autoplay" data-slide-index="{% if includesVideo %}{{ forloop.index }}{% else %}{{ forloop.index0 }}{% endif %}" {% if settings.video_controls == 'autoplay' %}data-product-video-autoplay{% endif %}>
+                {{ media | video_tag: controls: controls_setting, autoplay: autoplay_setting, loop: autoplay_setting }}
+              </div>
+            {% when 'model' %}
+              <div class="product__media-item" data-zoom-type="model" data-slide-index="{% if includesVideo %}{{ forloop.index }}{% else %}{{ forloop.index0 }}{% endif %}">
+                <div class="product__media-responsive" style="padding-top: 100%;">
+                  <button class="btn model-viewer__button"
+                    data-shopify-xr
+                    data-shopify-model3d-id="{{ media.id }}"
+                    data-shopify-title="{{ product.title | escape }}"
+                    aria-label="{{ 'products.product.model_xr' | t }}"
+                    data-shopify-xr-hidden
+                  >
+                    {% render 'icon-model-xr' %}
+                  </button>
+                  {{ media | model_viewer_tag | replace: 'data-shopify-feature', 'data-version' }}
+                </div>
+              </div>
+            {% else %}
+              <div class="product__media-item" data-slide-index="{% if includesVideo %}{{ forloop.index }}{% else %}{{ forloop.index0 }}{% endif %}">
+                {{ media | media_tag }}
+              </div>
+            {% endcase %}
+
+            {% capture pagerDots %}
+              {{ pagerDots }}
+              <button type="button" class="product__media-pager-dot" data-pager-index="{% if includesVideo %}{{ forloop.index }}{% else %}{{ forloop.index0 }}{% endif %}"></button>
+            {% endcapture %}
+
+          {% endfor %}
+
+        </div>
+
+        {% if product.media.size > 1 or includesVideo == true %}
+          <button class="product__media-direction product__media-direction--prev">
+            {% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}
+            <span class="visually-hidden">{{ 'accessibility_labels.view_previous_image' | t }}</span>
+          </button>
+          <button class="product__media-direction product__media-direction--next">
+            {% render 'use-svg', title: 'Chevron right icon', svg_id: 'iconChevronRight', class: 'icon icon-chevron-right', viewbox: '0 0 24 24' %}
+            <span class="visually-hidden">{{ 'accessibility_labels.view_next_image' | t }}</span>
+          </button>
+
+          <div class="product__media-pager-dots">{{ pagerDots }}</div>
+        {% endif %}
+
+        {% render 'product-badge', product: product %}
+      </div>
+    </div>
+
+    <div class="product__details">
+      <div class="product__details--inner">
+        <div class="product__form" id="ProductForm">
+          {% render 'product-form',
+            product: product,
+            current_variant: current_variant,
+            pricingClass: pricingClass,
+            hasSizeGuide: false,
+            isGiftCard: isGiftCard,
+            isProductModal: true
+          %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  {% unless product == empty %}
+    <script type="application/json" data-product-json>
+      {{ product | json }}
+    </script>
+    <script type="application/json" data-product-inventories-json>
+      {
+        {%- for variant in product.variants -%}
+          "{{ variant.id }}": {
+            "inventory_quantity": {{ variant.inventory_quantity | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      }
+    </script>
+
+    {% comment %}
+      Currently there are inconsistencies in the format of product data between
+      {{ product | json }} in liquid and fetching from /products/${handle}.js.
+      The below fixes that inconsistency so we don't require a fetch in the
+      product.js section.
+    {% endcomment %}
+    <script>
+      window.productJSON = {{ product | json }};
+      window.productJSON.options = {{ product.options_with_values | json }};
+      window.productJSON.url = {{ product.url | json }};
+      window.productJSON.inventories = {
+        {%- for variant in product.variants -%}
+          "{{ variant.id }}": {
+            "inventory_quantity": {{ variant.inventory_quantity | json }},
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      };
+    </script>
+  {% endunless %}
+
+  {% assign models = product.media | where: 'media_type', 'model' %}
+  {% if models.size > 0 %}
+    <script type="application/json" data-product-models-json>
+      {{ models | json }}
+    </script>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Product Modal",
+    "class": "product",
+    "settings": [
+
+    ]
+  }
+{% endschema %}

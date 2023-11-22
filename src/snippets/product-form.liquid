@@ -1,0 +1,322 @@
+{% if product.metafields.custom.bundling_with == blank %}
+{% form 'product', product, data-product-form: '', data-product-handle: product.handle %}
+  <div class="product__title--wrapper">
+    <h1 class="h3 product__title">{{ product.title }}</h1>
+    {% if settings.include_review_summary %}
+      {% render 'okendo-reviews-product-rating-summary', product: product %}
+    {% endif %}
+  </div>
+
+  <div class="product__pricing--wrapper">
+    <div class="product__price-container {{ pricingClass }}" data-price-wrapper>
+      <span class="h4 product__compare-at-price" data-product-compare-at-price>{{ product.selected_or_first_available_variant.compare_at_price | money_with_currency }}</span>
+      <span class="h4 product__price" data-product-price>{{ product.selected_or_first_available_variant.price | money_with_currency }}</span>
+    </div>
+
+    {% unless isGiftCard or cart.currency.iso_code == 'NZD' %}
+      {% render 'pay-later', section_settings: section_settings %}
+    {% endunless %}
+  </div>
+
+  {% unless isGiftCard %}
+    <div class="delivery__indicators-wrapper">
+      {%- liquid
+        render 'delivery-indication'
+        render 'stock-availability'
+      -%}
+    </div>
+    {% render 'product-stitching', product: product, compact: false %}
+  {% endunless %}
+
+  {% unless product.has_only_default_variant %}
+    <div class="product__form-options">
+      {% for option in product.options_with_values %}
+        {%- assign optionNameDowncase = option.name | downcase -%}
+        {% unless optionNameDowncase == 'colour' or optionNameDowncase == 'color' %}
+          <div class="selector-wrapper">
+            <div class="label__size-guide--wrapper m-t-md">
+              {%- assign optionSelectedValueDowncase = option.selected_value | downcase -%}
+              {%- if hasSizeGuide -%}
+                <button type="button" id="size-guide-modal--label" class="product__size-guide-btn btn btn__text--icon-left btn__text" data-size-guide-modal-trigger>
+                  {% render 'icon-measure-sm' %}
+                  <span>
+                    {{ 'products.product.size_guide' | t }}
+                  </span>
+                </button>
+              {%- endif -%}
+              {%- unless section_settings.show_find_my_fit == false or isGiftCard or isProductModal -%}
+                <div class="product__find-my-fit">
+                  <div class="predict-placement" data-predict-product-key="{{ product.handle }}" data-predict-product-name="{{ product.title | escape }}" data-predict-product-img="{{ product.featured_image | image_url: height: 600 }}"></div>
+                </div>
+              {%- endunless -%}
+            </div>
+            {% unless optionSelectedValueDowncase == 'default title' %}
+              <div class="product-options--wrapper">
+                <div class="product-options" data-product-options>
+                  {% for value in option.values %}
+                    {%- liquid
+                      assign variant_label_state = true
+                      if product.options.size == 1
+                        unless product.variants[forloop.index0].available
+                          assign variant_label_state = false
+                        endunless
+                      endif
+                    -%}
+                    <input type="radio"
+                      class="js-choice input__radio visually-hidden{% unless variant_label_state %} disabled{% endunless %}"
+                      value="{{ value | escape }}"
+                      data-single-option-selector
+                      data-index="option{{ option.position }}"
+                      id="Option-{{ value | escape | handleize }}-{{ option.position }}"
+                      name="options[{{ option.name | escape }}]"
+                      {% if option.selected_value == value %}checked{% endif %}>
+                    <label for="Option-{{ value | escape | handleize }}-{{ option.position }}">
+                      <span class="input__label">{{ value }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endunless %}
+          </div>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  {% endunless %}
+
+  {% comment %}
+    In order for this form to submit, it needs to contain an input with name="id".
+    ProductForm() will automatically create this input (or make sure it has the
+    right value set if it already exists) on form submit based on the
+    currently selected variant. However, if JS is disabled we need a fallback.
+
+    Include a single <select> element which allows users to select all variants
+    as a fallback and present it only when JS is disabled. In addition,
+    make sure to hide the option inputs declared above, which is done with the
+    .js class which only shows its contents when JS is enabled.
+  {% endcomment %}
+  <noscript class="no-js">
+    <div  class="product__primary-select">
+      <select name="id" data-product-select>
+      {% for variant in product.variants %}
+        {% capture variant_selected %}{% if variant == current_variant %}selected=""{% endif %}{% endcapture %}
+        {% capture variant_available %}{% unless variant.available %}disabled=""{% endunless %}{% endcapture %}
+        <option value="{{ variant.id }}" {{ variant_selected }} {{ variant_available }}>{{ variant.title }}</option>
+      {% endfor %}
+      </select>
+    </div>
+  </noscript>
+
+  {% if isGiftCard %}
+    <div class="form__group line-item-property__field">
+      <label for="friends-name">Friend's Name</label>
+      <input required class="required" id="friends-name" type="text" name="properties[Friend's Name]">
+    </div>
+    <div class="form__group line-item-property__field">
+      <label for="friends-email-address">Friend's Email Address</label>
+      <input required class="required" id="friends-email-address" type="email" name="properties[Friend's Email Address]">
+    </div>
+    <div class="form__group line-item-property__field">
+      <label for="subject">Subject</label>
+      <input required id="subject" type="text" name="properties[Subject]">
+    </div>
+    <div class="form__group line-item-property__field">
+      <label for="message">Message</label>
+      <textarea required id="message" name="properties[Message]"></textarea>
+    </div>
+    <div class="form__group line-item-property__field">
+      <label for="my-name">My Name</label>
+      <input required class="required" id="my-name" type="text" name="properties[My Name]" maxlength="50">
+    </div>
+  {% endif %}
+
+  {% comment %}
+    Any input with `name="quantity"` will be picked up by ProductForm and
+    registered as a quantity input. If a quantity input is not included, a
+    default quantity of 1 is assumed.
+  {% endcomment %}
+
+  <input type="hidden" id="Quantity" name="quantity" value="1" min="1">
+
+  {% if settings.show_okendo_fit_indicator and settings.okendo_user_id != blank and isGiftCard == false and isProductModal != true %}
+    <div class="size-fit-indicator" data-size-fit data-user-id={{ settings.okendo_user_id | json }}>
+      <div class="size-fit-indicator__ruler">
+        <div class="size-fit-indicator__markers"><span></span></div>
+        <div class="size-fit-indicator__point"></div>
+
+      </div>
+      <div class="size-fit-indicator__labels">
+        <div class="size-fit-indicator__label size-fit-indicator__label--min">&nbsp;</div>
+        <div class="size-fit-indicator__label size-fit-indicator__label--mid">&nbsp;</div>
+        <div class="size-fit-indicator__label size-fit-indicator__label--max">&nbsp;</div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% comment %}
+    Line Item property inputs with `name="properties[NAME]"` will be picked up
+    by ProductForm and registered as a properties input.
+  {% endcomment %}
+  {% comment %} <label for="Details">{{ 'products.product.details' | t }}</label>
+  <textarea id="Details" name="properties[Details]"></textarea> {% endcomment %}
+
+  <div class="btn-container">
+    <button type="submit" class="btn btn--block btn--add-to-cart" name="add" data-add-to-cart {% if current_variant.available == false or isProductModal %}disabled=""{% endif %}>
+      {% if current_variant.available %}{{ 'products.product.add_to_cart' | t }}{% else %}{{ 'products.product.sold_out' | t }}{% endif %}
+    </button>
+  </div>
+
+  {% if isProductModal %}
+    <div class="text-center"><a href="{{ product.url }}" class="btn__text btn__text--icon-right">View more details{% render 'icon-plus' %}</a></div>
+  {% endif %}
+
+  {%- comment -%}
+    Hidden <select> with product variants for use across Wishlist interface
+  {%- endcomment -%}
+  <select
+    class="hide"
+    aria-label="{{ 'accessibility_labels.select_product_variant' | t }}"
+    data-wishlist-size-selector
+  >
+    {% for variant in product.variants %}
+      <option
+        {% if variant == current_variant %}selected="selected"{% endif %}
+        {% unless variant.available %}disabled="disabled"{% endunless %}
+        value="{{ variant.id }}">
+          {{ variant.title }}
+      </option>
+    {% endfor %}
+  </select>
+
+  {% unless isProductModal %}
+    <div class="btn-container--fixed">
+      <div class="sticky-form container">
+        <div class="btn-container--form-wrapper">
+          <div>
+            <h4 class="product__title">{{ product.title }}</h4>
+            <div class="product__price-container {{ pricingClass }}" data-price-wrapper>
+              <span class="h4 product__compare-at-price" data-product-compare-at-price>{{ product.selected_or_first_available_variant.compare_at_price | money_with_currency }}</span>
+              <span class="h4 product__price" data-product-price>{{ product.selected_or_first_available_variant.price | money_with_currency }}</span>
+            </div>
+          </div>
+          {% unless product.has_only_default_variant %}
+            <div class="product__form-options">
+              {% for option in product.options_with_values %}
+                {%- assign optionNameDowncase = option.name | downcase -%}
+                {% unless optionNameDowncase == 'colour' or optionNameDowncase == 'color' %}
+                  <div class="selector-wrapper">
+                    {% unless optionSelectedValueDowncase == 'default title' %}
+                      <div class="product-options--wrapper">
+                        <div class="product-options" data-product-options>
+                          {% for value in option.values %}
+                            {%- liquid
+                              assign variant_label_state = true
+                              if product.options.size == 1
+                                unless product.variants[forloop.index0].available
+                                  assign variant_label_state = false
+                                endunless
+                              endif
+                            -%}
+                            <input type="radio"
+                              class="js-choice input__radio visually-hidden{% unless variant_label_state %} disabled{% endunless %}"
+                              value="{{ value | escape }}"
+                              data-single-option-selector
+                              data-index="option{{ option.position }}"
+                              name="test--{{ option.name | escape }}"
+                              id="Option-{{ value | escape | handleize }}-{{ option.position }}--sticky"
+                              {% if option.selected_value == value %}checked{% endif %}>
+                            <label for="Option-{{ value | escape | handleize }}-{{ option.position }}--sticky">
+                              <span class="input__label">{{ value }}</span>
+                            </label>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% endunless %}
+                  </div>
+                {% endunless %}
+              {% endfor %}
+            </div>
+          {% endunless %}
+        </div>
+        <button type="submit" class="btn btn--add-to-cart" name="add" data-add-to-cart {% unless current_variant.available %}disabled=""{% endunless %}>
+          {% if current_variant.available %}{{ 'products.product.add_to_cart' | t }}{% else %}{{ 'products.product.sold_out' | t }}{% endif %}
+        </button>
+      </div>
+    </div>
+  {% endunless %}
+{% endform %}
+
+  {% else %}
+
+<form method="post" action="/cart/add" class="shopify-product-form" enctype="multipart/form-data" data-product-form>
+<input type="hidden" class="btn btn--block btn--add-to-cart" name="add" data-add-to-cart>
+</form>
+
+
+<form method="post" action="/cart/add" id="add-all-to-cart-form" accept-charset="UTF-8" class="shopify-product-form" enctype="multipart/form-data" data-product-form data-product-handle="{{ product.handle }}">
+  <input type="hidden" name="form_type" value="product">
+  <input type="hidden" name="utf8" value="✓">
+  
+  <div class="product__title--wrapper">
+    <h1 class="h3 product__title">{{ product.title }}</h1>
+  </div>
+
+  <div class="product__pricing--wrapper">
+    <div class="product__price-container {{ pricingClass }}" data-price-wrapper>
+      <span class="h4 product__compare-at-price" data-product-compare-at-price>{{ product.selected_or_first_available_variant.compare_at_price | money_with_currency }}</span>
+      <span class="h4 product__price" data-product-price>{{ product.selected_or_first_available_variant.price | money_with_currency }}</span>
+    </div>
+    {% unless cart.currency.iso_code == 'NZD' %}
+      {% render 'pay-later', section_settings: section_settings %}
+    {% endunless %}
+  </div>
+
+
+
+<!-- CONTENT OF THE BUNDLE COMES HERE -->
+
+
+
+  <hr>
+
+  <h5>Items Included:</h5>
+        <div class="product__form-options">
+            {% assign collection_handle = product.metafields.custom.bundling_with %}
+            {% if collection_handle %}
+            {% assign collection = collections[collection_handle] %}
+            {% endif %}          
+            
+              {% if collection.products_count > 0 %}
+            
+                  {% for product in collection.products %}
+                    {%- comment %}<locksmith:16d8>{% endcomment -%}
+                      {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: product, subject_parent: collection, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+                    {%- comment %}</locksmith:16d8>{% endcomment -%}
+                    {% if product.available %}
+            
+                          <div style="display: flex; align-items: center; padding-bottom: 1rem;">
+                            <div style="padding: 5px 12px 8px 13px; background-color: var(--color-grey-1); border-radius: 40px;"><span style="font-size: .75rem">1x</span></div>
+                            <div style="padding-left: 0.75rem;"><span style="font-size: .75rem">{{ product.title }}</span></div>
+                          </div>  
+                            <input type="hidden" name="id[]" value="{{ product.variants.first.id }}">
+                            
+            
+                    {% endif %}
+                  {% endfor %}
+            
+              {% endif %}
+
+            <div class="btn-container">
+              <button type="submit" class="btn btn--block btn--add-to-cart" name="add" data-add-to-cart>
+                Add items to bag
+              </button>
+
+             
+
+            </div>
+
+      </div>
+
+
+</form>
+  
+{% endif %}

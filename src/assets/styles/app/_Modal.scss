@@ -1,0 +1,460 @@
+.modal-js--open {
+  overflow: hidden;
+
+  &.sort-menu-modal-js--open {
+    @include media-query($medium-up) {
+      overflow: revert;
+    }
+  }
+}
+
+.modal {
+  position: fixed;
+  z-index: 999998;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  transition-property: opacity, visibility;
+  transition-duration: 0.2s;
+  transition-timing-function: var(--transition-timing-flick);
+  will-change: opacity;
+
+  &[hidden] {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.modal__dialog {
+  background-color: var(--color-white);
+}
+
+.modal__close-button {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: rem(40px);
+  height: rem(40px);
+  border: 0;
+  line-height: 1;
+  cursor: pointer;
+  background-color: transparent;
+  outline: 0;
+  padding: 0;
+
+  .icon {
+    width: rem(24px);
+    height: rem(24px);
+  }
+}
+
+.modal__header {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-xs $spacing-xs $spacing-xs $spacing-sm;
+  background-color: var(--color-white);
+  height: rem(52px);
+  flex-shrink: 0;
+
+  h5 {
+    @extend %smallcaps;
+    margin: 0;
+  }
+
+  .modal__close-button {
+    position: static;
+    transform: none;
+    margin-left: auto;
+  }
+}
+
+// Modified Modals
+
+.modal--sm,
+.modal--md {
+  padding: $spacing-sm;
+  background-color: var(--color-fade);
+
+  .modal__dialog {
+    position: relative;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+    min-height: auto;
+    margin: auto;
+    width: 100%;
+  }
+
+  .modal__content {
+    padding: $spacing-sm;
+  }
+}
+
+.modal--sm {
+  .modal__dialog {
+    max-width: $grid-small;
+  }
+}
+
+.modal--md {
+  .modal__dialog {
+    max-width: $grid-medium;
+  }
+}
+
+.modal--quickshop {
+  background-color: var(--color-fade);
+
+  .modal__dialog {
+    position: relative;
+    min-height: 100%;
+    margin: auto;
+    width: 100%;
+    max-width: rem(800px);
+    transform: translateY(0);
+    transition-property: transform;
+    transition-duration: 0.7s;
+    transition-timing-function: var(--transition-timing-flick);
+
+    @include media-query($medium-up) {
+      min-height: rem(550px);
+    }
+  }
+
+  &[hidden] {
+    .modal__dialog {
+      transform: translateY(100%);
+    }
+  }
+}
+
+.modal--drawer-left {
+  background-color: var(--color-fade);
+
+  .modal__dialog {
+    position: fixed;
+    z-index: 115;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    overflow: auto;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    padding: 0;
+    -webkit-overflow-scrolling: touch;
+    transition: transform 0.2s;
+    transition-timing-function: var(--transition-timing-flick);
+    will-change: transform;
+    box-shadow: 0 4px 100px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+
+    @media screen and (min-width: $drawer-width) {
+      left: -$drawer-width;
+      width: $drawer-width;
+    }
+  }
+
+  .modal__header {
+    border-bottom: 1px solid var(--color-grey-2);
+    padding-right: $spacing-xs;
+  }
+
+  &.modal--visible {
+    .modal__dialog {
+      transform: translateX(100%);
+
+      @media (min-width: $drawer-width) {
+        transform: translateX($drawer-width);
+      }
+    }
+  }
+}
+
+.modal--sort-menu {
+  background-color: var(--color-fade);
+
+  @include media-query($medium-up) {
+    position: absolute;
+    z-index: 98;
+    top: 100%;
+    right: 0;
+    left: unset;
+    height: unset;
+    width: auto;
+    display: block;
+    background-color: transparent;
+    max-height: calc(100vh - 56px);
+    border: none;
+    border-bottom: 1px solid var(--color-light-grey);
+  }
+
+  .modal__dialog {
+    @include media-query($small-down) {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      min-height: 0;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      transform: translateY(100%);
+      transition: transform 0.2s var(--transition-timing-flick);
+      box-shadow: 0 4px 100px rgba(0, 0, 0, 0.1);
+    }
+
+    @include media-query($medium-up) {
+      position: static;
+      overflow: hidden;
+      display: block;
+      margin-right: auto;
+      margin-left: auto;
+      padding: 0;
+      width: 100%;
+      max-width: $page-width;
+      border: 1px solid var(--color-grey-2);
+    }
+  }
+
+  .modal__header {
+    justify-content: space-between;
+    padding: $spacing-sm 0 $spacing-sm $spacing-sm;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+
+    @include media-query($medium-up) {
+      display: none;
+    }
+  }
+
+  &.modal--visible {
+    .modal__dialog {
+      transform: translateY(0);
+    }
+  }
+}
+
+.modal--product-sizes,
+.modal--wishlist {
+  background-color: var(--color-fade);
+
+  .modal__dialog {
+    box-shadow: 0 4px 100px rgba(0, 0, 0, 0.1);
+  }
+
+  .modal__header {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  &.modal--visible {
+    .modal__dialog {
+      transform: translateY(0);
+      transition: transform 0.3s var(--transition-timing-flick);
+    }
+  }
+
+  [data-product-sizes] {
+    width: 100%;
+    padding: $spacing-sm 0 $spacing-lg;
+  }
+
+  .product-card__form {
+    position: static;
+  }
+}
+
+.modal--product-sizes {
+  .modal__dialog {
+    width: 100%;
+    margin-top: auto;
+    background-color: var(--color-white);
+    transform: translateY(100%);
+    transition: transform 0.15s var(--transition-timing-flick);
+  }
+}
+
+.modal--wishlist {
+  .modal__dialog {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+  }
+
+  .modal__content {
+    padding: $spacing-sm;
+  }
+
+  label {
+    color: var(--color-grey-5);
+  }
+
+  select {
+    width: 100%;
+  }
+
+  select,
+  .modal__meta {
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.modal--pay-later,
+.modal--find-in-store,
+.modal--size-guide {
+  background-color: var(--color-fade);
+
+  .modal__dialog {
+    position: fixed;
+    right: -100%;
+    top: 0;
+    bottom: 0;
+    z-index: 115;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--color-white);
+    -webkit-overflow-scrolling: touch;
+    transition: transform 0.2s;
+    transition-timing-function: var(--transition-timing-flick);
+    transform: translateX($drawer-width);
+
+    @media screen and (min-width: $drawer-width) {
+      right: -$drawer-width;
+      width: $drawer-width;
+    }
+
+    @include media-query($small-down) {
+      right: rem(-328px);
+      width: rem(328px);
+      transform: translateX(rem(328px));
+    }
+  }
+
+  .modal__header {
+    border-bottom: 1px solid var(--color-grey-2);
+    margin-bottom: $spacing-lg;
+    padding: $spacing-sm;
+  }
+
+  .modal__content {
+    padding: 0 $spacing-sm;
+  }
+
+  &.modal--visible {
+    .modal__dialog {
+      transform: translateX(-100%);
+      box-shadow: 0 4px 100px rgb(0 0 0 / 5%);
+
+      @media screen and (min-width: $drawer-width) {
+        transform: translateX(-$drawer-width);
+      }
+
+      @include media-query($small-down) {
+        transform: translateX(-328px);
+      }
+    }
+  }
+}
+
+.modal--currency {
+  background-color: var(--color-fade);
+
+  @include media-query($large-up) {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: rem(216px);
+    height: auto;
+    transform: unset;
+  }
+
+  &::before {
+    @include media-query($large-up) {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--color-fade);
+    }
+  }
+
+  .modal__header {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+
+    @include media-query($large-up) {
+      box-shadow: none;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    h5 {
+      @include media-query($large-up) {
+        font-size: rem(12px);
+      }
+    }
+  }
+
+  .modal__close-button {
+    @include media-query($large-up) {
+      @include visually-hidden;
+    }
+  }
+
+  .modal__dialog {
+    width: 100%;
+    margin-top: auto;
+    background-color: var(--color-white);
+    transform: translateY(100%);
+    transition: transform 0.15s var(--transition-timing-flick);
+    box-shadow: 0 4px 100px rgba(0, 0, 0, 0.1);
+
+    @include media-query($large-up) {
+      transform: unset;
+      height: auto;
+      border: 1px solid var(--color-grey-2);
+      padding: 0 $spacing-sm;
+    }
+  }
+
+  &.modal--visible {
+    .modal__dialog {
+      transform: translateY(0);
+      transition: transform 0.3s var(--transition-timing-flick);
+    }
+  }
+}
+
+.size-guide-modal__content {
+  padding: 0 $spacing-sm;
+
+  p,
+  ul,
+  ol {
+    font-size: rem(12px);
+    line-height: rem(20px);
+  }
+}
+
+.pay-later-tabs__content {
+  p,
+  ul,
+  ol {
+    font-size: rem(12px);
+    line-height: rem(20px);
+  }
+}

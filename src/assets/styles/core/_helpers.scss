@@ -1,0 +1,159 @@
+// Set a default focus state
+* {
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-outline);
+    outline-offset: 2px;
+  }
+}
+
+.clearfix {
+  @include clearfix;
+}
+
+.visually-hidden {
+  @include visually-hidden;
+}
+
+.js-focus-hidden:focus {
+  outline: none;
+}
+
+.label-hidden {
+  @include visually-hidden;
+
+  // No placeholders, so force show labels
+  .no-placeholder & {
+    @include visually-shown;
+  }
+}
+
+.visually-shown {
+  @include visually-shown;
+}
+
+// Only show when JS is not supported
+.no-js:not(html) {
+  display: none;
+
+  .no-js & {
+    display: block;
+  }
+}
+
+// Only show when JS is supported
+.js {
+  .no-js & {
+    display: none;
+  }
+}
+
+// Only show when browser cookies are not supported
+.supports-no-cookies:not(html) {
+  display: none;
+
+  .supports-no-cookies & {
+    display: block;
+  }
+}
+
+// Only show when browser cookies are supported
+.supports-cookies {
+  .supports-no-cookies & {
+    display: none;
+  }
+}
+
+// Skip to content button
+// Overrides .visually-hidden when focused
+.skip-link:focus {
+  @include visually-shown(absolute);
+  z-index: 10000;
+  padding: $spacing-xs;
+  color: var(--color-black);
+  transition: none;
+}
+
+.hide {
+  /* stylelint-disable-next-line declaration-no-important */
+  display: none !important;
+}
+
+// Visually hide the element but maintain the layout
+.hidden {
+  visibility: hidden;
+}
+
+// The faded overlay when the drawer is showing
+.fader {
+  z-index: 112;
+  top: 0;
+  left: 0;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-fade);
+  opacity: 0;
+  visibility: hidden;
+  cursor: pointer;
+  transition: opacity 0.2s, visibility 0.2s;
+  transition-timing-function: var(--transition-timing-flick);
+}
+
+.list-inline {
+  list-style: none;
+  padding: 0;
+
+  li {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+.btn-none {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+img {
+  transition: opacity 0.3s ease;
+
+  /* stylelint-disable selector-no-qualifying-type */
+  &.lazyload {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &.lazyloading {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &.lazyloaded {
+    visibility: visible;
+    opacity: 1;
+  }
+  /* stylelint-enable  selector-no-qualifying-type */
+}
+
+.scroll-lock {
+  overflow: hidden;
+}
+
+%list-none {
+  list-style: none;
+  padding: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+}
+
+.list-none {
+  @extend %list-none;
+}
+
+@mixin list-none {
+  @extend %list-none;
+}

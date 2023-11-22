@@ -1,0 +1,145 @@
+.article__breadcrumbs {
+  .breadcrumbs__arrow {
+    display: block;
+  }
+}
+
+.article__category {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0 0 $spacing-xs;
+  padding: 0;
+  list-style: square inside;
+  font-size: rem(10px);
+  color: var(--color-grey-5);
+
+  li {
+    margin-left: $spacing-xs;
+
+    &:first-child {
+      margin-left: 0;
+      list-style: none;
+    }
+  }
+
+  a {
+    margin: rem(-4px) 0;
+    padding: rem(4px) 0;
+    color: var(--color-grey-5);
+    text-decoration: none;
+    @include link-style(var(--color-grey-5), transparent, var(--color-grey-5), var(--color-grey-5));
+  }
+}
+
+.article__header {
+  padding-top: $spacing-lg;
+
+  @include media-query($large-up) {
+    padding-top: $spacing-xxl;
+    padding-bottom: $spacing-xxxl;
+  }
+}
+
+.article__title {
+  @include media-query($medium-up) {
+    font-size: rem(26px);
+    line-height: 1.24;
+    letter-spacing: rem(-0.5px);
+  }
+}
+
+.article__featured-image {
+  margin-bottom: $spacing-xxl;
+
+  @include media-query($large-up) {
+    margin-bottom: $spacing-xxxl;
+  }
+
+  .article--no-content & {
+    margin-bottom: 0;
+  }
+
+  .aspect-ratio--landscape {
+    padding-top: 100%;
+
+    @include media-query($medium-up) {
+      padding-top: 47.227%;
+    }
+  }
+
+  img {
+    display: block;
+  }
+}
+
+.article__content {
+  p {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  img {
+    display: block;
+    margin-top: $spacing-xxl;
+    margin-bottom: $spacing-xxl;
+
+    @include media-query($large-up) {
+      width: calc(100% + #{rem(230px)});
+      margin: $spacing-xxxl rem(-115px);
+    }
+  }
+}
+
+.article__comments {
+  margin-top: $spacing-xxl;
+
+  @include media-query($medium-up) {
+    margin-top: $spacing-xxxl;
+  }
+
+  &.hide-top-margin {
+    margin-top: 0;
+  }
+}
+
+.article__comments-display,
+.article__comments-form {
+  padding-top: $spacing-lg;
+  border-top: 1px solid var(--color-grey-1);
+
+  @include media-query($medium-up) {
+    padding-top: rem(64px);
+  }
+}
+
+.article__comments-display {
+  margin-bottom: $spacing-xxl;
+
+  @include media-query($medium-up) {
+    margin-bottom: rem(64px);
+  }
+
+  .form__success {
+    margin-top: 0;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.article__comments-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article__comment {
+  margin-bottom: $spacing-md;
+  padding: $spacing-md;
+  background: var(--color-grey-1);
+}
+
+.article__comment-author {
+  @extend %h5;
+  margin-bottom: 0;
+}

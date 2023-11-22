@@ -1,0 +1,69 @@
+{% if shop.metafields.okendo.settings.isWidgetPlusEnabled == true %}
+	{% assign renderWidgetPlusContent = true %}
+{% elsif shop.metafields.okendo.settings.isWidgetPlusAdminEnabled == true and theme.role == "unpublished" %}
+	{% if request.design_mode or theme.role == "unpublished" %}
+		{% assign renderWidgetPlusContent = true %}
+	{% endif %}
+{% endif %}
+
+{% if product != blank %}
+    {% capture product_data_attribute %}data-oke-reviews-product-id="shopify-{{ product.id }}"{% endcapture %}
+{% endif %}
+
+{% if renderWidgetPlusContent == true %}
+  {%- if shop.metafields.okendo.WidgetPreRenderBodyStyleTags != blank -%}
+      {{- shop.metafields.okendo.WidgetPreRenderBodyStyleTags }}
+  {%- endif -%}
+  {% if product.metafields.okendo.summaryData.reviewCount > 0 %}
+    <div class="oke-widget-container">
+    <div
+        data-oke-widget
+        {{ product_data_attribute }}
+    >
+        {{ product.metafields.okendo.ReviewsWidgetSnippet }}
+    </div>
+    </div>
+    {% else %}
+    <div class="oke-empty-widget-container">
+      	<div class="container okeReviews-custom-emptyWidget">
+          	<h2>Be the first to Review</h2>
+              <div data-oke-star-rating="" data-oke-all-reviews="true"></div>
+          <p class="okeReviews-emptyWidget-customText">our overall rating is <span id="okeRevews-emptyWidget-aggregate"></span> out of 5 stars from<br>
+            over <span id="okeReviews-emptyWidget-reviewsTotal"></span>.</p>
+          	<a class="okeReviews-emptyWidget-button" href="https://okendo.reviews/?subscriberId=7f233e04-f43b-4a37-90dd-479d6a9b5014&amp;productId=shopify-{{ product.id }}" target="_blank">Write a Review</a>
+      	</div>
+    </div>
+    {% endif %}
+{% else %}
+    {% if product.metafields.okendo.summaryData.reviewCount > 0 %}
+    	<div class="container">
+    		<div class="okeReviews-widget-holder">
+    			<div class="okeReviews-widget" data-oke-reviews-widget data-oke-reviews-product-id="shopify-{{ product.id }}">{{ product.metafields.okendo.ProductReviewsWidgetSnippet }}</div>
+    		</div>
+    	</div>
+    {% else %}
+    <div class="container">
+      <div class="okeReviews-emptyWidget-holder">
+      	<div class="container okeReviews-custom-emptyWidget">
+          <h2>Be the first to Review</h2>
+          <div data-oke-reviews-version="2.11.0" class="okeReviews okeReviews--theme okeReviews-emptyWidget-starRating">
+    		    <div class="okeReviews-reviewsSummary js-okeReviews-reviewsSummary" data-oke-ga-click-action="Star Rating Summary Click">
+              <div class="okeReviews-reviewsSummary-starRating">
+                <span class="okeReviews-starRating">
+                  <span class="okeReviews-a11yText">{{ product.metafields.okendo.summaryData.reviewAverageValue | default: 0 }} out of 5</span>
+                  <span class="okeReviews-starRating-indicator" role="presentation">
+                    <span class="okeReviews-starRating-indicator-layer"></span>
+                    <span class="okeReviews-starRating-indicator-layer okeReviews-starRating-indicator-layer--foreground" style="width: {{ product.metafields.okendo.summaryData.reviewAverageValue | times: 20 }}%"></span>
+                  </span>
+                </span>
+              </div>
+    		    </div>
+          </div>
+          <p class="okeReviews-emptyWidget-customText">our overall rating is <span id="okeRevews-emptyWidget-aggregate"></span> out of 5 stars from<br>
+          over <span id="okeReviews-emptyWidget-reviewsTotal"></span>.</p>
+          <a class="okeReviews-emptyWidget-button" href="https://okendo.reviews/?subscriberId=017fa11f-9259-493c-8cc1-0424b3da4117&productId=shopify-{{ product.id }}" target="_blank">Write a Review</a>
+      	</div>
+      </div>
+    </div>
+    {% endif %}
+{% endif %}

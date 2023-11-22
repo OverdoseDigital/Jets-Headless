@@ -1,0 +1,140 @@
+.product-single__store-availability-container {
+  margin-bottom: $spacing-md;
+}
+
+.store-availability-small-text {
+  font-size: 1em;
+}
+
+.store-availability-information {
+  display: flex;
+  padding: $spacing-sm;
+}
+
+.store-availability-information__title {
+  margin-bottom: 0;
+}
+
+.store-availability-information__stock {
+  margin-bottom: 0;
+}
+
+.store-availability-container .icon {
+  width: rem(16px);
+  height: rem(16px);
+  margin-right: rem(10px);
+}
+
+.store-availability-container .icon-tick {
+  color: var(--color-signal-success);
+}
+
+.store-availability-container .icon-cross {
+  width: rem(18px);
+  height: rem(18px);
+  margin: 0;
+  color: var(--color-signal-error);
+}
+
+.store-availability-container .store-availability-list__stock .icon {
+  margin: 0 rem(2px) rem(3px) 0;
+}
+
+.store-availability-container .store-availability-list__confirm-address .icon-unverified-address {
+  margin: 0 0 rem(3px);
+}
+.store-availability-container .store-availability-list__confirm-address .icon-unverified-address__exclamation {
+  fill: var(--color-black);
+}
+.store-availability-container .store-availability-list__confirm-address .icon-unverified-address__circle {
+  stroke: var(--color-black);
+  fill: transparent;
+}
+
+.store-availabilities__intro,
+.store-availabilities__store-selector {
+  padding: 0 rem(16px);
+  margin-bottom: 32px;
+}
+
+.store-availabilities__intro,
+.store-availability-list__address {
+  font-style: normal;
+
+  p {
+    @extend %small;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.store-availability-list__address,
+.store-availabilities .product__availability {
+  margin-bottom: rem(24px);
+}
+
+.store-availabilities-more__header {
+  display: flex;
+  justify-content: space-between;
+  padding: rem(16px) rem(24px);
+}
+
+.store-availabilities-more__product-title {
+  font-size: 1em;
+  text-transform: none;
+  margin-bottom: 0;
+  letter-spacing: 0;
+}
+
+.store-availabilities-list {
+  list-style: none;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  overflow-y: auto;
+  padding: 0 rem(20px);
+}
+
+.store-availability-list__item {
+  margin-bottom: rem(16px);
+
+  &::after {
+    content: '';
+    display: block;
+    padding: rem(16px) 0 0;
+    border-bottom: 1px solid var(--color-grey-2);
+  }
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.store-availability-list__phone-maps {
+  a {
+    @extend %small;
+    text-decoration: none;
+    margin-right: rem(32px);
+    vertical-align: middle;
+
+    @include media-query($small-down) {
+      display: block;
+      margin-bottom: rem(8px);
+    }
+  }
+}
+
+.store-availability-list__location {
+  font-size: 1em;
+  margin-bottom: rem(8px);
+}
+
+.store-availability-list__stock {
+  margin-top: rem(8px);
+  margin-bottom: rem(16px);
+}
+
+.store-availability-list__phone {
+  margin-bottom: 0;
+}

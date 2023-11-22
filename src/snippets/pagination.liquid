@@ -1,0 +1,72 @@
+{%- comment -%}
+  show_prev_next: true will display next/previous arrows
+  include_show_all: true will show the link to show all products
+  {% render 'pagination', paginate: paginate, show_prev_next: true %}
+{%- endcomment -%}
+
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination-nav" aria-label="{{ 'accessibility_labels.pagination_label' | t }}">
+    <ol class="pagination">
+
+      {% if show_prev_next %}
+        {%- if paginate.previous -%}
+          <li>
+            <a class="arrow-nav" href="{{ paginate.previous.url }}" aria-label="{{ 'accessibility_labels.previous_page' | t }}">
+              <span aria-hidden="true">{% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}</span>
+            </a>
+          </li>
+        {%- else -%}
+          <li class="disabled" aria-label="{{ 'accessibility_labels.previous_page_disabled' | t }}">
+            <span class="arrow-nav">
+              <span aria-hidden="true">{% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}</span>
+            </span>
+          </li>
+        {%- endif -%}
+      {% endif %}
+
+      {%- for part in paginate.parts -%}
+        {%- if part.is_link -%}
+          <li>
+            <a href="{{ part.url }}" aria-label="{{ 'accessibility_labels.page' | t }} {{ part.title }}">
+              {{ part.title }}
+            </a>
+          </li>
+        {%- else -%}
+          {%- if part.title == paginate.current_page -%}
+            <li class="active" aria-current="page" aria-label="{{ 'accessibility_labels.current_page' | t }} {{ part.title }}">
+              <span>{{ part.title }}</span>
+            </li>
+          {%- else -%}
+            <li aria-label="{{ 'accessibility_labels.page' | t }} {{ part.title }}">
+              <span class="dots">{{ part.title }}</span>
+            </li>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {% if show_prev_next %}
+        {%- if paginate.next -%}
+          <li>
+            <a class="arrow-nav" href="{{ paginate.next.url }}" aria-label="{{ 'accessibility_labels.next_page' | t }}">
+              <span aria-hidden="true">{% render 'use-svg', title: 'Chevron right icon', svg_id: 'iconChevronRight', class: 'icon icon-chevron-right', viewbox: '0 0 24 24' %}</span>
+            </a>
+          </li>
+        {%- else -%}
+          <li class="disabled" aria-label="{{ 'accessibility_labels.next_page_disabled' | t }}">
+            <span class="arrow-nav">
+              <span aria-hidden="true">{% render 'use-svg', title: 'Chevron right icon', svg_id: 'iconChevronRight', class: 'icon icon-chevron-right', viewbox: '0 0 24 24' %}</span>
+            </span>
+          </li>
+        {%- endif -%}
+      {% endif %}
+
+    </ol>
+    {% if include_show_all %}
+      {% if request.page_type == 'blog' %}
+        <div class="pagination__show-all"><a href="{{ blog.url }}{% if current_tags %}/tagged/{{ current_tags.first | handle }}{% endif %}?view=all" class="btn__text btn__link">{{ 'blogs.general.show_all_posts' | t: count: paginate.items }}</a></div>
+      {% else %}
+        <div class="pagination__show-all"><button type="button" class="btn__text btn__link">{{ 'collections.general.show_all_products_html' | t: count: paginate.items }}</button></div>
+      {% endif %}
+    {% endif %}
+  </nav>
+{%- endif -%}

@@ -1,0 +1,29 @@
+{%- liquid
+  assign clean_canonical_path = canonical_path
+  if canonical_path == '/'
+    assign clean_canonical_path = ''
+  endif
+
+  assign default_domain = nil
+
+  for i in (0..regionZeroIndexSize)
+    assign region_domain = allRegionDomains[i]
+    assign region_countries = allRegionCountries[i] | split: ','
+    assign hreflang_url = region_domain | append: clean_canonical_path
+    if allRegionDefaults[i] == 'true'
+      assign default_domain = region_domain
+    endif
+
+    capture link_tags
+      echo link_tags
+      for country in region_countries
+        echo '<link rel="alternate" hreflang="en-' | append: country | append: '" href="' | append: hreflang_url | append: '" />'
+      endfor
+    endcapture
+  endfor
+
+  echo link_tags
+-%}
+
+<link rel="alternate" hreflang="en" href="{{ default_domain | append: canonical_path }}" />
+<link rel="alternate" hreflang="x-default" href="{{ default_domain | append: canonical_path }}" />

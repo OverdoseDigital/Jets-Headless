@@ -1,0 +1,163 @@
+{%- comment %}
+  Parameters
+  video: Liquid object or string - Shopify media object or URL.
+  autoplay (optional): boolean - Defaults to false, whether the video should play automatically.
+  controls (optional): boolean - Defaults to true, whether video controls should be shown.
+  loop (optional): boolean - Defaults to true, whether the video should re-play after completion.
+  muted (optional): boolean - Defaults to true, whether the video should have sound on.
+  title (optional): string - Text for the video aria-label/title attribute. Defaults to media alt where available.
+  poster (optional): Shopify or Accentuate image object - Recommended, preview image shown before video plays.
+  poster_width (optional): number|string - Defaults to 600, width of the video poster image.
+  video_class (optional): string - Class(es) for the video element.
+  aspect_ratio (optional): string - Defaults to empty, which uses image intrinsic aspect ratio. Do not use 'natural' on MP4/WebM files
+{% endcomment -%}
+
+{%- liquid
+  assign poster = poster | default: blank
+  assign poster_width = poster_width | default: 600 | plus: 0
+  assign autoplay = autoplay | default: false, allow_false: true
+  assign controls = controls | default: true, allow_false: true
+  assign title = title | default: video.alt | escape
+
+  comment
+    Default options for videos included from a section
+  endcomment
+  if video.type == 'youtube' or video.type == 'vimeo'
+    assign loop = loop | default: false, allow_false: true
+    assign muted = muted | default: false, allow_false: true
+
+    if aspect_ratio == blank
+      assign aspect_ratio = '16-9'
+    endif
+
+  comment
+    Default options for videos included from product media
+  endcomment
+  else
+    assign loop = loop | default: true, allow_false: true
+    assign muted = muted | default: true, allow_false: true
+  endif
+
+  if autoplay
+    assign muted = true
+  endif
+
+  assign autoplay_ext = 0
+  if autoplay
+    assign autoplay_ext = 1
+  endif
+  assign muted_ext = 0
+  if muted
+    assign muted_ext = 1
+  endif
+  assign controls_ext = 0
+  if controls
+    assign controls_ext = 1
+  endif
+  assign loop_ext = 0
+  if loop
+    assign loop_ext = 1
+  endif
+
+  assign video_aspect_ratio = video.aspect_ratio | default: poster.aspect_ratio
+-%}
+
+{%- unless video == blank -%}
+  {% capture video_markup %}
+    {%- if video.media_type == 'video' -%}
+      {%- liquid
+        assign image_size = poster_width | append: 'x'
+        assign class = 'component-video__video'
+        if video_class
+          assign class = class | append: ' ' | append: video_class
+        endif
+      -%}
+
+      {{ video | video_tag:
+        class: class,
+        data-lazyvids: autoplay,
+        preload: 'none',
+        controls: controls,
+        muted: muted,
+        loop: loop,
+        aria-label: title,
+        width: video.preview_image.width,
+        height: video.preview_image.height,
+        image_size: image_size,
+        disablepictureinpicture: 'true',
+        disableremoteplayback: 'true',
+        x-webkit-airplay: 'deny'
+      }}
+    {%- elsif video.media_type == 'external_video' -%}
+      {%- liquid
+        assign class = 'component-video__video lazyload'
+        if video_class
+          assign class = class | append: ' ' | append: video_class
+        endif
+        assign aspect_value = video.aspect_ratio | append: ' / 1;'
+        assign aspect_style = 'aspect-ratio: ' | append: aspect_value
+      -%}
+
+      {{ video | external_video_url:
+        autoplay: autoplay_ext,
+        controls: controls_ext,
+        muted: muted_ext,
+        mute: muted_ext,
+        loop: loop_ext | external_video_tag:
+        class: class,
+        id: video.external_id,
+        loading: 'lazy',
+        title: title,
+        style: aspect_style
+      }}
+    {%- elsif video contains '.mp4' or video contains '.webm' -%}
+      {%- liquid
+        assign file_type = video | split: '?' | first | split: '.' | last
+
+        if poster.media_type == 'image'
+          assign width = poster.width
+          assign height = poster.height
+          assign poster_url = poster | image_url: width: poster_width
+          if poster.cloudinary_src != blank
+            assign poster_url = poster.cloudinary_src | append: 'w_' | append: poster_width
+          endif
+        endif
+      -%}
+
+      <video class="component-video__video{% if video_class %} {{ video_class }}{% endif %}"
+        {% if imgIndex != false %}data-media-index="{{ imgIndex }}"{% endif %}
+        {% if mediaId != false %}data-media-id="{{ mediaId }}"{% endif %}
+        src="{{ video }}"
+        type="video/{{ file_type }}"
+        preload="none"
+        {% if poster_url %}poster="{{ poster_url }}"{% endif %}
+        {% if autoplay %}data-lazyvids{% endif %}
+        {% if controls %}controls{% endif %}
+        {% if muted %}muted{% endif %}
+        {% if loop %}loop{% endif %}
+        {% if title %}aria-label={{ title }}{% endif %}
+        {% if width %}width="{{ width }}"{% endif %}
+        {% if height %}height="{{ height }}"{% endif %}
+        playsinline
+        disablepictureinpicture
+        disableremoteplayback
+        x-webkit-airplay="deny"
+      ></video>
+    {%- elsif video.type == 'youtube' -%}
+      <iframe src="//www.youtube.com/embed/{{ video.id }}?rel=0{% if autoplay %}&autoplay=1{% endif %}{% unless controls %}&controls=0{% endunless %}{% if loop %}&loop=1{% endif %}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    {%- elsif video.type == 'vimeo' -%}
+      <iframe src="https://player.vimeo.com/video/{{ video.id }}?byline=0&portrait=0{% if autoplay %}&background=1{% endif %}{% unless controls %}&controls=0{% endunless %}{% if loop %}&loop=1{% endif %}{% if muted %}&muted=1{% endif %}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    {%- endif -%}
+  {% endcapture %}
+
+  {%- if aspect_ratio != blank -%}
+    <div class="component-video__wrapper aspect-ratio aspect-ratio--{{ aspect_ratio }} {% if video_aspect_ratio == blank and aspect_ratio == 'natural' %}aspect-ratio--no-aspect{% endif %}"
+    {% if aspect_ratio == 'natural' and video_aspect_ratio != blank %}style="padding-top: {{ 100 | divided_by: video_aspect_ratio | append: '%' }}"{% endif %}>
+  {%- endif -%}
+      {{ video_markup }}
+  {%- if aspect_ratio != blank -%}
+    </div>
+  {%- endif -%}
+{%- else -%}
+  {{ 'image' | placeholder_svg_tag: 'component-video__video placeholder-svg' }}
+{%- endunless -%}

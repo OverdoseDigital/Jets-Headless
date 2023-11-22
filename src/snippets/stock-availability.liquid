@@ -1,0 +1,36 @@
+{% if settings.display_stock_availability %}
+  {%- liquid
+    if product.selected_or_first_available_variant.inventory_management == "shopify" and product.selected_or_first_available_variant.inventory_policy == "continue"
+      assign stockLevel = 'in-stock'
+      assign stockLevelString = 'products.product.in_stock' | t
+    else
+      if settings.stock_availability_threshold != blank
+        if product.selected_or_first_available_variant.inventory_quantity > 0
+          assign inventoryQuantityThreshold = settings.stock_availability_threshold | times: 1
+          if product.selected_or_first_available_variant.inventory_quantity > inventoryQuantityThreshold
+            assign stockLevel = 'in-stock'
+            assign stockLevelString = 'products.product.in_stock' | t
+          else
+            assign stockLevel = 'low-stock'
+            assign stockLevelString = 'products.product.low_stock' | t
+          endif
+        else
+          assign stockLevel = 'no-stock'
+          assign stockLevelString = 'products.product.out_of_stock' | t
+        endif
+      else
+        if product.selected_or_first_available_variant.inventory_quantity > 0
+          assign stockLevel = 'in-stock'
+          assign stockLevelString = 'products.product.in_stock' | t
+        else
+          assign stockLevel = 'no-stock'
+          assign stockLevelString = 'products.product.out_of_stock' | t
+        endif
+      endif
+    endif
+  -%}
+  <div class="product__availability product__availability--{{ stockLevel }}">
+    <div class="product__availability-icon"></div>
+    <span>{{ stockLevelString }}</span>
+  </div>
+{% endif %}

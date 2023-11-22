@@ -1,0 +1,46 @@
+{% assign highlight_count = 0 %}
+{% capture product_highlights %}
+  {% for i in (1..7) %}
+    {% assign isBlockHighlight = false %}
+    {% assign blockHighlightName = '' %}
+    {% assign highlight = 'highlight_' | append: i %}
+    {% if product.metafields.highlights[highlight] %}
+      {% assign highlight_count = highlight_count | plus: 1 %}
+
+      {% for block in section_blocks %}
+        {% if block.type == 'product_highlight' %}
+          {% if product.metafields.highlights[highlight] == block.settings.title %}
+            {% assign isBlockHighlight = true %}
+            {% assign blockHighlightName = block.settings.title %}
+            {% capture blockHighlightSvg %}
+              {{ block.settings.svg_code }}
+            {% endcapture %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      <div class="product-highlights__highlight">
+        {% if isBlockHighlight %}
+          <div class="highlight__icon">
+            {{ blockHighlightSvg }}
+          </div>
+          {{ blockHighlightName }}
+        {% else %}
+          <div class="highlight__icon">
+            {% render 'highlights-icons', highlight_name: product.metafields.highlights[highlight] %}
+          </div>
+          {{ product.metafields.highlights[highlight] }}
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+
+{% if highlight_count > 0 %}
+  <div class="product-highlights" data-highlight-count="{{ highlight_count }}">
+    <header class="product-highlights__header"><h6>{{ 'products.product.product_highlights' | t }}</h6></header>
+    <div class="product-highlights__highlights {% if highlight_count > 3 %}product-highlights__highlights--slider{% endif %}">
+      {{ product_highlights }}
+    </div>
+  </div>
+{% endif %}

@@ -1,0 +1,96 @@
+{%- liquid
+  assign has_banner_image = false
+  assign bannerTextColor = templateObject.metafields.banner.banner_image_text_color | default: '#ffffff'
+  assign bannerImageMob = templateObject.metafields.banner.banner_image_mobile
+  assign bannerImageDesk = templateObject.metafields.banner.banner_image_desktop
+
+  if templateObject.image != blank or bannerImageMob != blank or bannerImageDesk != blank
+    assign has_banner_image = true
+    if bannerImageMob != blank
+      assign mobile_image = bannerImageMob
+    else
+      assign mobile_image = templateObject.image
+    endif
+    if bannerImageDesk != blank
+      assign desktop_image = bannerImageDesk
+    else
+      assign desktop_image = templateObject.image
+    endif
+  endif
+
+  if has_banner_image
+    assign banner_image = mobile_image
+    assign banner_image_desktop = desktop_image
+    capture banner_img_alt
+      if mobile_image.alt != blank
+        echo mobile_image.alt
+      elsif desktop_image.alt != blank
+        echo desktop_image.alt
+      else
+        echo templateObject.title
+      endif
+    endcapture
+  endif
+-%}
+
+<div class="common-banner">
+  {%- if has_banner_image -%}
+    <div class="common-banner__wrapper">
+      {%- render 'component-picture',
+        image_mobile: banner_image,
+        image_desktop: banner_image_desktop,
+        img_alt: banner_img_alt,
+        max_width_mobile: 960,
+        lazy: false,
+        paddingTopManual: 130,
+        paddingTopDesktopManual: 34
+      -%}
+      <div class="common-banner__container text-center medium-up--text-center justify-center desktop-justify-center">
+        <header class="common-banner__content">
+          <h1 class="h2">{{ templateObject.title }}</h1>
+          {% if templateObject.metafields.banner.short_description != blank %}
+            <p class="paragraph-large">{{ templateObject.metafields.banner.short_description | strip_html }}</p>
+          {% endif %}
+        </header>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="container">
+    {% render 'breadcrumbs' %}
+
+    <header>
+      <div class="page-header">
+        {% if templateObject == search %}
+          {% if search.performed %}
+            <h1 class="h3" data-search-results-header>{{ 'general.search.heading' | t: count: search.results_count }}: {{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}</h1>
+          {% else %}
+            <h1 class="h3">{{ 'general.search.title' | t }}</h1>
+          {% endif %}
+      {% else %}
+          {% if settings.ss_enable and collection.handle and collection.handle == settings.ss_collection_handle %}
+            <div id="searchspring-header"></div>
+          {% else %}
+         	 <{%- if has_banner_image -%}h3{% else %}h1 class="h3"{% endif %}>{{ templateObject.title }}</{%- if has_banner_image -%}h3{% else %}h1{% endif %}>
+          {% endif %}
+        {% endif %}
+        {% if settings.ss_enable %}
+        	<div id="searchspring-header-count"></div>
+        {% else %}
+          <p class="small muted" data-products-count>{{ 'collections.general.products_count_html' | t: count: paginate_items }}</p>
+          {% if templateObject.metafields.seafolly.short_description != blank and has_banner_image == false %}
+            <div class="rte">
+              {{ templateObject.metafields.seafolly.short_description }}
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </header>
+  </div>
+</div>
+
+<style>
+  .common-banner__wrapper {
+    color: {{ bannerTextColor }};
+  }
+</style>

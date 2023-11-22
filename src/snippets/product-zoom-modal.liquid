@@ -1,0 +1,91 @@
+<div class="product-media-popup">
+  <div class="{% if product.media.size > 1 or includesVideo == true %}product__slideshow-zoom{% else %}product__singular-zoom{% endif %}">
+    <button
+      data-media-exit-fullscreen
+      class="btn__icon"
+      aria-label="{{ 'products.product.exit_fullscreen' | t }}"
+      title="{{ 'products.product.exit_fullscreen' | t }}"
+    >
+      {% render 'icon-cross' %}
+    </button>
+
+	  {% assign isVideoGenerated = false %}
+	  {% capture productVideoMain %}
+		  <div class="product__media-item" data-product-video-wrapper data-slide-index="{{ videoPosition }}">
+			  {% assign mediaId = product.id | append: '-video' %}
+			  {%- render 'component-video',
+			  video: videoUrl,
+			  autoplay: true,
+			  controls: false,
+			  aspect_ratio: 'portrait',
+			  imgIndex: videoPosition,
+			  mediaId: mediaId
+			  -%}
+		  </div>
+	  {% endcapture %}
+    {% for media in product.media %}
+		  {% assign mediaCount = forloop.index0 %}
+		  {% unless isVideoLast == true %}
+			  {% if includesVideo and isVideoGenerated == false and mediaCount == videoPosition %}
+				  {{ productVideoMain }}
+				  {% assign isVideoGenerated = true %}
+			  {% endif %}
+			  {% if isVideoGenerated == true %}
+			    {% assign mediaCount = mediaCount | plus: 1 %}
+			  {% endif %}
+		  {% endunless %}
+      {% case media.media_type %}
+      {% when 'image' %}
+        <div class="product__media-item" data-product-image-wrapper data-slide-index="{{ mediaCount }}">
+          {%- render 'component-image',
+            image: media,
+            aspect_ratio: 'natural',
+            max_width: 1120,
+            sizes: '(max-width: 47rem) 100vw, 50vw',
+            imgIndex: mediaCount
+          -%}
+        </div>
+      {% when 'external_video' %}
+        <div class="product__media-item" data-slide-index="{{ mediaCount }}" >
+          <div class="product__media-responsive" style="padding-top: {{ 100 | divided_by: media.aspect_ratio }}%;" data-product-external-video data-video-index="{{ mediaCount }}" data-video-id="{{ media.external_id }}">
+            {% capture autoplay_yt %}{% if autoplay_setting %}1{% else %}0{% endif %}{% endcapture %}
+            {% capture controls_yt %}{% if controls_setting %}1{% else %}0{% endif %}{% endcapture %}
+            {{ media | external_video_url: autoplay: autoplay_yt, controls: controls_yt | external_video_tag: id: media.external_id }}
+          </div>
+        </div>
+      {% when 'video' %}
+        <div class="product__media-item video--autoplay" data-slide-index="{{ mediaCount }}" {% if section.settings.video_controls == 'autoplay' %}data-product-video-autoplay{% endif %}>
+          {{ media | video_tag: controls: controls_setting, autoplay: autoplay_setting, loop: autoplay_setting }}
+        </div>
+      {% when 'model' %}
+        <div class="product__media-item" data-zoom-type="model" data-slide-index="{{ mediaCount }}">
+          <div class="product__media-responsive" style="padding-top: 100%;">
+            <button class="btn model-viewer__button"
+              data-shopify-xr
+              data-shopify-model3d-id="{{ media.id }}"
+              data-shopify-title="{{ product.title | escape }}"
+              aria-label="{{ 'products.product.model_xr' | t }}"
+              data-shopify-xr-hidden
+            >
+              {% render 'icon-model-xr' %}
+            </button>
+            {{ media | model_viewer_tag | replace: 'data-shopify-feature', 'data-version' }}
+          </div>
+        </div>
+      {% else %}
+        <div class="product__media-item" data-slide-index="{{ mediaCount }}">
+          {{ media | media_tag }}
+        </div>
+      {% endcase %}
+
+    {% endfor %}
+
+		{% if isVideoLast == true %}
+			{% if includesVideo and isVideoGenerated == false %}
+				{{ productVideoMain }}
+				{% assign isVideoGenerated = true %}
+			{% endif %}
+		{% endif %}
+
+  </div>
+</div>

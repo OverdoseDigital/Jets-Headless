@@ -1,0 +1,24 @@
+{%- comment %}
+  Parameters
+  img_url: {string} Shopify image_url of the image including a width parameter eg. &width={width}
+  max_width: {number} maximum width used for srcset (optional)
+{% endcomment -%}
+
+{%- liquid
+  assign widths = '160,320,480,640,800,960,1120,1280,1440,1600,1920,2240,2560' | split: ','
+  assign max_width_num = max_width | plus: 0
+
+  capture srcset_output
+    for width in widths
+      assign width_num = width | plus: 0
+      if max_width_num > 0 and max_width_num < width_num
+        break
+      endif
+      unless forloop.first
+        echo ', '
+      endunless
+      echo img_url | replace: '{width}', width | append: ' ' | append: width | append: 'w'
+    endfor
+  endcapture
+  echo srcset_output
+-%}

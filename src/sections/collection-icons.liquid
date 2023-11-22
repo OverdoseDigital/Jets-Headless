@@ -1,0 +1,103 @@
+<div class="section section-spacer--{{ section.settings.section_bottom_margin }}" data-section-id="{{ section.id }}" data-section-type="collection-icons">
+  {% capture iconCells %}
+    {%- comment %}<locksmith:8905>{% endcomment -%}
+      {%- assign locksmith_cb1b_forloop__size = 0 %}{% for item in linklists[section.settings.list].links %}{% capture var %}{% render 'locksmith-variables', scope: 'subject', subject: item, subject_parent: linklists[section.settings.list], variable: 'transparent' %}{% endcapture %}{% if var == 'true' %}{% assign locksmith_cb1b_forloop__size = locksmith_cb1b_forloop__size | plus: 1 %}{% endif %}{% endfor %}{% assign locksmith_cb1b_forloop__index = nil -%}
+    {%- comment %}</locksmith:8905>{% endcomment -%}
+    {% for item in linklists[section.settings.list].links %}
+      {%- comment %}<locksmith:728a>{% endcomment -%}
+        {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: item, subject_parent: linklists[section.settings.list], variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% if locksmith_cb1b_forloop__index == nil %}{% assign locksmith_cb1b_forloop__index = 1 %}{% assign locksmith_cb1b_forloop__index0 = 0 %}{% else %}{% assign locksmith_cb1b_forloop__index = locksmith_cb1b_forloop__index | plus: 1 %}{% assign locksmith_cb1b_forloop__index0 = locksmith_cb1b_forloop__index0 | plus: 1 %}{% endif %}{% if locksmith_cb1b_forloop__index == 1 %}{% assign locksmith_cb1b_forloop__first = true %}{% else %}{% assign locksmith_cb1b_forloop__first = false %}{% endif %}{% if locksmith_cb1b_forloop__index == locksmith_cb1b_forloop__size %}{% assign locksmith_cb1b_forloop__last = true %}{% else %}{% assign locksmith_cb1b_forloop__last = false %}{% endif %}{% assign locksmith_cb1b_forloop__rindex = locksmith_cb1b_forloop__size | minus: locksmith_cb1b_forloop__index | minus: 1 %}{% assign locksmith_cb1b_forloop__rindex0 = locksmith_cb1b_forloop__size | minus: locksmith_cb1b_forloop__index0 | minus: 1 %}{% else %}{% continue %}{% endif -%}
+      {%- comment %}</locksmith:728a>{% endcomment -%}
+      {% liquid
+        assign itemCollection = item.url | remove: '/collections/'
+        assign itemCollection = collections[itemCollection]
+      %}
+      <div class="collection__icons-row-item" data-cell-index="{{ locksmith_cb1b_forloop__index0 }}">
+        <a href="{{ itemCollection.url }}">
+          <div class="collection__icons-row-image">
+            <img src="{{ itemCollection.metafields.meta.collection_icon | file_url }}" loading="lazy" width="80" height="80" alt="{{ item.title }}" />
+          </div>
+          <span>{{ item.title }}</span>
+        </a>
+      </div>
+    {% endfor %}
+  {% endcapture %}
+
+  <div class="container">
+    {%- if section.settings.title != blank -%}
+      <div class="section__title text-center">
+        <h3 class="h6">{{ section.settings.title }}</h3>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="container container--flush--medium-down">
+    <div class="collection__icons-row-wrapper">
+      <div class="collection__icons-row">
+        {{ iconCells }}
+      </div>
+    </div>
+    <hr />
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Collection Icons",
+    "class": "collection-icons",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "paragraph",
+        "content": "IMPORTANT: The collections within the collection list assigned below must each be populated with an icon via a metafield within the collection admin."
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "A style for every body"
+      },
+      {
+        "type": "link_list",
+        "id": "list",
+        "label": "Collection List",
+        "info": "Specify the navigation list with the relevant collections"
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Collection Icons",
+        "category": "Collection"
+      }
+    ],
+    "templates": [
+      "index"
+    ]
+  }
+{% endschema %}

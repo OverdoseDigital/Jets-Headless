@@ -1,0 +1,171 @@
+<div
+  data-section-id="{{ section.id }}"
+  data-section-type="featured-collections"
+  data-section-settings='{{ section.settings | json }}'
+  class="featured-collections featured-collections--{{ section.id }}"
+>
+
+  {%- if section.settings.title != blank -%}
+    <div class="container">
+      <div class="featured-collections__title">
+        <h2 class="h3">{{ section.settings.title }}</h2>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.description != blank -%}
+    <div class="container">
+      <div class="featured-collections__description">
+        <p>{{ section.settings.description }}</p>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {% if section.settings.button_link != blank and section.settings.button_label != blank %}
+    <div class="container">
+      <div class="featured-collections__cta">
+        <a
+          href="{{ section.settings.button_link }}"
+          class="btn__text"
+        >
+          {{ section.settings.button_label | escape }}
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+  {% liquid
+    assign valid_blocks_count = 0
+    for block in section.blocks
+      assign collection = collections[block.settings.collection]
+      if collection != blank and collection.products_count >= 4
+        assign valid_blocks_count = valid_blocks_count | plus: 1
+      endif
+    endfor
+  %}
+
+  {% capture tabs_content %}
+    {%- for block in section.blocks -%}
+      {% liquid
+        assign collection = collections[block.settings.collection]
+        unless collection != blank and collection.products_count >= 4
+          continue
+        endunless
+      %}
+      {% capture tab_content %}
+        <div class="container container--flush--medium-down">
+          <div
+            class="product-cards-carousel__slider carousel js-featured-collections-slider"
+            id="featured-collections__slider--{{ block.id }}"
+          >
+            {%- for product in collection.products limit: section.settings.max_products -%}
+              {%- comment %}<locksmith:313d>{% endcomment -%}
+                {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: product, subject_parent: collection, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+              {%- comment %}</locksmith:313d>{% endcomment -%}
+              {% render 'product-card',
+                product: product,
+                card_class: 'slide product-cards-slider-quarter',
+                collection: collection,
+                sizes: '(max-width: 47rem) 80vw, (max-width: 60.875rem) 40vw, (min-width: 77.5rem) calc(77.5rem / 4), calc(100vw / 4)'
+              %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endcapture %}
+
+      {%- if valid_blocks_count > 1 -%}
+        <div id="collection-{{ collection.title | handleize }}-{{ section.id | slice: -3, 3 }}{{ forloop.index }}" class="js-tabcontent">
+          {{ tab_content }}
+        </div>
+      {% else %}
+        {{ tab_content }}
+      {%- endif -%}
+
+    {%- endfor -%}
+  {% endcapture %}
+
+  {%- if valid_blocks_count > 1 -%}
+    <div class="js-tabs" data-tabs-prefix-class="product-cards-carousel">
+      <div class="product-cards-carousel__scroll-wrapper">
+        <ul class="js-tablist list-inline">
+          {%- for block in section.blocks -%}
+            {% liquid
+              assign collection = collections[block.settings.collection]
+              unless collection != blank and collection.products_count >= 4
+                continue
+              endunless
+            %}
+            <li class="js-tablist__item">
+              <a class="js-tablist__link" href="#collection-{{ collection.title | handleize }}-{{ section.id | slice: -3, 3 }}{{ forloop.index }}"{% if forloop.first %} data-selected="1"{% endif %}>{{ collection.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+      {{ tabs_content }}
+    </div>
+  {% else %}
+    {{ tabs_content }}
+  {%- endif -%}
+</div>
+
+{% schema %}
+  {
+    "name": "Featured Collections",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "range",
+        "id": "max_products",
+        "label": "Max products to show",
+        "min": 4,
+        "max": 10,
+        "step": 1,
+        "default": 6
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "textarea",
+        "id": "description",
+        "label": "Description"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Link label",
+        "default": "See Collection"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Link URL"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "label": "Collection",
+            "id": "collection",
+            "type": "collection",
+            "info": "Edit the collection above to update sort order"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured Collections",
+        "category": "Collection"
+      }
+    ]
+  }
+{% endschema %}

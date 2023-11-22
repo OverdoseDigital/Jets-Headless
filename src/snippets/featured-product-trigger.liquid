@@ -1,0 +1,23 @@
+<div class="featured-product-tile__button-wrap" style="--left: {{ horizontal }}%; --top: {{ vertical }}%; --left-desk: {{ horizontal_desk }}%; --top-desk: {{ vertical_desk }}%">
+  <button type="button" data-open-quick-shop="{{ product.handle }}" class="featured-product-tile__btn">
+    {% render 'use-svg', title: 'Plus icon', svg_id: 'iconPlus', class: 'icon icon-plus', viewbox: '0 0 24 24' %}
+  </button>
+  <div class="product-in-image__ui">
+    <h6>{{ product.title }}</h6>
+    {% if product.price_varies %}
+      <span>
+      {% capture priceMin %}{{ product.price_min | money_with_currency }}{% endcapture %}
+      {{ 'products.product.from_text_html' | t: price: priceMin }}
+      </span>
+    {% else %}
+    {% if product.compare_at_price > product.price %}
+      <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+      <s data-compare-price>{{ product.compare_at_price | money_with_currency }}</s>
+    {% endif %}
+      <span data-product-price {% if product.compare_at_price > product.price %}class="product-card__sale-price"{% endif %}>
+        {{ product.price | money_with_currency }}
+      </span>
+    {% endif %}
+    {% render 'use-svg', title: 'Bubble point', svg_id: 'iconBubblePoint', class: 'icon icon-bubble-point', viewbox: '0 0 12 4' %}
+  </div>
+</div>

@@ -1,0 +1,151 @@
+/*
+  __list: including page specific prefixed variations
+*/
+.js-tablist,
+.tab-menu__list {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin: 0 0 $spacing-lg;
+}
+
+.pay-later-tabs__list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.product-cards-carousel-tabs__list,
+.tab-menu__list {
+  display: inline-flex;
+  flex-wrap: unset;
+  padding: 0 $outer-margin-sm + rem(1px); // visual alignment
+  justify-content: flex-start;
+
+  @include media-query($large-up) {
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    height: $tab-button-height;
+    width: 2rem;
+    background: linear-gradient(270deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+  }
+}
+
+.tab-menu__list {
+  padding: 0;
+}
+
+.product-cards-carousel-tabs__list {
+  margin: 0 0 $spacing-xxl;
+}
+
+// for iOS & Safari - only works on actual device, not in safari devtools with responsive design mode.
+.product-cards-carousel__scroll-wrapper,
+.tab-menu__scroll-wrapper {
+  text-align: center;
+  width: 100%;
+  overflow: scroll;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  &.tab-menu__scroll-wrapper--contained {
+    margin-left: -$outer-margin-sm;
+    margin-right: -$outer-margin-sm;
+    width: calc(100% + #{2 * $outer-margin-sm});
+
+    .tab-menu__list {
+      padding-left: $outer-margin-sm;
+      padding-right: $outer-margin-sm;
+    }
+  }
+}
+
+/*
+  __item: including page specific prefixed variations
+*/
+.js-tablist__item,
+.tab-menu__item {
+  &:not(:last-child) {
+    position: relative;
+    margin-right: $spacing-md;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: rem(-12px);
+      display: block;
+      width: rem(3px);
+      height: rem(3px);
+      margin-top: rem(-1.5px);
+      background: var(--color-black);
+    }
+  }
+
+  .recently-is-hidden & {
+    margin-right: 0;
+    &::after {
+      display: none;
+    }
+  }
+}
+
+/*
+  __link
+*/
+.js-tablist__link,
+.tab-menu__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  width: auto;
+  text-align: center;
+  white-space: nowrap;
+  text-decoration: none;
+  user-select: none;
+  appearance: none;
+  padding: 0;
+  @extend %smallcaps;
+  min-height: $tab-button-height;
+  color: var(--color-black);
+  @include link-style(var(--color-black), transparent, var(--color-black), var(--color-black), 0);
+  cursor: pointer;
+
+  &[aria-selected='true'],
+  &.is-active {
+    @include link-style(var(--color-black), var(--color-black), var(--color-black), var(--color-black), 0);
+  }
+}
+
+.js-tabcontent {
+  &[aria-hidden='true'] {
+    display: none;
+  }
+}
+
+.ss-group-jets {
+  /* stylelint-disable-next-line selector-class-pattern */
+  .ss__recommendations-tablist__link {
+    background-color: transparent;
+    border-radius: 0;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}

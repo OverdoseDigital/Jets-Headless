@@ -1,0 +1,37 @@
+<div
+  data-section-type="ss-recommendations"
+  data-section-id="{{ section.id }}"
+>
+  <script type="searchspring/personalized-recommendations" profile="{{ section.settings.profileId }}">
+    seed = "{{ product.variants[0].sku }}";
+  </script>
+</div>
+{% schema %}
+{
+  "name": "SS Recommendations",
+  "class": "searchspring-recommendations",
+  "presets": [
+    {
+      "category": "{{ section.settings.category }}",
+      "name": "SS Recommendations"
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "profileId",
+      "label": "Searchspring Recommendations Profile Id",
+      "default": "customers-also-viewed-tabbed",
+      "info": "This profileId can be found in the Searchspring Management Console"
+    }
+  ],
+  "templates": [
+    "product",
+    "404",
+    "cart",
+    "page",
+    "article",
+    "index"
+  ]
+}
+{% endschema %}

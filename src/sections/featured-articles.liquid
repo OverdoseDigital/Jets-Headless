@@ -1,0 +1,135 @@
+<div data-section-id="{{ section.id }}" data-section-type="featured-articles">
+  <div class="container">
+
+    {%- if section.settings.title != blank -%}
+      <div class="section__title">
+        <h2 class="h3">{{ section.settings.title }}</h2>
+      </div>
+    {%- endif -%}
+
+  </div>
+  <div class="container container--flush--medium-down">
+
+    {%- comment -%}
+      Due to accessibility requirements, the Blog entries list functions
+      as a list of content items. Non-visual users will expect lists of content
+      to appear in a list structure, allowing for easier understanding and navigation of list items.
+    {%- endcomment -%}
+    <ul class="articles articles__slider carousel" id="articles__slider--{{ section.id }}">
+      {% for block in section.blocks %}
+        {%- comment -%}
+          See article-card.liquid for explanation on square_image_sizes
+
+          Correct sizes attribute:
+          '(min-width: 90rem) 28rem, (min-width: 61.875rem) 33.333vw, (min-width: 48rem) 40vw, 86vw'
+        {%- endcomment -%}
+        {%- liquid
+          assign image_sizes = '(min-width: 90rem) 56rem, (min-width: 61.875rem) 66.666vw, (min-width: 48rem) 80vw, 172vw'
+          assign square_image_sizes = '(min-width: 90rem) 33.6rem, (min-width: 61.875rem) 40vw, (min-width: 48rem) 48vw, 104vw'
+        -%}
+        <li class="slide third">
+          {% assign article = articles[block.settings.article] %}
+          {% render 'article-card', article: article, sizes: image_sizes, square_image_sizes: square_image_sizes %}
+        </li>
+      {% endfor %}
+    </ul>
+
+  </div>
+</div>
+
+<style>
+#shopify-section-{{ section.id }} {
+  {%- if section.settings.background_color != blank -%}
+    background-color: {{ section.settings.background_color }};
+  {%- endif -%}
+  {%- if section.settings.text_color != blank -%}
+    color: {{ section.settings.text_color }};
+  {%- endif -%}
+}
+
+{%- if section.settings.link_color != blank -%}
+  #shopify-section-{{ section.id }} a,
+  #shopify-section-{{ section.id }} a:hover {
+    color: {{ section.settings.link_color }};
+  }
+
+  #shopify-section-{{ section.id }} a:after {
+    background-color: {{ section.settings.link_color }};
+  }
+{%- endif -%}
+
+{% if section.settings.text_color != blank %}
+  #shopify-section-{{ section.id }} .section__title {
+    color: {{ section.settings.text_color }};
+  }
+{%- endif -%}
+
+</style>
+
+{% schema %}
+  {
+    "name": "Featured Articles",
+    "class": "featured-articles",
+    "max_blocks": 12,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Featured Articles"
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_author",
+        "label": "Show author",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_date",
+        "label": "Show date",
+        "default": false
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color"
+      },
+      {
+        "type": "color",
+        "id": "link_color",
+        "label": "Link color"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "article",
+        "name": "Article",
+        "settings": [
+          {
+            "label": "Article",
+            "id": "article",
+            "type": "article"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured Articles",
+        "category": "Blog",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

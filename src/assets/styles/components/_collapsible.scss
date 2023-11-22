@@ -1,0 +1,134 @@
+details summary {
+  list-style: none;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--color-grey-2);
+  }
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
+details[open] summary {
+  margin-bottom: 1px;
+}
+
+.collapsible-block {
+  margin-bottom: $spacing-xxxs;
+
+  .collapsible__panel {
+    @include media-query($small-down) {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  .accordion__trigger {
+    padding: rem(20px) 0;
+    text-transform: none;
+    letter-spacing: rem(0.4px);
+  }
+
+  .accordion__body {
+    padding-bottom: $spacing-xs;
+    font-size: rem(14px);
+
+    p,
+    li,
+    a {
+      font-size: rem(14px);
+    }
+  }
+}
+
+.collapsible__trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0;
+  padding: $spacing-sm 0;
+  color: var(--color-black);
+  font-size: rem(14px);
+  font-weight: 600;
+  text-align: left;
+  background: var(--color-grey-1);
+  border: 1px solid transparent;
+  outline-offset: 0;
+
+  .section-title {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    padding-right: $spacing-xl;
+  }
+
+  .collapsible__trigger-icon {
+    width: rem(40px);
+    height: rem(40px);
+    border-radius: 50%;
+    background-color: var(--color-white);
+    margin-left: rem(15px);
+    margin-right: rem(15px);
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+
+    .icon {
+      width: rem(24px);
+      height: rem(24px);
+      margin-left: 0;
+    }
+  }
+
+  .accordion--is-left & {
+    justify-content: flex-start;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: var(--color-black);
+  }
+
+  .icon {
+    width: rem(20px);
+    height: rem(20px);
+    margin-left: $spacing-xs;
+  }
+
+  .icon-chevron-up {
+    display: none;
+  }
+
+  [open] & {
+    color: var(--color-black);
+
+    .icon-chevron-down {
+      display: none;
+    }
+
+    .icon-chevron-up {
+      display: block;
+    }
+  }
+}
+
+.collapsible__panel {
+  padding: 0 rem(16px);
+}
+
+.collapsible__trigger-indicator {
+  position: absolute;
+  top: 50%;
+  right: $spacing-sm;
+  transform: translateY(-50%);
+}

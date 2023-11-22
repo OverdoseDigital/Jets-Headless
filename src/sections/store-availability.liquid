@@ -1,0 +1,131 @@
+{% if product_variant %}
+<div class="store-availability-container">
+  {%- comment -%}Find the current region code{%- endcomment -%}
+  {%- liquid
+    for index in (1..6)
+      assign regionCurrentIndexSetting = index | append: '_region_current'
+      assign regionCurrent = settings[regionCurrentIndexSetting]
+      if regionCurrent
+        assign regionCodeIndexSettings = index | append: '_region_code'
+        assign current_region_code = settings[regionCodeIndexSettings] | downcase
+        break
+      endif
+    endfor
+
+    assign default_state_code = customer.default_address.province_code | default: 'NSW'
+    assign default_state_name = customer.default_address.province | default: 'New South Wales'
+    assign default_state_has_stores = false
+
+  -%}
+
+  {%- liquid
+    assign pick_up_availabilities = product_variant.store_availabilities | where: 'pick_up_enabled', true
+
+    if pick_up_availabilities.size > 0
+      assign variant_available_for_pickup = true
+    endif
+  -%}
+
+  {% capture inStockMarker %}
+    <div class="product__availability product__availability--in-stock">
+      <div class="product__availability-icon"></div>
+      <span>{{ 'store_availability.general.pick_up_available' | t }}</span>
+    </div>
+  {% endcapture %}
+
+  {% capture noStockMarker %}
+    <div class="product__availability product__availability--no-stock">
+      <div class="product__availability-icon"></div>
+      <span>{{ 'store_availability.general.pick_up_currently_unavailable' | t }}</span>
+    </div>
+  {% endcapture %}
+
+  {%- if variant_available_for_pickup -%}
+    <div
+      class="store-availabilities"
+      id="StoreAvailabilityMore"
+      role="dialog"
+      aria-labelledby="StoreAvailabilitiesMoreProductTitle"
+      store-availability-more
+    >
+
+      <div class="store-availabilities__intro">
+        <p>{{ 'store_availability.general.intro' | t }}</p>
+      </div>
+
+      {% if current_region_code == 'au' %}
+      <div class="custom-select-hybrid-stores form__group store-availabilities__store-selector">
+        <span class="selectLabel" id="locationLabel">Location</span>
+        <div class="selectWrapper">
+          <select name="Store location" id="store_location_state" class="selectNative js-selectNative" aria-labelledby="locationLabel" data-store-location-state>
+            <option value="NSW" {% if default_state_code == 'NSW' %}selected{% endif %}>New South Wales</option>
+            <option value="VIC" {% if default_state_code == 'VIC' %}selected{% endif %}>Victoria</option>
+            <option value="QLD" {% if default_state_code == 'QLD' %}selected{% endif %}>Queensland</option>
+            <option value="SA" {% if default_state_code == 'SA' %}selected{% endif %}>South Australia</option>
+            <option value="WA" {% if default_state_code == 'WA' %}selected{% endif %}>Western Australia</option>
+            <option value="NT" {% if default_state_code == 'NT' %}selected{% endif %}>Norhern Territory</option>
+            <option value="ACT" {% if default_state_code == 'ACT' %}selected{% endif %}>Australian Capital Territory</option>
+          </select>
+          <!-- Hide the custom select from AT (e.g. SR) using aria-hidden -->
+          <div class="selectCustom js-selectCustom" aria-hidden="true">
+            <div class="selectCustom-trigger">{{ default_state_name }}</div>
+            <div class="selectCustom-options">
+              <div class="selectCustom-option" data-value="NSW">New South Wales</div>
+              <div class="selectCustom-option" data-value="VIC">Victoria</div>
+              <div class="selectCustom-option" data-value="QLD">Queensland</div>
+              <div class="selectCustom-option" data-value="SA">South Australia</div>
+              <div class="selectCustom-option" data-value="WA">Western Australia</div>
+              <div class="selectCustom-option" data-value="NT">Norhern Territory</div>
+              <div class="selectCustom-option" data-value="ACT">Australian Capital Territory</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <ul class="store-availabilities-list" role="list">
+        {%- for availability in pick_up_availabilities -%}
+          {%- assign address = availability.location.address -%}
+          <li
+            class="store-availability-list__item {% if address.province_code != default_state_code and current_region_code == 'au' %}hidden{% endif %}"
+            {% if current_region_code == 'au' %}data-state={{ address.province_code }}{% endif %}
+          >
+            {%liquid
+              assign storeName = ''
+              assign titleArray = availability.location.name | split: ' '
+              for word in titleArray
+                assign tempWord = word | capitalize
+                assign storeName = storeName | append: tempWord | append: ' '
+              endfor
+            %}
+            <h3 class="store-availability-list__location">{{ storeName }}</h3>
+            {%- if availability.available -%}{{ inStockMarker }}{%- else -%}{{ noStockMarker }}{%- endif -%}
+            <address class="store-availability-list__address">
+              {{ address | format_address | replace: '<br>', ', ' }}
+            </address>
+            <div class="store-availability-list__phone-maps store-availability-small-text">
+              {%- if address.phone.size > 0 -%}
+                <a href="tel:{{ address.phone }}">{% render 'icon-phone-sm' %}{{ address.phone }}</a>
+              {%- endif -%}
+              {%- comment -%}
+                For a more flexible system, we could implement repeatable blocks or theme settings that would associate STORE-NAME with Google location (Share link in google maps)
+              {%- endcomment -%}
+              <a target="_blank" href="https://www.google.com/maps/place/{{ availability.location.latitude }},{{ availability.location.longitude }}">{% render 'icon-location-sm' %}Get Directions</a>
+            </div>
+          </li>
+          {% if current_region_code != 'au' or default_state_code == address.province_code %}
+            {% assign default_state_has_stores = true %}
+          {% endif %}
+        {%- endfor -%}
+        <li class="store-availability-list__item--no-results {% if default_state_has_stores %}hidden{% endif %}">
+          <p>{{ 'store_availability.general.no_stores_in_area' | t }}</p>
+        </li>
+      </ul>
+    </div>
+  {% else %}
+    <div class="store-availabilities__intro">
+      <p> This product is not available for pickup. </p>
+    </div>
+  {%- endif -%}
+</div>
+{% endif %}

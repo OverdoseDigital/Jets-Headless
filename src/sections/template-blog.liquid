@@ -1,0 +1,147 @@
+{%- liquid
+  assign blog_paginate = section.settings.blog_paginate
+
+  if template.suffix == 'all'
+    assign blog_paginate = 9999
+  endif
+-%}
+
+{% paginate blog.articles by blog_paginate %}
+<div id="BlogSection" data-section-id="{{ section.id }}" data-section-type="blog-template">
+
+  <div class="blog__header page-header">
+    <h1 class="blog__title h3">{{ blog.title }}</h1>
+
+    {%- if blog.all_tags.size > 0 -%}
+      <h2 class="visually-hidden">{{ 'blogs.general.categories' | t }}</h2>
+
+      <div class="blog__categories tab-menu__scroll-wrapper dragscroll">
+        <ul class="tab-menu__list list-inline">
+          <li class="tab-menu__item">
+            <a href="{{ blog.url }}" class="tab-menu__link{% unless current_tags %} is-active{% endunless %}">
+              {{ 'blogs.general.all' | t }}
+            </a>
+          </li>
+          {%- for tag in blog.all_tags -%}
+            <li class="tab-menu__item">
+              <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="tab-menu__link{% if current_tags contains tag %} is-active{% endif %}">
+                {{ tag }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="container">
+    <ul class="blog__grid">
+      {%- for article in blog.articles -%}
+        {%- comment -%}
+          See article-card.liquid for explanation on square_image_sizes
+        {%- endcomment -%}
+        {%- liquid
+          assign blog_item_class = ''
+          assign article_sizes = ''
+          assign article_square_sizes = ''
+          assign is_featured = false
+
+          assign modulo = forloop.index0 | modulo: 7
+          assign modulo_reverse = forloop.index0 | modulo: 14
+
+          if modulo == 0
+            assign blog_item_class = ' blog__grid-item--featured'
+            assign article_sizes = '(min-width: 90rem) 85rem, (min-width: 48rem) 100vw, 200vw'
+            assign article_square_sizes = '(min-width: 90rem) 42.5rem, (min-width: 48rem) 50vw, 100vw'
+            assign is_featured = true
+          endif
+
+          if modulo_reverse == 7
+            assign blog_item_class = blog_item_class | append: ' reverse-desktop'
+          endif
+        -%}
+
+        <li class="blog__grid-item {{ blog_item_class }}">
+          {% render 'article-card', article: article, sizes: article_sizes, square_image_sizes: article_square_sizes, featured: is_featured %}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if paginate.pages > 1 -%}
+      {% render 'pagination', paginate: paginate, show_prev_next: true, include_show_all: true %}
+    {%- endif -%}
+  </div>
+</div>
+
+{% endpaginate %}
+
+
+{% schema %}
+  {
+    "name": "Blog",
+    "class": "blog-template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Featured image"
+      },
+      {
+        "type": "paragraph",
+        "content": "Displays on each blog post as the top banner on desktop"
+      },
+      {
+        "type": "paragraph",
+        "content": "Upload to Blog Post > Featured Image"
+      },
+      {
+        "type": "paragraph",
+        "content": "Minimum size 2560 x 1210px (landscape)"
+      },
+      {
+        "type": "header",
+        "content": "Square image"
+      },
+      {
+        "type": "paragraph",
+        "content": "Displays on the blog landing page and more stories section"
+      },
+      {
+        "type": "paragraph",
+        "content": "Upload to Blog Post > More Actions > Custom Fields > Square Image"
+      },
+      {
+        "type": "paragraph",
+        "content": "Minimum size 1600 x 1600px (square)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Note: square image is optional – if it's not uploaded, the featured image will be used and cropped to a square size"
+      },
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "range",
+        "id": "blog_paginate",
+        "label": "Articles per page",
+        "default": 11,
+        "min": 4,
+        "max": 44,
+        "step": 1
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_author",
+        "label": "Show author",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_date",
+        "label": "Show date",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

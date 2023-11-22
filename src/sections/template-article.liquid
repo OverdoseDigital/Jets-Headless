@@ -1,0 +1,173 @@
+<div
+  id="ArticleSection_{{ section.id }}"
+  {% if article.content == blank %}class="article--no-content"{% endif %}
+  data-section-id="{{ section.id }}"
+  data-section-type="article-template">
+{%- liquid
+  assign article_mobile_image = ''
+
+  assign article_square_images = article.metafields.square_image.image
+  if article_square_images != blank
+    for image in article_square_images
+      assign article_mobile_image = image
+    endfor
+  endif
+
+  capture img_alt
+    if article_mobile_image.alt != blank
+      echo article_mobile_image.alt
+    elsif article.image.alt != blank
+      echo article.image.alt
+    endif
+  endcapture
+-%}
+
+<div class="article__breadcrumbs container">
+  {% render 'breadcrumbs' %}
+</div>
+
+{% if article.content != blank %}
+  <article>
+{% else %}
+  <section>
+{% endif %}
+
+  <div class="container container--narrow">
+    <header class="article__header page-header">
+      {%- if article.tags.size > 0 -%}
+        <ul class="article__category h6">
+          {%- for tag in article.tags -%}
+            <li>
+              <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <h1 class="article__title h3">{{ article.title }}</h1>
+
+      {% if section.settings.blog_show_author %}
+        <p>
+          {{ 'blogs.article.by_author' | t: author: article.author }}
+        </p>
+      {% endif %}
+
+      {% if section.settings.blog_show_date %}
+        <p>
+          {{ article.published_at | time_tag: format: 'month_day_year' }}
+        </p>
+      {% endif %}
+    </header>
+  </div>
+
+  {% if article.image %}
+    <div class="article__featured-image">
+      {%- if article_mobile_image != blank -%}
+        {%- render 'component-picture',
+          image_mobile: article_mobile_image,
+          image_desktop: article.image,
+          img_alt: img_alt,
+          lazy: false,
+          max_width_mobile: 1600,
+          sizes: '100vw',
+          paddingTopDesktopManual: 47.227
+        -%}
+      {%- else -%}
+        {%- render 'component-image',
+          image: article.image,
+          aspect_ratio: 'landscape',
+          lazy: false,
+          max_width: 2560,
+          sizes: '(min-width: 48rem) 100vw, 200vw'
+        -%}
+      {%- endif -%}
+    </div>
+  {% endif %}
+
+  {% if article.content != blank %}
+    <div class="container container--narrow">
+      <div class="article__content rte">
+        {{ article.content }}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.settings.show_comments %}
+    {% render 'article-comments' %}
+  {% endif %}
+
+{% if article.content != blank %}
+  </article>
+{% else %}
+  </section>
+{% endif %}
+
+</div>
+
+{% schema %}
+  {
+    "name": "Article",
+    "class": "article-template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Featured image"
+      },
+      {
+        "type": "paragraph",
+        "content": "Displays on each blog post as the top banner on desktop"
+      },
+      {
+        "type": "paragraph",
+        "content": "Upload to Blog Post > Featured Image"
+      },
+      {
+        "type": "paragraph",
+        "content": "Minimum size 2560 x 1210px (landscape)"
+      },
+      {
+        "type": "header",
+        "content": "Square image"
+      },
+      {
+        "type": "paragraph",
+        "content": "Displays on the blog landing page and more stories section"
+      },
+      {
+        "type": "paragraph",
+        "content": "Upload to Blog Post > More Actions > Custom Fields > Square Image"
+      },
+      {
+        "type": "paragraph",
+        "content": "Minimum size 1600 x 1600px (square)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Note: square image is optional – if it's not uploaded, the featured image will be used and cropped to a square size"
+      },
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_comments",
+        "label": "Show comments if enabled",
+        "default": true,
+        "info": "You should hide comments if using sections to build the blog post. You will need to manually add the 'Comments' section at the bottom of the blog post so the comments will show in the correct location."
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_author",
+        "label": "Show author",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_date",
+        "label": "Show date",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

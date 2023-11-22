@@ -1,0 +1,3 @@
+{%- if checkout %} {{ 'layout.checkout.css' | asset_url | stylesheet_tag, preload: true }} {% endif -%}
+{%- if request.page_type == 'password' %} {{ 'layout.password.css' | asset_url | stylesheet_tag, preload: true }} {% endif -%}
+{%- unless 'password,gift_card' contains request.page_type or checkout %} {{ 'layout.theme.css' | asset_url | stylesheet_tag, preload: true }} {% endunless -%}

@@ -1,0 +1,150 @@
+{%- liquid
+  if request.page_type == 'product'
+    assign productId = product.id
+  else
+    if cart.item_count > 0
+      assign productId = cart.items[0].product.id
+    else
+      assign recommendationsCollection = collections[section.settings.recommendations_collection] | default: collections.all
+      assign min = 0
+      assign max = recommendationsCollection.all_products_count
+      assign diff = max | minus: min
+      assign randomNumber = "now" | date: "%N" | modulo: diff | plus: min
+      assign productId = recommendationsCollection.products[randomNumber].id
+    endif
+  endif
+  assign limit = section.settings.limit
+-%}
+
+{% comment %}
+  This section is rendered twice per page load - but must return different content each time:
+    - the section wrapper
+    - the recommendations content when called by the recommendations api
+{% endcomment %}
+{% unless recommendations.performed %}
+  <div
+    class="product-recommendations section-spacer--{{ section.settings.section_bottom_margin }}"
+    data-product-id="{{ productId }}"
+    data-limit="{{ limit }}"
+    data-section-id="{{ section.id }}"
+    data-section-type="product-recommendations"
+  >
+  </div>
+{% elsif recommendations.products_count > 0 %}
+  <div class="js-product-recommendations__wrapper">
+    <div class="container">
+      <h4 class="product-cards-carousel__title product-cards-carousel__title--recommendations">{{ section.settings.recommended_products_title }}</h4>
+    </div>
+
+    <div class="container {% if section.settings.mobile_layout == 'slider' %}container--flush--medium-down{% endif %}">
+      <div
+        {% if section.settings.mobile_layout == 'slider' %}
+          class="product-cards-carousel__slider carousel js-product-recommendations__slider"
+        {% else %}
+          class="product-recommendations__grid js-product-recommendations__grid"
+        {% endif %}
+      >
+        {% for product in recommendations.products %}
+          {%- comment %}<locksmith:560c>{% endcomment -%}
+            {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: product, subject_parent: recommendations, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+          {%- comment %}</locksmith:560c>{% endcomment -%}
+          {% render 'product-card',
+            product: product,
+            card_class: 'slide product-cards-slider-quarter',
+            sizes: '(max-width: 47rem) 80vw, (max-width: 60.875rem) 40vw, (min-width: 77.5rem) calc(77.5rem / 4), calc(100vw / 4)'
+          %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endunless %}
+
+{% schema %}
+  {
+    "name": "Product Recommendations",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "text",
+        "id": "recommended_products_title",
+        "label": "Title",
+        "default": "Recommended for you"
+      },
+      {
+        "type": "radio",
+        "id": "mobile_layout",
+        "label": "Layout - mobile",
+        "options": [
+          {
+            "value": "grid",
+            "label": "Grid"
+          },
+          {
+            "value": "slider",
+            "label": "Slider"
+          }
+        ],
+        "default": "grid"
+      },
+      {
+        "type": "range",
+        "id": "limit",
+        "label": "Max products to show",
+        "min": 4,
+        "max": 10,
+        "step": 1,
+        "default": 4
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "header",
+        "content": "Outside Product Template",
+        "info": "When this section is used outside the product detail page template it needs to be able to assign an initial product id to base its recommendations on. It will look first for something in the cart, then it will try to pick a random product from this default collection"
+      },
+      {
+        "type": "collection",
+        "id": "recommendations_collection",
+        "label": "Default collection",
+        "info": "Assign a default collection, a random product will be picked from this collection as the basis for the recommended products that will be shown."
+      }
+    ],
+    "templates": [
+      "404",
+      "cart",
+      "page",
+      "article"
+    ],
+    "presets": [
+      {
+        "name": "Product Recommendations",
+        "category": "Product"
+      }
+    ]
+  }
+{% endschema %}

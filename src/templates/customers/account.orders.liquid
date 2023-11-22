@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="account account--orders">
+    <header class="account__header account__header--orders">
+      {% capture title %}{{ 'customer.orders.title' | t }}{% endcapture %}
+      {% render 'account-greeting', title: title %}
+      {% render 'component-accounts-pages-menu', linklist: linklists[settings.account_links], parent_class: 'account__top-nav' %}
+    </header>
+
+    <div class="account__orders">
+      {% if customer.orders.size != 0 %}
+        {% paginate customer.orders by 20 %}
+          {% for order in customer.orders %}
+            <div class="account__order">
+              {% render 'account-order-card', order: order %}
+            </div>
+            {% endfor %}
+          {% endpaginate %}
+        {% else %}
+          <p class="account__orders-none">{{ 'customer.orders.none' | t }}</p>
+        {% endif %}
+      </div>
+    </div>
+      {% if paginate.pages > 1 %}
+        {% render 'pagination', paginate: paginate, show_prev_next: true, center: true %}
+      {% endif %}
+
+  </div>
+</div>

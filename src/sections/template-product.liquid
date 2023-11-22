@@ -1,0 +1,640 @@
+{%- liquid
+  assign isGiftCard = false
+  if product.type == 'Gift Cards'
+    assign isGiftCard = true
+  endif
+  assign current_variant = product.selected_or_first_available_variant
+  assign autoplay_setting = false
+  assign controls_setting = true
+
+  assign hasFindInStore = false
+  if section.settings.show_find_in_store and section.settings.display_pickup_availabilities
+    assign hasFindInStore = true
+  endif
+
+  assign includesVideo = false
+  if product.metafields.video.video_url != blank
+    assign includesVideo = true
+    assign videoUrl = product.metafields.video.video_url
+    assign videoPosition = product.metafields.video.video_position | default: 0
+    assign isVideoLast = false
+		unless videoPosition == 0
+			assign videoPosition = videoPosition | minus: 1
+		endunless
+		if videoPosition >= product.media.size
+			assign isVideoLast = true
+			assign videoPosition = product.media.size
+		endif
+  endif
+
+  if section.settings.video_controls == 'autoplay'
+    assign autoplay_setting = true
+    assign controls_setting = false
+  endif
+
+  assign retailDeptMetafield = product.metafields.filters.retail_department | downcase
+  assign productTypeMetafield = product.metafields.filters.product_type | downcase
+
+  assign hasSizeGuide = false
+  if section.settings.show_size_guide
+    if retailDeptMetafield == 'swimwear' and section.settings.size_guide_page_swimwear != blank
+      assign size_guide_page = section.settings.size_guide_page_swimwear
+      assign hasSizeGuide = true
+    elsif retailDeptMetafield == 'overswim' and section.settings.size_guide_page_overswim != blank
+      assign size_guide_page = section.settings.size_guide_page_overswim
+      assign hasSizeGuide = true
+    elsif retailDeptMetafield == 'activewear' and section.settings.size_guide_page_activewear != blank
+      assign size_guide_page = section.settings.size_guide_page_activewear
+      assign hasSizeGuide = true
+    elsif retailDeptMetafield == 'accessories' and productTypeMetafield == 'footwear' and section.settings.size_guide_page_footwear != blank
+      assign size_guide_page = section.settings.size_guide_page_footwear
+      assign hasSizeGuide = true
+    endif
+  endif
+-%}
+
+{%- capture pricingClass -%}
+{%- if product.has_only_default_variant -%}
+  {%- if product.compare_at_price > product.price -%}
+    product__price--on-sale
+  {%- endif -%}
+  {%- else -%}
+  {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+    product__price--on-sale
+  {%- endif -%}
+{%- endif -%}
+{%- endcapture -%}
+
+<div
+  class="product"
+  data-section-id="{{ section.id }}"
+  data-enable-history-state="true"
+  data-section-type="product"
+  data-first-variant="{{ current_variant.id }}"
+  data-product-id="{{ product.id }}"
+  data-selected-variant="{{ product.selected_or_first_available_variant.id }}"
+  data-stock-availability-threshold="{{ settings.stock_availability_threshold }}"
+  data-display-pickup-availabilities="{{ section.settings.display_pickup_availabilities }}"
+  {% if isGiftCard %}data-gift-card{% endif %}
+>
+
+  {% if section.settings.include_breadcrumbs == true %}
+    <div class="container">{% render 'breadcrumbs' %}</div>
+  {% endif %}
+
+  <div class="container">
+    <div class="product__header">
+      <div class="product__media">
+
+        <div class="product__thumbnails-container">
+          <div class="product__thumbnails" data-product-thumbnails data-scroll-snap-arrow-up=".product-thumbs__arrow--up" data-scroll-snap-arrow-down=".product-thumbs__arrow--down">
+	          {% assign isVideoGenerated = false %}
+	          {% capture productVideoThumbnail %}
+		          <button type="button" data-image-index="{{ videoPosition }}" class="product__media-thumbnail product__media-thumbnail--video">
+			          {% render 'icon-video-thumbnail' %}
+		          </button>
+	          {% endcapture %}
+	          {% for media in product.media %}
+	            {% assign mediaCount = forloop.index0 %}
+		          {% unless isVideoLast == true %}
+		            {% if includesVideo and isVideoGenerated == false and mediaCount == videoPosition %}
+				          {{ productVideoThumbnail }}
+	                {% assign isVideoGenerated = true %}
+			          {% endif %}
+			          {% if isVideoGenerated == true %}
+			            {% assign mediaCount = mediaCount | plus: 1 %}
+			          {% endif %}      
+		          {% endunless %}      
+              <button type="button" data-image-index="{{ mediaCount }}" class="product__media-thumbnail">
+                {%- render 'component-image', image: media, max_width: 320, aspect_ratio: section.settings.image_aspect_ratio -%}
+              </button>
+            {% endfor %}
+
+	          {% if isVideoLast == true %}
+		          {% if includesVideo and isVideoGenerated == false %}
+			          {{ productVideoThumbnail }}
+			          {% assign isVideoGenerated = true %}
+		          {% endif %}
+	          {% endif %}
+          </div>
+        </div>
+
+        <div class="product__slideshow-wrapper">
+          <div class="{% if product.media.size > 1 or includesVideo == true %}product__slideshow{% else %}product__singular{% endif %}" data-scroll-snap-arrow-left=".product__media-direction--prev" data-scroll-snap-arrow-right=".product__media-direction--next">
+            {% assign pagerDots = '' %}
+	          {% assign isVideoGenerated = false %}
+	          {% capture productVideoMain %}
+		          <div class="product__media-item" data-product-video-wrapper data-slide-index="{{ videoPosition }}">
+			          {% assign mediaId = product.id | append: '-video' %}
+			          {%- render 'component-video',
+			          video: videoUrl,
+			          autoplay: true,
+			          controls: false,
+			          aspect_ratio: 'portrait',
+			          imgIndex: videoPosition,
+			          mediaId: mediaId
+			          -%}
+		          </div>
+	          {% endcapture %}
+            {% for media in product.media %}
+		          {% assign mediaCount = forloop.index0 %}
+	            {% unless isVideoLast == true %}
+			          {% if includesVideo and isVideoGenerated == false and mediaCount == videoPosition %}
+				          {{ productVideoMain }}
+				          {% assign isVideoGenerated = true %}
+			          {% endif %}
+			          {% if isVideoGenerated == true %}
+			            {% assign mediaCount = mediaCount | plus: 1 %}
+			          {% endif %}
+	            {% endunless %}
+	          
+              {% case media.media_type %}
+              {% when 'image' %}
+                {% assign lazy = true %}
+                {% if forloop.index <= 2 %}
+                  {% assign lazy = false %}
+                {% endif %}
+
+                {% capture zoomImg %}data-zoom="{{ media | image_url: width: 1000 }}"{% endcapture %}
+                <div class="product__media-item" data-product-image-wrapper data-slide-index="{{ mediaCount }}">
+                  {%- render 'component-image',
+                    image: media,
+                    max_width: 1120,
+                    aspect_ratio: 'natural',
+                    sizes: '(max-width: 47rem) 100vw, 50vw',
+                    imgIndex: forloop.index,
+                    lazy: lazy,
+                    img_attributes: zoomImg
+                  -%}
+                </div>
+              {% when 'external_video' %}
+                <div class="product__media-item" data-slide-index="{{ mediaCount }}" >
+                  <div class="product__media-responsive" style="padding-top: {{ 100 | divided_by: media.aspect_ratio }}%;" data-product-external-video data-video-index="{{ mediaCount }}" data-video-id="{{ media.external_id }}">
+                    {% capture autoplay_yt %}{% if autoplay_setting %}1{% else %}0{% endif %}{% endcapture %}
+                    {% capture controls_yt %}{% if controls_setting %}1{% else %}0{% endif %}{% endcapture %}
+                    {{ media | external_video_url: autoplay: autoplay_yt, controls: controls_yt | external_video_tag: id: media.external_id }}
+                  </div>
+                </div>
+              {% when 'video' %}
+                <div class="product__media-item video--autoplay" data-slide-index="{{ mediaCount }}" {% if section.settings.video_controls == 'autoplay' %}data-product-video-autoplay{% endif %}>
+                  {{ media | video_tag: controls: controls_setting, autoplay: autoplay_setting, loop: autoplay_setting }}
+                </div>
+              {% when 'model' %}
+                <div class="product__media-item" data-zoom-type="model" data-slide-index="{{ mediaCount }}">
+                  <div class="product__media-responsive" style="padding-top: 100%;">
+                    <button class="btn model-viewer__button"
+                      data-shopify-xr
+                      data-shopify-model3d-id="{{ media.id }}"
+                      data-shopify-title="{{ product.title | escape }}"
+                      aria-label="{{ 'products.product.model_xr' | t }}"
+                      data-shopify-xr-hidden
+                    >
+                      {% render 'icon-model-xr' %}
+                    </button>
+                    {{ media | model_viewer_tag | replace: 'data-shopify-feature', 'data-version' }}
+                  </div>
+                </div>
+              {% else %}
+                <div class="product__media-item" data-slide-index="{{ mediaCount }}">
+                  {{ media | media_tag }}
+                </div>
+              {% endcase %}
+			        {% if isVideoLast == true %}
+				        {% if includesVideo and isVideoGenerated == false and mediaCount == videoPosition %}
+					        {{ productVideoMain }}
+					        {% assign isVideoGenerated = true %}
+				        {% endif %}
+				        {% if isVideoGenerated == true %}
+				          {% assign mediaCount = mediaCount | plus: 1 %}
+				        {% endif %}
+			        {% endif %}
+              {% capture pagerDots %}
+                {{ pagerDots }}
+                <button type="button" class="product__media-pager-dot" data-pager-index="{{ mediaCount }}"></button>
+              {% endcapture %}
+
+            {% endfor %}
+
+		        {% if isVideoLast == true %}
+			        {% if includesVideo and isVideoGenerated == false %}
+				        {{ productVideoMain }}
+				        {% assign isVideoGenerated = true %}
+		
+				        {% capture pagerDots %}
+				        {{ pagerDots }}
+				        <button type="button" class="product__media-pager-dot" data-pager-index="{{ videoPosition }}"></button>
+				        {% endcapture %}
+			        {% endif %}
+		        {% endif %}
+          </div>
+
+          {% if product.media.size > 1 or includesVideo == true %}
+            <div
+              data-media-fullscreen
+              aria-label="{{ 'products.product.fullscreen' | t }}"
+              title="{{ 'products.product.fullscreen' | t }}"
+            >
+              {% render 'icon-zoom' %}
+            </div>
+
+            <button class="product__media-direction product__media-direction--prev">
+              {% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}
+              <span class="visually-hidden">{{ 'accessibility_labels.view_previous_image' | t }}</span>
+            </button>
+            <button class="product__media-direction product__media-direction--next">
+              {% render 'use-svg', title: 'Chevron right icon', svg_id: 'iconChevronRight', class: 'icon icon-chevron-right', viewbox: '0 0 24 24' %}
+              <span class="visually-hidden">{{ 'accessibility_labels.view_next_image' | t }}</span>
+            </button>
+
+            <div class="product__media-pager-dots">{{ pagerDots }}</div>
+          {% endif %}
+
+          {% render 'product-badge', product: product %}
+
+          <div class="product__zoom-detail"></div>
+
+        </div>
+      </div>
+
+      <div class="product__details">
+        <div class="product__details--inner">
+          {% if settings.enable_wishlist %}
+            <button type="button" data-wishlist-add aria-label="Add to wishlist">{% render 'icon-heart' %}</button>
+          {% endif %}
+
+          <div class="product__form" id="ProductForm">
+            {% render 'product-form',
+              product: product,
+              section_settings: section.settings,
+              current_variant: current_variant,
+              pricingClass: pricingClass,
+              hasSizeGuide: hasSizeGuide,
+              isGiftCard: isGiftCard
+            %}
+          </div>
+
+          {% if product.metafields.custom.bundling_with == blank %}
+          {% unless isGiftCard or cart.currency.iso_code == 'NZD' %}
+            {% if hasFindInStore or
+                  section.settings.show_appointment or
+                  section.settings.show_reserve %}
+              <div class="secondary-actions">
+                {% if hasFindInStore %}
+                  <div class="secondary-actions__button">
+                    <button id="find-in-store-{{ product.id }}--label" class="btn__text btn__text--icon-left" data-find-in-store-{{ product.id }}-modal-trigger>
+                      {% render 'icon-location-sm' %}
+                      {{ 'products.product.find_in_store' | t }}
+                    </button>
+                  </div>
+                {% endif %}
+                {% if section.settings.show_appointment and settings.brauz_book_appointment_script %}
+                  <div class="secondary-actions__button">
+                    {% render 'brauz-book-appointment' %}
+                  </div>
+                {% endif %}
+                {% if section.settings.show_reserve and settings.brauz_reserve_script != blank %}
+                  <div class="secondary-actions__button">
+                    {% render 'brauz-reserve-in-store' %}
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endunless %}
+            {% endif %}
+
+          {% if section.settings.show_product_highlights %}
+            {% render 'product-highlights', product: product, section_blocks: section.blocks %}
+          {% endif %}
+
+          {% liquid
+            render 'product-accordion', section_blocks: section.blocks, sizing_swimwear: section.settings.sizing_swimwear, sizing_overswim: section.settings.sizing_overswim, sizing_activewear: section.settings.sizing_activewear, sizing_footwear: section.settings.sizing_footwear, care_swimwear: section.settings.care_swimwear, care_overswim: section.settings.care_overswim, care_activewear: section.settings.care_activewear, care_footwear: section.settings.care_footwear, isGiftCard: isGiftCard
+            unless isGiftCard
+              render 'shipping-times'
+            endunless
+            render 'trust-indicators'
+            render 'find-in-store', product: product
+
+            if hasSizeGuide
+              render 'size-guide', size_guide_page: size_guide_page
+            endif
+          %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% render 'product-zoom-modal', isVideoLast: isVideoLast, videoPosition: videoPosition, includesVideo: includesVideo, videoUrl: videoUrl %}
+
+  {% unless product == empty %}
+    <script type="application/json" data-product-json>
+      {{ product | json }}
+    </script>
+
+    {% comment %}
+      Currently there are inconsistencies in the format of product data between
+      {{ product | json }} in liquid and fetching from /products/${handle}.js.
+      The below fixes that inconsistency so we don't require a fetch in the
+      product.js section.
+    {% endcomment %}
+    <script>
+      window.productJSON = {{ product | json }};
+      window.productJSON.options = {{ product.options_with_values | json }};
+      window.productJSON.url = {{ product.url | json }};
+      window.productJSON.inventories = {
+        {%- for variant in product.variants -%}
+          "{{ variant.id }}": {
+            "inventory_quantity": {{ variant.inventory_quantity | json }},
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      };
+    </script>
+  {% endunless %}
+
+  {% assign models = product.media | where: 'media_type', 'model' %}
+  {% if models.size > 0 %}
+    <script type="application/json" data-product-models-json>
+      {{ models | json }}
+    </script>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Product Page",
+    "class": "product",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "include_breadcrumbs",
+        "label": "Include breadcrumbs",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Stock availability"
+      },
+      {
+        "type": "checkbox",
+        "id": "display_pickup_availabilities",
+        "label": "Show pickup availabilities",
+        "info": "Displays below product description if one or more pickup locations is enabled for selected variant",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Pay later side drawer tabbed content"
+      },
+      {
+        "type": "page",
+        "id": "pay_later_content_1",
+        "label": "Pay later content tab 1"
+      },
+      {
+        "type": "page",
+        "id": "pay_later_content_2",
+        "label": "Pay later content tab 2"
+      },
+      {
+        "type": "page",
+        "id": "pay_later_content_3",
+        "label": "Pay later content tab 3"
+      },
+      {
+        "type": "header",
+        "content": "Size & Fit"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_size_guide",
+        "label": "Show Size Guides button",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "size_guide_drawer_header",
+        "label": "Size Guide Drawer Header",
+        "default": "Size Guide"
+      },
+      {
+        "type": "header",
+        "content": "Swimwear Size Guide"
+      },
+      {
+        "type": "page",
+        "id": "size_guide_page_swimwear",
+        "label": "Swimwear size guide page"
+      },
+      {
+        "type": "header",
+        "content": "Overswim / Apparel Size Guide"
+      },
+      {
+        "type": "page",
+        "id": "size_guide_page_overswim",
+        "label": "Overswim/Apparel size guide page"
+      },
+      {
+        "type": "header",
+        "content": "Activewear Size Guide"
+      },
+      {
+        "type": "page",
+        "id": "size_guide_page_activewear",
+        "label": "Activewear size guide page"
+      },
+      {
+        "type": "header",
+        "content": "Footwear Size Guide"
+      },
+      {
+        "type": "page",
+        "id": "size_guide_page_footwear",
+        "label": "Footwear size guide page"
+      },
+      {
+        "type": "header",
+        "content": "WAIR Find my fit"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_find_my_fit",
+        "label": "Show Find My Fit button",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Secondary store actions"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_find_in_store",
+        "label": "Show Find in-store button",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_appointment",
+        "label": "Show Book an Appointment button",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_reserve",
+        "label": "Show Reserve in-store button",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Product highlights"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_product_highlights",
+        "label": "Show Product Highlights section",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Sizing contents"
+      },
+      {
+        "type": "richtext",
+        "id": "sizing_swimwear",
+        "label": "Sizing - Swimwear content",
+        "info": "This is the content that will be shown on products that have retail_department metafield set to Swimwear"
+      },
+      {
+        "type": "richtext",
+        "id": "sizing_overswim",
+        "label": "Sizing - Overswim content",
+        "info": "This is the content that will be shown on products that have retail_department metafield set to Overswim"
+      },
+      {
+        "type": "richtext",
+        "id": "sizing_activewear",
+        "label": "Sizing - Activewear content",
+        "info": "This is the content that will be shown on products that have retail_department metafield set to Activewear"
+      },
+      {
+        "type": "richtext",
+        "id": "sizing_footwear",
+        "label": "Sizing - Footwear content",
+        "info": "This is the content that will be shown on products that have retail_department metafield set to Accessories and a product_type metafield of Footwear"
+      },
+      {
+        "type": "header",
+        "content": "Care contents"
+      },
+      {
+        "type": "richtext",
+        "id": "care_swimwear",
+        "label": "Care - Swimwear content",
+        "info": "This is the content that will be shown on products that have retail_department metafield set to Swimwear"
+      },
+      {
+        "type": "richtext",
+        "id": "care_overswim",
+        "label": "Care - Overswim content",
+        "info": "This is the content that will be shown on products that have retail_department metafield set to Overswim"
+      },
+      {
+        "type": "richtext",
+        "id": "care_activewear",
+        "label": "Care - Activewear content",
+        "info": "This is the content that will be shown on products that have retail_department metafield set to Activewear"
+      },
+      {
+        "type": "richtext",
+        "id": "care_footwear",
+        "label": "Care - Footwear content",
+        "info": "This is the content that will be shown on products that have retail_department metafield set to Accessories and a product_type metafield of Footwear"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "accordion_item",
+        "name": "Accordion item",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Accordion label"
+          },
+          {
+            "type": "select",
+            "id": "content_type",
+            "label": "Content type",
+            "info": "Determines where to source the content. For the content type Care, specific products may have metafield information that override the default care information configurable in this blocks section settings.",
+            "default": "text",
+            "options": [
+              {
+                "value": "text",
+                "label": "Text"
+              },
+              {
+                "value": "page",
+                "label": "Page"
+              },
+              {
+                "value": "product_description",
+                "label": "Product Description (metafield)"
+              },
+              {
+                "value": "care_info",
+                "label": "Care (section settings or metafield)"
+              },
+              {
+                "value": "model_info",
+                "label": "Model (metafield)"
+              },
+              {
+                "value": "product_sizing",
+                "label": "Product Sizing (section settings)"
+              }
+            ]
+          },
+          {
+            "type": "richtext",
+            "id": "content_text",
+            "label": "Text content (complete this field only if the content type is text)"
+          },
+          {
+            "type": "page",
+            "id": "content_page",
+            "label": "Page content (complete this field only if the content type is page)",
+            "info": "This will display content provided using the page editor in Shopify's administration."
+          },
+          {
+            "type": "checkbox",
+            "id": "include_on_giftcards",
+            "label": "Include on Gift Cards",
+            "default": true
+          }
+        ]
+      },
+      {
+        "type": "product_highlight",
+        "name": "Product highlight",
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "These blocks are for any additional highlights created after the theme build, as most should be part of the theme"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Highlight name",
+            "info": "This will need to match the name of the highlight sent from Comestri"
+          },
+          {
+            "type": "html",
+            "id": "svg_code",
+            "label": "SVG code",
+            "info": "Must have a viewBox of '0 0 48 48' and no inline hex colours, use 'currentColor' instead"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

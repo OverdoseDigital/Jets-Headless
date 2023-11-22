@@ -1,0 +1,55 @@
+<div
+  class="recently-viewed__wrapper"
+  data-section-id="{{ section.id }}"
+  data-section-type="product-recently-viewed"
+  data-product-handle="{{ product.handle }}"
+  data-limit="{{ section.settings.limit }}"
+>
+  <div class="container">
+    <h3 class="product-cards-carousel__title">{{ section.settings.recently_viewed_title }}</h2>
+  </div>
+
+  <div class="container container--flush--medium-down">
+    <div class="product-cards-carousel__slider carousel js-recently-viewed__slider">
+    </div>
+  </div>
+</div>
+
+{% comment %}
+  Not currently enabled for the theme. To enable:
+    - import the section script in the relevant layout's js file.
+    - add the following section config below
+
+  "templates": [
+    "index/product/etc"
+  ],
+  "presets": [
+    {
+      "name": "Recently Viewed Products",
+      "category": "Content"
+    }
+  ]
+{% endcomment %}
+
+{% schema %}
+  {
+    "name": "Recently Viewed Products",
+    "settings": [
+      {
+        "type": "text",
+        "id": "recently_viewed_title",
+        "label": "Title",
+        "default": "Recently viewed products"
+      },
+      {
+        "type": "range",
+        "id": "limit",
+        "label": "Max products to show",
+        "min": 4,
+        "max": 10,
+        "step": 1,
+        "default": 6
+      }
+    ]
+  }
+{% endschema %}

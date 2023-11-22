@@ -1,0 +1,335 @@
+<section class="image-row-section section-spacer--{{ section.settings.section_bottom_margin }} {% if section.settings.padding_size != 'none' %}vert-padding padding-{{ section.settings.padding_size }}{% endif %}">
+  <div class="container container--flush--medium-down">
+    {% if section.settings.title != blank %}
+      <div class="section__title">
+        <h2 class="h3 image-row__title text-center">{{ section.settings.title | escape }}</h2>
+      </div>
+    {% endif %}
+    <div class="image-row">
+      {% for block in section.blocks %}
+        <div class="common-banner__wrapper image-row-text__image shopify-block-{{ block.id }} {% if section.blocks.size == 2 %}image-row-text__image--span-6{% else %}image-row-text__image--span-4{% endif %}">
+          {%- render 'component-image',
+            image: block.settings.image,
+            aspect_ratio: 'square',
+            max_width: 960,
+            sizes: '(min-width: 77.5rem) calc(77.5rem / 2), (min-width: 48rem) 50vw, 100vw'
+          -%}
+          <div class="common-banner__container common-banner__container--row {{ block.settings.text_align }} {{ block.settings.text_align_desktop }} {{ block.settings.content_position }} {{ block.settings.content_position_desktop }}">
+            <div class="common-banner__content">
+              {% if block.settings.title != blank %}
+                <h3 class="h2">{{ block.settings.title | escape }}</h3>
+              {% endif %}
+              {% if block.settings.text != blank %}
+                <div>{{ block.settings.text }}</div>
+              {% endif %}
+              {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                <a
+                  href="{{ block.settings.button_link }}"
+                  {% if block.settings.link_new_tab %}target="_blank"{% endif %}
+                  class="{% unless block.settings.button_style == '__text' %}btn {% endunless %}btn{{ block.settings.button_style }}"
+                >
+                  {{ block.settings.button_label | escape }}
+                </a>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+
+        {% capture block_styles %}
+        {{ block_styles }}
+        {%- if block.settings.text_color != blank -%}
+          .shopify-block-{{ block.id }},
+          .shopify-block-{{ block.id }} .btn__text {
+            color: {{ block.settings.text_color }};
+          }
+
+          .shopify-block-{{ block.id }} .btn__text {
+            text-decoration-color: {{ block.settings.text_color | color_modify: 'alpha', 0.4 }};
+          }
+
+          .shopify-block-{{ block.id }} .btn__text:focus,
+          .shopify-block-{{ block.id }} .btn__text:active {
+            text-decoration-color: {{ block.settings.text_color }};
+          }
+
+          @media (hover: hover) {
+            .shopify-block-{{ block.id }} .btn__text:hover {
+              text-decoration-color: {{ block.settings.text_color }};
+            }
+          }
+        {%- endif -%}
+        .shopify-block-{{ block.id }}::after {
+          background-color: rgba(0, 0, 0, {{ block.settings.overlay_level | divided_by: 100.0 }})
+        }
+        {% endcapture %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+{{ block_styles }}
+</style>
+
+{% schema %}
+  {
+    "name": "Image Row",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "info": "Optional"
+      },
+      {
+        "type": "header",
+        "content": "Layout options"
+      },
+      {
+        "type": "select",
+        "id": "padding_size",
+        "label": "Choose vertical padding spacing",
+        "options": [
+          {
+            "label": "None",
+            "value": "none"
+          },
+          {
+            "label": "Small",
+            "value": "small"
+          },
+          {
+            "label": "Regular",
+            "value": "regular"
+          },
+          {
+            "label": "Large",
+            "value": "large"
+          },
+          {
+            "label": "Extra-Large",
+            "value": "xlarge"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Image",
+        "type": "image",
+        "limit": 3,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Block Settings"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "Aspect ratio will be forced into a square, so it's recommended to upload a square aspect image here so that your image isn't cropped. Min width 800px."
+          },
+          {
+            "type": "range",
+            "id": "overlay_level",
+            "min": 0,
+            "max": 50,
+            "step": 1,
+            "unit": "%",
+            "label": "Image darkening",
+            "default": 0
+          },
+          {
+            "type": "select",
+            "id": "content_position",
+            "label": "Content position - mobile",
+            "default": "justify-center align-center",
+            "options": [
+              {
+                "value": "justify-center align-start",
+                "label": "Top"
+              },
+              {
+                "value": "justify-center align-center",
+                "label": "Centre"
+              },
+              {
+                "value": "justify-center align-end",
+                "label": "Bottom"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "content_position_desktop",
+            "label": "Content position - desktop",
+            "default": "desktop-justify-center desktop-align-center",
+            "options": [
+              {
+                "value": "desktop-justify-start desktop-align-start",
+                "label": "Left Top"
+              },
+              {
+                "value": "desktop-justify-center desktop-align-start",
+                "label": "Centre Top"
+              },
+              {
+                "value": "desktop-justify-end desktop-align-start",
+                "label": "Right Top"
+              },
+              {
+                "value": "desktop-justify-start desktop-align-center",
+                "label": "Left Centre"
+              },
+              {
+                "value": "desktop-justify-center desktop-align-center",
+                "label": "Centre Centre"
+              },
+              {
+                "value": "desktop-justify-end desktop-align-center",
+                "label": "Right Centre"
+              },
+              {
+                "value": "desktop-justify-start desktop-align-end",
+                "label": "Left Bottom"
+              },
+              {
+                "value": "desktop-justify-center desktop-align-end",
+                "label": "Centre Bottom"
+              },
+              {
+                "value": "desktop-justify-end desktop-align-end",
+                "label": "Right Bottom"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "text_align",
+            "label": "Text align - mobile",
+            "default": "text-center",
+            "options": [
+              {
+                "value": "text-left",
+                "label": "Left"
+              },
+              {
+                "value": "text-center",
+                "label": "Centre"
+              },
+              {
+                "value": "text-right",
+                "label": "Right"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "text_align_desktop",
+            "label": "Text align - desktop",
+            "default": "medium-up--text-center",
+            "options": [
+              {
+                "value": "medium-up--text-left",
+                "label": "Left"
+              },
+              {
+                "value": "medium-up--text-center",
+                "label": "Centre"
+              },
+              {
+                "value": "medium-up--text-right",
+                "label": "Right"
+              }
+            ]
+          },
+          {
+            "type": "color",
+            "id": "text_color",
+            "label": "Text color"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Image with text"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text",
+            "default": "<p>Pair large text with an image to give focus to your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>"
+          },
+          {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label"
+          },
+          {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link"
+          },
+          {
+            "type": "checkbox",
+            "label": "Open link in new tab?",
+            "id": "link_new_tab",
+            "default": false
+          },
+          {
+            "type": "radio",
+            "id": "button_style",
+            "label": "Button style",
+            "options": [
+              {
+                "value": "--white",
+                "label": "White"
+              },
+              {
+                "value": "--primary",
+                "label": "Black"
+              },
+              {
+                "value": "__text",
+                "label": "Text"
+              }
+            ],
+            "default": "--white"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Image Row",
+        "category": "Image"
+      }
+    ]
+  }
+{% endschema %}

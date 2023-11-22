@@ -1,0 +1,93 @@
+{%- comment -%}
+  Due to accessibility requirements, we are regrouping all logical elements into the <a> element.
+  If a screen reader user is tabbing through the page, or browsing by links on the page with duplicated links,
+  they will appear identical which may lead to a confusing user experience.
+{%- endcomment -%}
+
+{%- comment -%}
+  Parameters
+  featured: whether or not this is a featured article (different layout)
+  card_class: optional class on the parent element
+  sizes: optional sizes attribute for srcset
+  square_image_sizes: optional sizes attribute for the square image from metafields
+  show_excerpt: whether to show the excerpt (default is true)
+{%- endcomment -%}
+
+{%- comment -%}
+  Note for sizes attribute:
+  - Sizes are larger than needed because the image is cropped using CSS
+  - Landscape images are 200% larger than the output size due to the crop
+  - Square image sizes are 120% larger than the output size due to the crop
+
+  Correct sizes attribute for blog page:
+  '(min-width: 90rem) 28rem, (min-width: 61.875rem) 33.333vw, (min-width: 48rem) 50vw, 100vw'
+{%- endcomment -%}
+
+{%- liquid
+  assign article_image = article.image
+  assign sizes = sizes | default: '(min-width: 90rem) 56rem, (min-width: 61.875rem) 66.666vw, (min-width: 48rem) 100vw, 200vw'
+  assign square_image_sizes = square_image_sizes | default: '(min-width: 90rem) 33.6rem, (min-width: 61.875rem) 40vw, (min-width: 48rem) 60vw, 120vw'
+
+  assign article_square_images = article.metafields.square_image.image
+  if article_square_images != blank
+    for image in article_square_images
+      assign article_image = image
+      assign sizes = square_image_sizes
+    endfor
+  endif
+
+  assign show_excerpt = show_excerpt | default: true, allow_false: true
+-%}
+
+<div class="article-card{% if card_class != blank %} {{ card_class }}{% endif %}">
+
+  <div class="article-card__image">
+    <a href="{{ article.url }}">
+      {%- render 'component-image',
+        image: article_image,
+        aspect_ratio: 'portrait',
+        max_width: 1440,
+        sizes: sizes
+      -%}
+    </a>
+  </div>
+
+  <div class="article-card__content">
+    {%- if article.tags.size > 0 -%}
+      <ul class="article-card__category h6">
+        {%- for tag in article.tags -%}
+          <li>
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <h3 class="article-card__title h4">
+      <a href="{{ article.url }}">{{ article.title }}</a>
+    </h3>
+
+    {%- if section.settings.blog_show_author -%}
+      <p>{{ 'blogs.article.by_author' | t: author: article.author }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.blog_show_date -%}
+      <p>{{ article.published_at | time_tag: format: 'month_day_year' }}</p>
+    {%- endif -%}
+
+    {%- if show_excerpt -%}
+      <div class="article-card__excerpt">
+        {%- if article.excerpt.size > 0 -%}
+          {{ article.excerpt }}
+        {%- else -%}
+          {{ article.content | strip_html | truncate: 175 }}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <p class="article-card__cta">
+      <a href="{{ article.url }}" aria-label="{{ 'blogs.article.read_more_title' | t: title: article.title }}" class="{% if featured %}btn btn--secondary{% else %}btn__text{% endif %}">{{ 'blogs.article.read_more' | t }}</a>
+    </p>
+  </div>
+
+</div>

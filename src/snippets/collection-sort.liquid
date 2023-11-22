@@ -1,0 +1,30 @@
+{%- assign sort_by = templateObject.sort_by | default: templateObject.default_sort_by -%}
+<div class="collection-navbar__sort">
+  <button type="button" class="btn__text btn__text--icon-right collection__sort-toggle" data-collection-sort-toggle>
+    {{ 'collections.sorting.title' | t }}
+    {%- render 'use-svg', title: 'Plus icon', svg_id: 'iconPlusSm', class: 'icon icon-plus-sm', viewbox: '0 0 20 20' -%}
+    {%- render 'use-svg', title: 'Minus icon', svg_id: 'iconMinusSm', class: 'icon icon-minus-sm', viewbox: '0 0 20 20' -%}
+  </button>
+
+  {% capture sortMenu %}
+  <ul class="collection__sort-list">
+    <li><a href="{{ templateObject.url | sort_by: 'created-descending' }}" {% if sort_by == 'created-descending' %}class="is-active"{% endif %}>{{ 'collections.sorting.date_descending' | t }}</a></li>
+    <li><a href="{{ templateObject.url | sort_by: 'best-selling' }}" {% if sort_by == 'best-selling' %}class="is-active"{% endif %}>{{ 'collections.sorting.best_selling' | t }}</a></li>
+    <li><a href="{{ templateObject.url | sort_by: 'price-ascending' }}" {% if sort_by == 'price-ascending' %}class="is-active"{% endif %}>{{ 'collections.sorting.price_ascending' | t }}</a></li>
+    <li><a href="{{ templateObject.url | sort_by: 'price-descending' }}" {% if sort_by == 'price-descending' %}class="is-active"{% endif %}>{{ 'collections.sorting.price_descending' | t }}</a></li>
+  </ul>
+  {% endcapture %}
+
+  {%- capture sortTitle -%}
+  {{ 'collections.sorting.title' | t }}
+  {%- endcapture -%}
+
+  {% render 'component-modal-dialog',
+    modal_class: 'sort-menu',
+    modal_id: 'sort-menu',
+    modal_content: sortMenu,
+    modal_sticky_header: true,
+    modal_header: sortTitle
+  %}
+
+</div>

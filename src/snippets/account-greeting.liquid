@@ -1,0 +1,11 @@
+<div class="account__greeting">
+  <h1 class="h3 account__greeting-title">
+    {{ 'customer.orders.hello_html' | t: firstname: customer.first_name }}
+  </h1>
+  <a class="btn__text account__logout" href="{{ routes.account_logout_url }}">
+    Logout
+  </a>
+</div>
+<div class="account__page-title">
+  <h1 class="h3">{{ title }}</h1>
+</div>

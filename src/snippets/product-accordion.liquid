@@ -1,0 +1,98 @@
+{%- liquid
+  assign accordionLabels = ''
+  assign accordionContent = ''
+  assign has_desc_or_style = false
+  assign has_model_info = false
+  assign has_care_info = false
+  assign has_size_info = false
+  assign retail_department_metafield = product.metafields.filters.retail_department | downcase
+  assign product_type_metafield = product.metafields.filters.product_type | downcase
+
+  if product.description != blank or product.metafields.information.stylecode != blank
+    assign has_desc_or_style = true
+    assign description_contents = '<div class="product__description">' | append: product.description | append: '<p class="product__stylecode">STYLE: ' | append: product.metafields.information.stylecode | append: '</p></div>'
+  endif
+
+  if product.metafields.information.model != blank
+    assign has_model_info = true
+    assign model_details = '<div class="product__model"><p>' | append: product.metafields.information.model | append: '</p></div>'
+    assign model_contents = model_details
+  endif
+
+  if product.metafields.information.care != blank
+    assign has_care_info = true
+    assign care_details_product_specific = '<div class="product__care"><p>' | append: product.metafields.information.care | append: '</p></div>'
+    assign care_contents = care_details_product_specific
+  elsif retail_department_metafield == 'swimwear' and care_swimwear != empty
+    assign has_care_info = true
+    assign care_contents = care_swimwear
+  elsif retail_department_metafield == 'overswim' and care_overswim != empty
+    assign has_care_info = true
+    assign care_contents = care_overswim
+  elsif retail_department_metafield == 'activewear' and care_activewear != empty
+    assign has_care_info = true
+    assign care_contents = care_activewear
+  elsif retail_department_metafield == 'accessories' and product_type_metafield == 'footwear' and care_footwear != empty
+    assign has_care_info = true
+    assign care_contents = care_footwear
+  endif
+
+  if product.metafields.information.sizing != blank
+    assign has_size_info = true
+    assign sizing_details_product_specific = '<div class="product__sizing"><p>' | append: product.metafields.information.sizing | append: '</p></div>'
+    assign sizing_contents = sizing_details_product_specific
+  elsif retail_department_metafield == 'swimwear' and sizing_swimwear != empty
+    assign has_size_info = true
+    assign sizing_contents = sizing_swimwear
+  elsif retail_department_metafield == 'overswim' and sizing_overswim != empty
+    assign has_size_info = true
+    assign sizing_contents = sizing_overswim
+  elsif retail_department_metafield == 'activewear' and sizing_activewear != empty
+    assign has_size_info = true
+    assign sizing_contents = sizing_activewear
+  elsif retail_department_metafield == 'accessories' and product_type_metafield == 'footwear' and sizing_footwear != empty
+    assign has_size_info = true
+    assign sizing_contents = sizing_footwear
+  endif
+
+
+  for block in section_blocks
+    if block.type == 'accordion_item'
+      assign hideForGiftcard = false
+      if isGiftCard and block.settings.include_on_giftcards == false
+        assign hideForGiftcard = true
+      endif
+      if block.settings.content_type == 'text' and hideForGiftcard == false
+        assign accordionLabels = accordionLabels | append: block.settings.title | append: '|'
+        assign accordionContent = accordionContent | append: block.settings.content_text
+      elsif block.settings.content_type == 'product_description' and has_desc_or_style == true and hideForGiftcard == false
+        assign accordionLabels = accordionLabels | append: block.settings.title | append: '|'
+        assign accordionContent = accordionContent | append: description_contents
+      elsif block.settings.content_type == 'product_sizing' and retail_department_metafield != blank and has_size_info == true and hideForGiftcard == false
+        assign accordionLabels = accordionLabels | append: block.settings.title | append: '|'
+        assign accordionContent = accordionContent | append: sizing_contents
+      elsif block.settings.content_type == 'care_info' and has_care_info == true and hideForGiftcard == false
+        assign accordionLabels = accordionLabels | append: block.settings.title | append: '|'
+        assign accordionContent = accordionContent | append: care_contents
+      elsif block.settings.content_type == 'model_info' and has_model_info == true and hideForGiftcard == false
+        assign accordionLabels = accordionLabels | append: block.settings.title | append: '|'
+        assign accordionContent = accordionContent | append: model_contents
+      elsif block.settings.content_type == 'page' and hideForGiftcard == false
+        assign accordionLabels = accordionLabels | append: block.settings.title | append: '|'
+        assign accordionContent = accordionContent | append: pages[block.settings.content_page].content
+      else
+        continue
+      endif
+      unless forloop.last
+        assign accordionContent = accordionContent | append: '|'
+      endunless
+    endif
+  endfor
+
+  assign labelArray = accordionLabels | split: '|'
+  assign contentArray = accordionContent | split: '|'
+
+  if accordionLabels != ''
+    render 'component-accordion-item', labels: labelArray, contents: contentArray, open_first: true, multi: true
+  endif
+-%}

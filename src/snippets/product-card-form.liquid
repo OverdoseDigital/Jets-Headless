@@ -1,0 +1,51 @@
+{% capture formID %}product-form-{{ product.id }}{% endcapture %}
+{% form "product", product, class: "product-card__form", id: formID %}
+  <input type="hidden" name="quantity" value="1">
+  <select
+    name="id"
+    class="hide"
+    aria-label="{{ 'accessibility_labels.select_product_variant' | t }}"
+    data-wishlist-size-selector
+  >
+    {% for variant in product.variants %}
+      <option
+        {% if variant == current_variant or product.has_only_default_variant or product.variants.size == 1 %}selected="selected"{% endif %}
+        {% unless variant.available %}disabled="disabled"{% endunless %}
+        value="{{ variant.id }}">
+          {{ variant.title }}
+      </option>
+    {% endfor %}
+  </select>
+  <div class="selectCustom js-selectCustom" aria-hidden="true" data-wishlist-size-selector-custom>
+    <div class="selectCustom-trigger">{{ product.selected_or_first_available_variant.title }}</div>
+    <div class="selectCustom-options">
+      {% for variant in product.variants %}
+        <div class="selectCustom-option" data-value="{{ variant.id }}">{{ variant.title }}</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% unless product.has_only_default_variant %}
+    <div class="product-card__variants">
+      <div class="variants-wrap">
+        {% for variant in product.variants %}
+          <button
+            class="btn btn--secondary product-card__variant {% if variant == current_variant %}is-selected{% endif %}" data-variant-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price }}{% else %}{{ variant.price }}{% endif %}"
+            data-variant-id="{{ variant.id }}"
+            {% unless variant.available %} disabled{% endunless %}
+          >{{- variant.title -}}</button>
+        {% endfor %}
+      </div>
+    </div>
+  {% endunless %}
+  <div class="product-card__actions" data-selected-variant-id="{{ current_variant.id }}" data-compare-price="{% if current_variant.compare_at_price > current_variant.price %}{{ current_variant.compare_at_price }}{% else %}{{ current_variant.price }}{% endif %}">
+    <button
+      type="submit"
+      class="btn btn--primary product-card__add"
+      {% unless product.available %} disabled="disabled"{% endunless %}
+      aria-label="{% if current_variant.available %}{{ product.title }} - {{ 'products.product.add_to_cart' | t }}{% else %}{{ product.title }} is {{ 'products.product.sold_out' | t }}{% endif %}"
+    >
+      {{ 'products.product.add_to_cart' | t }}
+    </button>
+  </div>
+{% endform %}

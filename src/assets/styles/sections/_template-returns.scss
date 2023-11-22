@@ -1,0 +1,44 @@
+.returns__orders {
+  width: 100%;
+  max-width: 451px;
+  margin: 0 auto;
+  text-align: left;
+  display: grid;
+  gap: $spacing-sm;
+
+  p {
+    margin: 0;
+  }
+
+  .returns__order-links {
+    margin-top: rem(64px);
+  }
+}
+
+.returns__order {
+  p {
+    @extend %smallcaps;
+  }
+
+  @include media-query($small-down) {
+    padding-top: $spacing-sm;
+
+    &:first-child {
+      padding-top: 0;
+    }
+  }
+}
+
+.returns__order-card {
+  background-color: var(--color-offwhite);
+  padding: 24px 16px 15px;
+}
+
+.returns__order-links {
+  text-align: right;
+
+  .btn__text {
+    margin-left: $spacing-xs;
+    text-decoration-color: var(--color-grey-3);
+  }
+}

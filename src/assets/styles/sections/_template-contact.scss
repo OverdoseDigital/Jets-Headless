@@ -1,0 +1,32 @@
+.contact-us--template {
+  display: grid;
+
+  @include media-query($medium-down) {
+    gap: $spacing-lg;
+  }
+}
+
+@include media-query($medium-up) {
+  .contact-us--template {
+    grid-template-columns: 2fr 2fr;
+  }
+
+  .contact-us--aside {
+    max-width: 70%;
+  }
+}
+
+.contact-us--form {
+  .form__group {
+    margin-bottom: $spacing-sm;
+
+    input::placeholder,
+    textarea::placeholder {
+      color: transparent;
+    }
+  }
+
+  input[type='submit'] {
+    margin-top: $spacing-sm;
+  }
+}

@@ -1,0 +1,181 @@
+@use 'sass:math';
+
+.carousel {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  &::after {
+    content: 'flickity';
+    display: none; /* hide :after */
+  }
+
+  .flickity-viewport {
+    overflow: visible;
+  }
+
+  @include media-query($medium-down) {
+    padding-right: $spacing-sm;
+    overflow: hidden;
+  }
+
+  &:not(.product-cards-carousel__slider) {
+    @include media-query($large-up) {
+      display: flex;
+      flex-wrap: wrap;
+      margin-right: -$spacing-xs;
+      margin-left: -$spacing-xs;
+
+      &::after {
+        content: '';
+      }
+    }
+  }
+
+  @extend %jets-carousel-buttons;
+
+  .slide {
+    width: 80%; // same always on mobile
+    padding-left: $spacing-sm;
+
+    @include media-query($medium) {
+      width: 40%; // same always on tablet
+    }
+
+    @include media-query($large-up) {
+      padding-right: $spacing-xs;
+      padding-left: $spacing-xs;
+    }
+
+    &.half {
+      @include media-query($large-up) {
+        width: 50%;
+      }
+    }
+
+    &.third {
+      @include media-query($large-up) {
+        width: calc(100% / 3);
+      }
+    }
+
+    &.quarter {
+      @include media-query($large-up) {
+        width: calc(100% / 4);
+      }
+    }
+
+    &.product-cards-slider-quarter {
+      @include media-query($large-up) {
+        // +4px pushes centered slider edges out slightly and produces image height as per design.
+        width: calc(100% / 4 + 4px);
+      }
+    }
+
+    &.fifth {
+      @include media-query($large-up) {
+        width: calc(100% / 5);
+      }
+    }
+
+    &.sixth {
+      @include media-query($large-up) {
+        width: calc(100% / 6);
+      }
+    }
+  }
+
+  .slide--small {
+    width: 32%;
+
+    @include media-query($medium) {
+      width: 20%;
+    }
+  }
+
+  &.product-cards-carousel__slider {
+    overflow: hidden;
+
+    // #shame - avoids excessive javascript to perfectly position arrows but needs
+    // updating if product card meta section changes.
+    $product_card_meta_height_adjustment: math.div(115px, 2);
+
+    .flickity-prev-next-button {
+      top: calc(50% - #{$product_card_meta_height_adjustment});
+    }
+  }
+
+  &.product-cards-carousel__slider--sub-five {
+    @include media-query($large-up) {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      margin-right: -$spacing-xs;
+      margin-left: -$spacing-xs;
+
+      &::after {
+        content: unset;
+      }
+    }
+  }
+}
+
+.product-cards-carousel__slider {
+  text-align: left;
+
+  @include media-query($large-up) {
+    padding-bottom: 2.25rem;
+  }
+
+  &:not(.flickity-enabled):not(.searchspring-slider) {
+    /* stylelint-disable-next-line selector-max-specificity */
+    .slide:not(:first-child) {
+      display: none;
+    }
+  }
+
+  .flickity-page-dots {
+    bottom: 1rem;
+
+    @include media-query($medium-down) {
+      display: none;
+    }
+
+    .dot {
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+    }
+  }
+
+  .flickity-prev-next-button.previous {
+    left: $spacing-lg;
+  }
+
+  .flickity-prev-next-button.next {
+    right: $spacing-lg;
+  }
+
+  .product-card__slider.product-card__slider--mob {
+    @include media-query($medium-down) {
+      /* stylelint-disable-next-line selector-max-specificity */
+      &::after {
+        content: '';
+      }
+    }
+  }
+
+  .product-card__slider-controls.medium-down--render {
+    @include media-query($medium-down) {
+      display: none;
+    }
+  }
+}
+
+.product-cards-carousel__title {
+  text-align: center;
+  margin-bottom: $spacing-lg;
+}
+
+.product-cards-carousel__title--recommendations {
+  @extend %h6;
+}

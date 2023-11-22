@@ -1,0 +1,196 @@
+<div class="mobile-nav__slider">
+  <ul class="nav" role="menu">
+
+  {%- comment %}<locksmith:71af>{% endcomment -%}
+    {%- assign locksmith_a184_forloop__size = 0 %}{% for link in linklists[section.settings.menu].links %}{% capture var %}{% render 'locksmith-variables', scope: 'subject', subject: link, subject_parent: linklists[section.settings.menu], variable: 'transparent' %}{% endcapture %}{% if var == 'true' %}{% assign locksmith_a184_forloop__size = locksmith_a184_forloop__size | plus: 1 %}{% endif %}{% endfor %}{% assign locksmith_a184_forloop__index = nil -%}
+  {%- comment %}</locksmith:71af>{% endcomment -%}
+  {% for link in linklists[section.settings.menu].links %}
+    {%- comment %}<locksmith:94c1>{% endcomment -%}
+      {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: link, subject_parent: linklists[section.settings.menu], variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% if locksmith_a184_forloop__index == nil %}{% assign locksmith_a184_forloop__index = 1 %}{% assign locksmith_a184_forloop__index0 = 0 %}{% else %}{% assign locksmith_a184_forloop__index = locksmith_a184_forloop__index | plus: 1 %}{% assign locksmith_a184_forloop__index0 = locksmith_a184_forloop__index0 | plus: 1 %}{% endif %}{% if locksmith_a184_forloop__index == 1 %}{% assign locksmith_a184_forloop__first = true %}{% else %}{% assign locksmith_a184_forloop__first = false %}{% endif %}{% if locksmith_a184_forloop__index == locksmith_a184_forloop__size %}{% assign locksmith_a184_forloop__last = true %}{% else %}{% assign locksmith_a184_forloop__last = false %}{% endif %}{% assign locksmith_a184_forloop__rindex = locksmith_a184_forloop__size | minus: locksmith_a184_forloop__index | minus: 1 %}{% assign locksmith_a184_forloop__rindex0 = locksmith_a184_forloop__size | minus: locksmith_a184_forloop__index0 | minus: 1 %}{% else %}{% continue %}{% endif -%}
+    {%- comment %}</locksmith:94c1>{% endcomment -%}
+    {% liquid
+      assign hasDropdown = false
+      assign subnavBlocks = ''
+      assign menuColumnsClass = 'span-1'
+      assign has_link_color = false
+
+      if link.levels > 0
+        assign hasDropdown = true
+      endif
+    %}
+
+    {%- for block in section.blocks -%}
+      {% liquid
+        assign link_title = link.title | strip | downcase
+        assign block_label = block.settings.title | strip | downcase
+
+        if link_title == block_label
+          if block.type == 'subnav_columns' or block.type == 'subnav_item'
+            assign hasDropdown = true
+          endif
+          if block.type == 'set_nav_link_color'
+            assign link_color = block.settings.link_color
+            assign has_link_color = true
+          endif
+        endif
+      %}
+
+      {%- if link_title == block_label -%}
+        {%- if block.type == 'subnav_item' -%}
+          {% capture subnav_item_block %}
+            <div class="submenu__image {% if block.settings.subnav_item_double_width %}submenu__image--double{% endif %}">
+              {%- liquid
+                assign imageMaxWidth = 480
+                assign imageSizes = '(min-width: 61.875rem) 13.5rem, (min-width: 25rem) 11rem, (min-width: 23.4375rem) calc(50vw - 3rem), calc(50vw - 2rem)'
+
+                if block.settings.subnav_item_double_width
+                  assign imageMaxWidth = 960
+                  assign imageSizes = '(min-width: 61.875rem) 28rem, (min-width: 25rem) 23rem, (min-width: 23.4375rem) calc(100vw - 5rem), calc(100vw - 3rem)'
+                endif
+              -%}
+              <a href="{{ block.settings.subnav_item_link }}">
+                {%- render 'component-image', image: block.settings.subnav_item_image, max_width: imageMaxWidth, aspect_ratio: 'natural', sizes: imageSizes -%}
+                <span>{{ block.settings.subnav_item_label }}</span>
+              </a>
+            </div>
+          {% endcapture %}
+          {% assign subnavBlocks = subnavBlocks | append: subnav_item_block %}
+        {%- endif -%}
+
+        {%- if block.type == 'subnav_columns' -%}
+          {% assign menuColumnsClass = block.settings.menu_columns %}
+        {%- endif -%}
+
+      {%- endif -%}
+    {%- endfor -%}
+
+    {% if hasDropdown %}
+      <li class="nav__item nav__item--level-1 nav__item--has-child {% if link.active %} is-active{% endif %}" data-count="{{ forloop.index }}">
+        <a href="{{ link.url }}" class="nav__item--toggle nav__link--level-1 nav__link {% if has_link_color %}has-custom-color{% endif %}" aria-expanded="false" aria-label="{{ link.title }}" {% if has_link_color %} style="--link-color: {{ link_color }};--link-color-hover: {{ link_color | color_darken: 20 }}"{% endif %}>
+          {{ link.title }}
+          {%- render 'use-svg', title: 'Chevron right icon', svg_id: 'iconChevronRight', class: 'icon icon-chevron-right', viewbox: '0 0 24 24' -%}
+        </a>
+
+        <div class="{% if hasDropdown %}nav__dropdown{% endif %}">
+          <div class="megamenu">
+            {%- if hasDropdown == true -%}
+              {%- liquid
+                assign blockCount = 0
+                for block in section.blocks
+                  assign link_title = link.title | strip | downcase
+                  assign block_label = block.settings.label | strip | downcase
+                  if link_title == block_label
+                    assign blockCount = blockCount | plus: 1
+                  endif
+                endfor
+              -%}
+
+              {% if link.levels > 0 %}
+                <ul class="submenu submenu--nested submenu-{{ menuColumnsClass }}">
+
+                  {%- comment %}<locksmith:cadf>{% endcomment -%}
+                    {%- assign locksmith_9337_forloop__size = 0 %}{% for childlink in link.links %}{% capture var %}{% render 'locksmith-variables', scope: 'subject', subject: childlink, subject_parent: link, variable: 'transparent' %}{% endcapture %}{% if var == 'true' %}{% assign locksmith_9337_forloop__size = locksmith_9337_forloop__size | plus: 1 %}{% endif %}{% endfor %}{% assign locksmith_9337_forloop__index = nil -%}
+                  {%- comment %}</locksmith:cadf>{% endcomment -%}
+                  {% for childlink in link.links %}
+                    {%- comment %}<locksmith:0d52>{% endcomment -%}
+                      {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: childlink, subject_parent: link, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% if locksmith_9337_forloop__index == nil %}{% assign locksmith_9337_forloop__index = 1 %}{% assign locksmith_9337_forloop__index0 = 0 %}{% else %}{% assign locksmith_9337_forloop__index = locksmith_9337_forloop__index | plus: 1 %}{% assign locksmith_9337_forloop__index0 = locksmith_9337_forloop__index0 | plus: 1 %}{% endif %}{% if locksmith_9337_forloop__index == 1 %}{% assign locksmith_9337_forloop__first = true %}{% else %}{% assign locksmith_9337_forloop__first = false %}{% endif %}{% if locksmith_9337_forloop__index == locksmith_9337_forloop__size %}{% assign locksmith_9337_forloop__last = true %}{% else %}{% assign locksmith_9337_forloop__last = false %}{% endif %}{% assign locksmith_9337_forloop__rindex = locksmith_9337_forloop__size | minus: locksmith_9337_forloop__index | minus: 1 %}{% assign locksmith_9337_forloop__rindex0 = locksmith_9337_forloop__size | minus: locksmith_9337_forloop__index0 | minus: 1 %}{% else %}{% continue %}{% endif -%}
+                    {%- comment %}</locksmith:0d52>{% endcomment -%}
+                    {% if locksmith_9337_forloop__index == 1 %}
+                      <li class="mobile-nav__back-item nav__item"><button type="button" class="nav__link nav__link--back" data-action-back>{% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}{{ link.title }}</button></li>
+                    {% endif %}
+                    <li class="nav__item nav__item--level-2 {% if childlink.levels > 0 %}has-submenu{% endif %}" data-count="{{ locksmith_9337_forloop__index }}">
+                      <a href="{{ childlink.url }}" class="nav__link nav__link--level-2 {% if childlink.levels > 0 %}mobile-subnav__item--toggle{% endif %}" aria-expanded="false">
+                      {{ childlink.title }}
+                      {%- liquid
+                        if childlink.levels > 0
+                          render 'use-svg', title: 'Chevron right icon', svg_id: 'iconChevronRight', class: 'icon icon-chevron-right', viewbox: '0 0 24 24'
+                        endif
+                      -%}
+                      </a>
+                      {% if childlink.levels > 0 %}
+                        <div class="submenu--descendant">
+                          <ul>
+                            <li class="mobile-nav__back-item nav__item">
+                              <button type="button" class="nav__link nav__link--back" data-action-back-descendant>{% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}{{ childlink.title }}</button>
+                            </li>
+                            {% for grandchildlink in childlink.links %}
+                            {%- comment %}<locksmith:db32>{% endcomment -%}
+                              {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: grandchildlink, subject_parent: childlink, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+                            {%- comment %}</locksmith:db32>{% endcomment -%}
+                            <li class="nav__item nav__item--level-3">
+                              <a href="{{ grandchildlink.url }}" class="nav__link nav__link--level-3">{{ grandchildlink.title }}</a>
+                            </li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+              {% if link.levels == 0 %}
+                <ul class="large-up--hide">
+                  <li class="mobile-nav__back-item nav__item"><button type="button" class="nav__link nav__link--back" data-action-back>{% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}{{ link.title }}</button></li>
+                </ul>
+              {% endif %}
+
+              {% if subnavBlocks != empty %}
+                {{ subnavBlocks }}
+                {% assign subnavBlocks = '' %}
+              {% endif %}
+
+            {% endif %}
+
+          </div>
+        </div>
+      </li>
+    {% else %}
+      <li class="nav__item nav__item--level-1{% if link.active %} is-active{% endif %}" role="menuitem">
+        <a href="{{ link.url }}" class="nav__link--level-1 nav__link" {% if has_link_color %} style="color: {{ link_color }}"{% endif %}>{{ link.title }}</a>
+      </li>
+    {% endif %}
+
+    {% assign hasDropdown = false %}
+
+  {% endfor %}
+
+  </ul>
+
+  {% if section.settings.feature_image_1 != blank or section.settings.feature_image_2 != blank %}
+  <div class="nav-drawer__feature-tiles">
+    {% if section.settings.feature_image_1 != blank %}
+      <div class="submenu__image {% if section.settings.feature_image_1_double_width %}submenu__image--double{% endif %}">
+        <a href="{{ section.settings.feature_image_url_1 }}">
+          {%- render 'component-image', image: section.settings.feature_image_1, max_width: 600, aspect_ratio: 'natural' -%}
+          <span>{{ section.settings.feature_image_text_1 }}</span>
+        </a>
+      </div>
+    {% endif %}
+    {% if section.settings.feature_image_2 != blank %}
+      <div class="submenu__image {% if section.settings.feature_image_2_double_width %}submenu__image--double{% endif %}">
+        <a href="{{ section.settings.feature_image_url_2 }}">
+          {%- render 'component-image', image: section.settings.feature_image_2, max_width: 600, aspect_ratio: 'natural' -%}
+          <span>{{ section.settings.feature_image_text_2 }}</span>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+
+</div>
+<div class="nav-drawer__footer">
+  <ul>
+    {% if settings.enable_currency_selector %}
+    <li>
+      <button type="button" class="header__btn btn__text" data-currency-modal-trigger>{% render 'icon-globe' %}<span data-cart-currency>{{ cart.currency.symbol }} {{ cart.currency.iso_code }}</span>{% render 'use-svg', title: 'Chevron down icon', svg_id: 'iconChevronDown', class: 'icon icon-chevron-down', viewbox: '0 0 24 24' %}</button>
+    </li>
+    {% endif %}
+    {% if section.settings.help_url != blank %}
+      <li>
+        <a href="{{ section.settings.help_url }}">{% render 'icon-support' %}<span>{{ 'general.navigation.help' | t }}</span></a>
+      </li>
+    {% endif %}
+  </ul>
+</div>

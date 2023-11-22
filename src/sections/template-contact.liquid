@@ -1,0 +1,373 @@
+{% assign accordion_blocks = section.blocks | where: "type", "accordion_block" %}
+{% assign icon_blocks = section.blocks | where: "type", "icon" %}
+
+<div class="container
+    {% if section.settings.enable_narrow %}container--narrow container--flush--medium-up{% endif %}
+    {% if section.settings.padding_size != 'none' %}vert-padding padding-{{ section.settings.padding_size }}{% endif %}
+    icon-size--{{ section.settings.icon_size }}"
+    data-section-id="{{ section.id }}"
+    data-section-type="contact"
+>
+  <div class="icon-row icon-row-count-{{ section.settings.icons_per_row }}">
+    {% for block in icon_blocks %}
+      <div class="icon-row__block">
+        {%- if block.settings.url != blank -%}
+          <a href="{{ block.settings.url }}">
+        {%- endif -%}
+
+        <div class="icon-row__icon">
+          {% render 'icons', icon: block.settings.icon %}
+        </div>
+
+        {%- if block.settings.title != blank -%}
+          <h6 class="icon-row__icon-title">{{ block.settings.title }}</h6>
+        {%- endif -%}
+
+        {%- if block.settings.url != blank -%}
+          </a>
+        {%- endif -%}
+      </div>
+    {% endfor %}
+  </div>
+
+  <section class="contact-us--template vert-padding padding-regular">
+    <div class="contact-us--aside">
+      {%- capture accordionLabels -%}
+        {%- for block in accordion_blocks -%}
+          {{ block.settings.accordion_label }}{%- unless forloop.last -%}|{%- endunless -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      {%- capture accordionContent -%}
+        {%- for block in accordion_blocks -%}
+          {{ block.settings.accordion_content }}{%- unless forloop.last -%}|{%- endunless -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      {% assign labelArray = accordionLabels | split: '|' %}
+      {% assign contentArray = accordionContent | split: '|' %}
+
+      <div class="accordion-group">
+        <div class="container container--narrow container--flush--medium-up">
+          {% render 'component-accordion-item', labels: labelArray, contents: contentArray, multi: false, open_first: true %}
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-us--form">
+      {% form 'contact' %}
+        {% if form.posted_successfully? %}
+          <p class="form__success">
+            {{ 'contact.form.post_success' | t }}
+          </p>
+        {% endif %}
+
+        {{ form.errors | default_errors }}
+
+        <div class="form__group">
+          <label for="ContactFormName">{{ 'contact.form.name' | t }}</label>
+          <input type="text"
+          name="contact[name]"
+          id="ContactFormName"
+          placeholder="{{ 'contact.form.name' | t }}"
+          value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+          required>
+        </div>
+
+        <div class="form__group">
+          <label for="ContactFormEmail">{{ 'contact.form.email' | t }}</label>
+          <input type="email"
+          name="contact[email]"
+          id="ContactFormEmail"
+          placeholder="{{ 'contact.form.email' | t }}"
+          value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+          spellcheck="false"
+          autocomplete="off"
+          autocapitalize="off"
+          required>
+        </div>
+
+        <div class="form__group">
+          <label for="ContactFormPhone">{{ 'contact.form.phone' | t }}</label>
+          <input type="tel"
+          name="contact[phone]"
+          id="ContactFormPhone"
+          placeholder="{{ 'contact.form.phone' | t }}"
+          value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+          >
+        </div>
+
+        <div class="form__group">
+          <label for="ContactFormReason">{{ 'contact.form.reason' | t }}</label>
+          <input type="text"
+          name="contact[reason]"
+          id="ContactFormReason"
+          placeholder="{{ 'contact.form.reason' | t }}"
+          >
+        </div>
+
+        <div class="form__group">
+          <label for="ContactFormMessage">{{ 'contact.form.message' | t }}</label>
+          <textarea rows="10"
+          name="contact[body]"
+          id="ContactFormMessage"
+          placeholder="{{ 'contact.form.message' | t }}"
+          required>
+          {%- if form.body -%}
+          {{- form.body -}}
+          {%- endif -%}
+          </textarea>
+        </div>
+
+        <input type="submit" class="btn btn--block" value="{{ 'contact.form.send' | t }}">
+
+      {% endform %}
+
+    </div>
+  </section>
+</div>
+
+{% schema %}
+  {
+    "name": "Contact",
+    "class": "contact-template",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_narrow",
+        "label": "Display narrow width?",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "padding_size",
+        "label": "Choose vertical padding spacing",
+        "options": [
+          {
+            "label": "None",
+            "value": "none"
+          },
+          {
+            "label": "Small",
+            "value": "small"
+          },
+          {
+            "label": "Regular",
+            "value": "regular"
+          },
+          {
+            "label": "Large",
+            "value": "large"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "select",
+        "id": "icons_per_row",
+        "label": "Icons per row (desktop)",
+        "options": [
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          }
+        ],
+        "default": "4"
+      },
+      {
+        "type": "select",
+        "id": "icon_size",
+        "label": "Icon size",
+        "options": [
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "type": "icon",
+        "name": "Icon",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "url",
+            "id": "url",
+            "label": "Link"
+          },
+          {
+            "type": "select",
+            "id": "icon",
+            "label": "Icon",
+            "options": [
+              {
+                "label": "Account",
+                "value": "account"
+              },
+              {
+                "label": "Bag",
+                "value": "bag"
+              },
+              {
+                "label": "Bikini",
+                "value": "bikini-sm"
+              },
+              {
+                "label": "Book",
+                "value": "book"
+              },
+              {
+                "label": "Box",
+                "value": "box"
+              },
+              {
+                "label": "Maternity",
+                "value": "bump-friendly"
+              },
+              {
+                "label": "Calendar",
+                "value": "calendar"
+              },
+              {
+                "label": "Chat",
+                "value": "chat"
+              },
+              {
+                "label": "Check",
+                "value": "check"
+              },
+              {
+                "label": "Envelope",
+                "value": "envelope"
+              },
+              {
+                "label": "Gift",
+                "value": "gift"
+              },
+              {
+                "label": "Gift - card",
+                "value": "gift-card"
+              },
+              {
+                "label": "Gift - money",
+                "value": "gift-money"
+              },
+              {
+                "label": "Heart",
+                "value": "heart"
+              },
+              {
+                "label": "Location",
+                "value": "location"
+              },
+              {
+                "label": "Lock",
+                "value": "lock"
+              },
+              {
+                "label": "Measure",
+                "value": "measure"
+              },
+              {
+                "label": "Measure tape",
+                "value": "measure-tape"
+              },
+              {
+                "label": "Money",
+                "value": "money"
+              },
+              {
+                "label": "Palm",
+                "value": "palm"
+              },
+              {
+                "label": "Phone",
+                "value": "phone"
+              },
+              {
+                "label": "Regenerated Fibers",
+                "value": "regenerated-fibers"
+              },
+              {
+                "label": "Return",
+                "value": "return"
+              },
+              {
+                "label": "Search",
+                "value": "search"
+              },
+              {
+                "label": "Sunlounge",
+                "value": "sunlounge"
+              },
+              {
+                "label": "Support",
+                "value": "support"
+              },
+              {
+                "label": "Sustainable",
+                "value": "sustainable"
+              },
+              {
+                "label": "Swimsuit",
+                "value": "swimsuit-sm"
+              },
+              {
+                "label": "Tick",
+                "value": "tick"
+              },
+              {
+                "label": "Truck",
+                "value": "truck"
+              },
+              {
+                "label": "Upload",
+                "value": "upload"
+              },
+              {
+                "label": "Zip",
+                "value": "zip"
+              },
+              {
+                "label": "Zoom",
+                "value": "zoom"
+              }
+            ],
+            "default": "box"
+          }
+        ]
+      },
+      {
+        "type": "accordion_block",
+        "name": "Accordion block",
+        "settings": [
+          {
+            "type": "text",
+            "id": "accordion_label",
+            "label": "Label",
+            "info": "eg. Question"
+          },
+          {
+            "type": "richtext",
+            "id": "accordion_content",
+            "label": "Content"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

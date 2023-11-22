@@ -1,0 +1,103 @@
+.featured-catalogues__heading {
+  padding-top: $spacing-xxl;
+  padding-bottom: $spacing-lg;
+  text-align: center;
+
+  @include media-query($medium-down) {
+    padding-left: $spacing-lg;
+    padding-right: $spacing-lg;
+  }
+
+  @include media-query($large-up) {
+    padding-top: $spacing-md;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.featured-catalogues__main-title,
+.featured-catalogues__intro {
+  max-width: rem(646px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// three column by default
+.featured-catalogues__catalogues {
+  display: grid;
+  grid-template-columns: repeat(3, 90%);
+  grid-column-gap: rem($spacing-xxs);
+  overflow: scroll;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  @include media-query($medium) {
+    grid-template-columns: repeat(3, 40%);
+  }
+
+  @include media-query($large-up) {
+    overflow: hidden;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (hover: hover) {
+    // small screen non-touch devices should just squeeze all three columns further since horizontal scroll is not supported.
+    overflow: hidden;
+    grid-template-columns: 1fr;
+
+    @include media-query($medium-up) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+.featured-catalogues__catalogues--two-column {
+  grid-template-columns: 1fr;
+  grid-row-gap: 4px;
+
+  @include media-query($medium-up) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.featured-catalogues__catalogue {
+  position: relative;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+
+  .featured-catalogues__overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: $outer-margin-sm;
+
+    @include media-query($large-up) {
+      padding: $outer-margin-lg;
+    }
+  }
+
+  .featured-catalogues__overlay--top {
+    padding-top: 40px;
+    align-items: flex-start;
+  }
+
+  .featured-catalogues__overlay--bottom {
+    padding-bottom: 40px;
+    align-items: flex-end;
+  }
+}

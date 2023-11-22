@@ -1,0 +1,135 @@
+{%- unless request.page_type == 'index' or request.page_type == 'cart' or request.page_type == 'list-collections' or request.page_type == '404' -%}
+  <nav class="breadcrumbs" aria-label="{{ 'general.breadcrumbs.label' | t }}">
+    <ol class="breadcrumbs__list">
+      {%- if request.page_type == 'page' -%}
+        <li class="breadcrumbs__item">
+          <span>{{ page.title }}</span>
+        </li>
+      {%- elsif request.page_type == 'product' -%}
+        {%- comment %}
+          Find an attached collection that is not hidden
+        {% endcomment -%}
+        {%- liquid
+          if collection == blank
+            assign product_type = product.type
+            if product_type != blank
+              for collection in product.collections
+                comment
+                  <locksmith:4be3> Code added automatically by the Locksmith app. Do not modify or remove.
+                endcomment
+                capture var
+                  render 'locksmith-variables', scope: 'subject', subject: collection, subject_parent: product, variable: 'transparent'
+                endcapture
+                if var == "true"
+                else
+                  continue
+                endif
+                comment
+                  </locksmith:4be3> End Locksmith code block.
+                endcomment
+                if collection.title == product_type and collection.metafields.seo.hidden != 1
+                  assign collection = collection
+                  break
+                endif
+              endfor
+            endif
+          endif
+        -%}
+
+        {%- comment %}
+          Look for a parent in the collection-map list
+        {% endcomment -%}
+        {% assign colMapItemCount = 0 %}
+        {%- for page_link in linklists['collection-map'].links -%}
+          {%- comment %}<locksmith:1645>{% endcomment -%}
+            {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: page_link, subject_parent: linklists.collection-map, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+          {%- comment %}</locksmith:1645>{% endcomment -%}
+          {%- for col_link in page_link.links -%}
+            {%- comment %}<locksmith:150d>{% endcomment -%}
+              {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: col_link, subject_parent: page_link, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+            {%- comment %}</locksmith:150d>{% endcomment -%}
+            {%- if col_link.handle == collection.handle -%}
+              <li class="breadcrumbs__item">
+                <a href="{{ page_link.url }}" class="breadcrumbs__link">
+                  <span class="breadcrumbs__arrow">{% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}</span>{{ page_link.title }}
+                </a>
+              </li>
+              {% assign colMapItemCount = colMapItemCount | plus: 1 %}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endfor -%}
+
+        {%- if collection != blank -%}
+          <li class="breadcrumbs__item">
+            <a href="{{ collection.url }}" class="breadcrumbs__link">{% unless colMapItemCount > 0 %}<span class="breadcrumbs__arrow">{% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}</span>{% endunless %}{{ collection.title }}</a>
+          </li>
+        {% else %}
+          <li class="breadcrumbs__item">
+            <a href="/collections/all" class="breadcrumbs__link"><span class="breadcrumbs__arrow">{% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}</span>{{ 'products.product.breadcrumb_all' | t }}</a>
+          </li>
+        {%- endif -%}
+
+        <li class="breadcrumbs__item">
+          <span>{{ product.title }}</span>
+        </li>
+      {%- elsif request.page_type == 'collection' and collection.handle -%}
+
+        {%- comment %}
+          Look for a parent in the collection-map list
+        {% endcomment -%}
+        {%- for page_link in linklists['collection-map'].links -%}
+          {%- comment %}<locksmith:421f>{% endcomment -%}
+            {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: page_link, subject_parent: linklists.collection-map, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+          {%- comment %}</locksmith:421f>{% endcomment -%}
+          {%- for col_link in page_link.links -%}
+            {%- comment %}<locksmith:fa54>{% endcomment -%}
+              {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: col_link, subject_parent: page_link, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+            {%- comment %}</locksmith:fa54>{% endcomment -%}
+            {%- if col_link.handle == collection.handle -%}
+              <li class="breadcrumbs__item">
+                <a href="{{ page_link.url }}" class="breadcrumbs__link">
+                  {{ page_link.title }}
+                </a>
+              </li>
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endfor -%}
+        <li class="breadcrumbs__item">
+          <span>{{ collection.title }}</span>
+        </li>
+
+      {%- elsif request.page_type == 'blog' -%}
+        {%- if current_tags -%}
+          <li class="breadcrumbs__item">
+            <a class="breadcrumbs__link" href="{{ blog.url }}"><span>{{ blog.title }}</span></a>
+          </li>
+          <li class="breadcrumbs__item">
+            <span>{{ current_tags | join: " + " }}</span>
+          </li>
+        {%- else -%}
+          <li class="breadcrumbs__item">
+            <span>{{ blog.title }}</span>
+          </li>
+        {%- endif -%}
+      {%- elsif request.page_type == 'article' -%}
+        <li class="breadcrumbs__item">
+          <a class="breadcrumbs__link" href="{{ blog.url }}"><span class="breadcrumbs__arrow">{% render 'use-svg', title: 'Chevron left icon', svg_id: 'iconChevronLeft', class: 'icon icon-chevron-left', viewbox: '0 0 24 24' %}</span>{{ 'general.breadcrumbs.back' | t }}</a>
+        </li>
+      {%- elsif request.page_type == 'search' -%}
+        <li class="breadcrumbs__item">
+          {% if search.performed %}
+            <span>{{ 'general.search.heading' | t: count: search.results_count }}: {{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}</span>
+          {% else %}
+            <span>{{ 'general.search.title' | t }}</span>
+          {% endif %}
+        </li>
+      {%- else -%}
+        <li class="breadcrumbs__item">
+          <span>{{ page_title }}</span>
+        </li>
+      {%- endif -%}
+    </ol>
+  </nav>
+  {%- endunless -%}

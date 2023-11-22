@@ -1,0 +1,21 @@
+.logo-image {
+  display: block;
+  margin: 0 auto;
+  color: var(--color-black);
+  width: 100%;
+  max-width: rem(172px);
+
+  &:focus {
+    color: var(--color-black);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-black);
+    }
+  }
+
+  svg {
+    display: block;
+  }
+}

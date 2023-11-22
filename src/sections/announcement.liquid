@@ -1,0 +1,125 @@
+{%- if section.settings.announcement_bar_enabled -%}
+  {%- if section.settings.announcement_bar_home_page_only == false or request.page_type == 'index' -%}
+    {%- liquid
+      assign bgcolour = section.settings.announcement_bar_bgcolour
+      assign colour = section.settings.announcement_bar_colour
+    -%}
+    {% if section.blocks.size > 0 %}
+      <div
+        class="announcement{% if section.settings.dismissable %} has-dismiss is-loading{% endif %}"
+        id="{{ section.id }}"
+        data-announcement-bar
+        data-section-id="{{ section.id }}"
+        data-section-type="announcement"
+        style="background-color: {{ bgcolour }}; color: {{ colour }}"
+      >
+        <div class="announcement__text-wrap">
+          <div class="announcement__text">
+            <p>
+              {% for block in section.blocks %}
+                {%- if block.settings.title != blank -%}
+                  <span class="announcement__item">
+                    {{ block.settings.title | replace: '<p>', '' | replace: '</p>', '' }}
+                  </span>
+                {%- endif -%}
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+        {% if section.settings.dismissable %}
+          <button
+            aria-label="Dismiss announcement"
+            class="announcement-dismiss btn__icon"
+            data-announcement-bar-dismiss
+          >
+            {% render 'icon-cross' %}
+          </button>
+        {% endif %}
+      </div>
+    {% endif %}
+  {%- endif -%}
+{%- endif -%}
+
+{% assign bgRgb = section.settings.announcement_bar_bgcolour | color_to_rgb %}
+<style>
+  {% if section.settings.dismissable %}
+    #{{ section.id }}.has-dismiss:after {
+      background: linear-gradient(270deg, {{ bgRgb | color_modify: 'alpha', 1 }} 50%, {{ bgRgb | color_modify: 'alpha', 0 }} 100%);
+    }
+  {% endif %}
+  #{{ section.id }} a,
+  #{{ section.id }} .btn__icon {
+    color: {{ colour }};
+  }
+
+  #{{ section.id }}.marquee .announcement__text {
+    animation: marquee {{ section.settings.speed }}s linear infinite;
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Announcement",
+    "class": "announcement-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Announcement bar"
+      },
+      {
+        "type": "checkbox",
+        "id": "announcement_bar_enabled",
+        "label": "Show announcement",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "announcement_bar_home_page_only",
+        "label": "Show on home page only",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "dismissable",
+        "label": "Add close button",
+        "default": false,
+        "info": "Clicking this button dismiss announcement bar for the duration of a Browser Session"
+      },
+      {
+        "type": "color",
+        "id": "announcement_bar_bgcolour",
+        "label": "Background Colour",
+        "default": "#9EE1D3"
+      },
+      {
+        "type": "color",
+        "id": "announcement_bar_colour",
+        "label": "Text colour",
+        "default": "#000000"
+      },
+      {
+        "type": "range",
+        "id": "speed",
+        "min": 5,
+        "max": 60,
+        "step": 5,
+        "unit": "sec",
+        "label": "Animation speed: time to complete one loop (mobile)",
+        "default": 40
+      }
+    ],
+    "blocks": [
+      {
+        "type": "message",
+        "name": "Message",
+        "settings": [
+          {
+            "type": "richtext",
+            "id": "title",
+            "label": "Text"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

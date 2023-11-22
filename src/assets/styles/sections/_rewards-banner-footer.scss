@@ -1,0 +1,45 @@
+.rewards-banner-footer {
+  text-align: center;
+
+  .rewards-banner-footer__icon {
+    display: flex;
+    width: rem(96px);
+    height: rem(96px);
+    margin: 0 auto $spacing-lg;
+    padding: $spacing-xs;
+    background: var(--color-offwhite);
+    color: var(--color-black);
+    border-radius: 50%;
+
+    .icon {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: auto;
+    }
+  }
+}
+
+.rewards-banner-footer__title {
+  margin-bottom: $spacing-xs;
+
+  @include media-query($small-down) {
+    font-size: rem(16px);
+  }
+}
+
+.rewards-banner-footer__text-body {
+  p {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  @include media-query($small-down) {
+    font-size: rem(12px);
+
+    p {
+      font-size: rem(12px);
+    }
+  }
+}

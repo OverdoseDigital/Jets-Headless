@@ -1,0 +1,107 @@
+{%- comment %}
+  Parameters
+  image_mobile: Image object of the image used at mobile breakpoint
+  image_desktop: Image object of the image used at small desktop breakpoint
+  img_alt: The alt attribute for the fallback <img> element. Defaults to either mobile/desktop image.alt
+  img_desktop_alt: The alt attribute for the desktop image. Defaults to image_desktop.alt
+  class: The class attribute on the picture element
+  max_width_mobile: (optional) maximum width used for mobile srcset
+  max_width_desktop: (optional) maximum width used for desktop srcset
+  lazy: (optional) boolean - Defaults to true (lazy-load).
+  sizes: (optional) sizes attribute for <source> nodes. Defaults to 100vw (100% viewport width)
+  paddingTopManual: percentage number value, will override calculated aspect padding value for mobile
+  paddingTopDesktopManual: percentage number value, will override calculated aspect padding value for desktop
+  placeholderType: (optional) placeholder image type e.g. 'image' or 'lifestyle-2' (default)
+  breakpoint_desktop: (optional) specify breakpoint
+{% endcomment -%}
+
+{%- liquid
+  assign lazy = lazy | default: true, allow_false: true
+  assign sizes = sizes | default: '100vw'
+  assign default_breakpoint = settings.grid_medium | default: 768
+  assign breakpoint_desktop = breakpoint_desktop | default: default_breakpoint
+-%}
+
+{%- unless image_mobile == blank and image_desktop == blank -%}
+  {%- comment -%}
+    Handle Accentuate Custom Fields MediaV2 images through cloudinary_src property
+  {%- endcomment -%}
+  {%- liquid
+    if image_mobile == blank or image_desktop == blank
+      assign image_desktop = image_desktop | default: image_mobile
+      assign image_mobile = blank
+    endif
+
+    if image_mobile != blank
+      if image_mobile.cloudinary_src == blank
+        assign mobile_src_template = image_mobile | image_url: width: 100 | replace: 'width=100', 'width={width}'
+      else
+        assign mobile_src_template = image_mobile.cloudinary_src | append: 'w_{width}'
+      endif
+      assign img_alt = img_alt | default: image_mobile.alt
+
+      capture srcset_mobile
+        render 'srcset', img_url: mobile_src_template, max_width: max_width_mobile
+      endcapture
+    endif
+
+    if image_desktop != blank
+      if image_desktop.cloudinary_src == blank
+        assign image_desktop_fallback = image_desktop | image_url: width: 1920
+        assign desktop_src_template = image_desktop | image_url: width: 100 | replace: 'width=100', 'width={width}'
+      else
+        assign image_desktop_fallback = image_desktop.cloudinary_src | append: 'w_1920'
+        assign desktop_src_template = image_desktop.cloudinary_src | append: 'w_{width}'
+      endif
+      assign img_alt = img_alt | default: image_desktop.alt
+
+      capture srcset_desktop
+        render 'srcset', img_url: desktop_src_template, widths: image_widths, max_width: max_width_desktop
+      endcapture
+    endif
+
+    assign padding_top = 100 | divided_by: image_desktop.aspect_ratio | append: '%'
+    assign padding_top_desktop = 100 | divided_by: image_desktop.aspect_ratio | append: '%'
+    if image_mobile != blank
+      assign padding_top = 100 | divided_by: image_mobile.aspect_ratio | append: '%'
+    endif
+    if paddingTopManual != blank
+      assign padding_top = paddingTopManual | append: '%'
+    endif
+    if paddingTopDesktopManual != blank
+      assign padding_top_desktop = paddingTopDesktopManual | append: '%'
+    endif
+    capture wrapper_styles
+      echo '--paddingTop: ' | append: padding_top | append: ';'
+      echo '--paddingTopDesktop: ' | append: padding_top_desktop | append: ';'
+    endcapture
+    assign wrapper_styles = wrapper_styles | strip_newlines
+  -%}
+  <div class="component-picture__wrapper{% if breakpoint_desktop == settings.grid_large %} component-picture__wrapper--breakpoint-large{% endif %}" style="{{ wrapper_styles }}">
+    <picture>
+      {%- if image_mobile != blank -%}
+        <source
+          media="(max-width: {{ breakpoint_desktop | minus: 1 | append: 'px' }})"
+          sizes="{{ sizes }}"
+          srcset="{{ srcset_mobile }}"
+        />
+      {%- endif -%}
+
+      <source
+        {% if image_mobile != blank %}media="(min-width: {{ breakpoint_desktop | append: 'px' }})"{% endif %}
+        sizes="{{ sizes }}"
+        srcset="{{ srcset_desktop }}"
+      />
+      <img {% if class %}class="{{ class }}"{% endif %}
+        src="{{ image_desktop_fallback }}"
+        alt="{{ img_alt | strip_html | escape }}"
+        loading="{% if lazy %}lazy{% else %}eager{% endif %}"
+      />
+    </picture>
+  </div>
+{%- else -%}
+  {% assign defaultImage = placeholderType | default: 'lifestyle-2' %}
+  <div class="component-picture__wrapper">
+    {{ defaultImage | placeholder_svg_tag: 'placeholder-svg' }}
+  </div>
+{%- endunless -%}

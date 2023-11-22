@@ -1,0 +1,186 @@
+{%- comment -%}
+  Parameters
+  card_class: (optional) class on the parent element
+  slider_mob: (optional) boolean, (default false) if true, render prod. images slider on mobile
+  sizes: (optional) sizes attribute for <source> nodes. Defaults to 100vw (100% viewport width)
+  isWishlist: (optional) boolean, is this request from Wishlist page
+{%- endcomment -%}
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+
+  assign includesVideo = false
+  if product.metafields.video.show_video == 1
+    if product.metafields.video.video_url != blank
+      assign includesVideo = true
+      assign videoUrl = product.metafields.video.video_url
+    endif
+  endif
+
+  if product.media.size > 1
+    assign featuredMediaClass = 'featured'
+
+  endif
+%}
+
+<div
+  data-selected-variant-id="{{ current_variant.id }}"
+  data-wishlist-selected-variant-exists="{% if product.selected_variant %}true{% else %}false{% endif %}"
+  data-wishlist-variant-available="{{ product.selected_variant.available }}"
+  data-product-id="{{ product.id }}"
+  data-compare-price="{% if product.compare_at_price > product.price %}{{ product.compare_at_price }}{% else %}{{ product.price }}{% endif %}"
+  class="product-card{% if card_class != blank %} {{ card_class }}{% endif %}"
+>
+  <div class="product-card__image">
+    <a href="{{ product.url | within: collection }}">
+      {% if includesVideo %}
+        {% render 'component-video', video: videoUrl, autoplay: true, controls: false, aspect_ratio: 'portrait', video_class: featuredMediaClass %}
+      {% else %}
+        {% render 'component-image', image: product.featured_image, aspect_ratio: 'portrait', max_width: 960, sizes: sizes, img_class: featuredMediaClass, check_aspect_ratio: true %}
+      {% endif %}
+
+      {%- if settings.show_second_image and product.media.size > 1 or settings.show_second_image and includesVideo and product.media.size == 1 -%}
+        <div class="product-card__image--secondary {% if slider_mob %}product-card__image--secondary-foreground{% endif %}">
+          {% liquid
+            assign slider_classes = 'product-card__slider'
+            if slider_mob
+              assign slider_classes = slider_classes | append: ' product-card__slider--mob'
+            endif
+          %}
+          <div class="{{ slider_classes }}">
+            {% if includesVideo %}
+              <div class="product-card__slide">
+                {% render 'component-video', video: videoUrl, autoplay: true, controls: false, aspect_ratio: 'portrait' %}
+              </div>
+            {% endif %}
+
+            {% for media in product.media %}
+              {% if media.media_type == 'video' %}{% continue %}{% endif %}
+              <div class="product-card__slide">
+              {% liquid
+                if media.media_type == 'image'
+                  render 'component-image', image: media, aspect_ratio: 'portrait', max_width: 960, sizes: sizes, check_aspect_ratio: true
+                endif
+              %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {%- endif -%}
+    </a>
+
+    {% liquid
+      assign controls_classes = 'product-card__slider-controls'
+      if slider_mob
+        assign controls_classes = controls_classes | append: ' medium-down--render'
+      endif
+
+      assign showControls = false
+      if product.media.size == 1 and includesVideo
+        assign showControls = true
+      elsif product.media.size > 1
+        assign showControls = true
+      endif
+    %}
+    {% if showControls %}
+    <div class="{{ controls_classes }}">
+      <button class="btn--control btn--control-prev" aria-label="{{ 'accessibility_labels.view_previous_slide' | t }}">{% render 'icon-chevron-left' %}</button>
+      <button class="btn--control btn--control-next" aria-label="{{ 'accessibility_labels.view_next_slide' | t }}">{% render 'icon-chevron-right' %}</button>
+    </div>
+    {% endif %}
+
+
+    {%- if settings.include_form and isWishlist != true and product.type != 'Gift Cards' -%}
+      <div class="product-card__form-container">
+        <button
+          class="product-card__sizes-trigger"
+          data-open-product-sizes
+          data-product-handle="{{ product.handle }}"
+        >
+          {%- render 'use-svg', title: 'Plus icon', svg_id: 'iconPlus', class: 'icon icon-plus', viewbox: '0 0 24 24' -%}
+        </button>
+        {% render 'product-card-form', product: product, current_variant: current_variant, isFromProductCard: true %}
+      </div>
+    {%- endif -%}
+
+    {% render 'product-badge', product: product, includeIconBadge: true %}
+
+  </div>
+
+  <div class="product-card__meta">
+
+    <div class="product-card__stitching-wishlist">
+      {% render 'product-stitching', product: product, compact: true, isWishlist: isWishlist %}
+
+      {% if product.type != 'Gift Cards' %}
+      <div class="product-card__wishlist">
+        <button
+          data-trigger-wishlist-modal
+          data-product-title={{ product.title | json }}
+          data-product-handle={{ product.handle }}
+          data-product-price={{ product.price }}
+          data-product-id="{{ product.id }}"
+          data-selected-variant-id="{{ current_variant.id }}"
+          {% if isWishlist %}
+            data-add-to-wishlist
+            aria-label="{{ 'wishlist.wishlist_remove' | t }}"
+            class="is-wishlisted btn__icon"
+          {% else %}
+            aria-label="{{ 'wishlist.wishlist_add' | t }}"
+            class="btn__icon"
+          {% endif %}
+        >
+          {% render 'icon-heart' %}
+        </button>
+      </div>
+      {% endif %}
+    </div>
+
+    <h4 class="product-card__title">
+      <a href="{{ product.url | within: collection }}">
+        {{ product.title }}
+      </a>
+    </h4>
+
+    {% if isWishlist %}
+      <p class="product-card__size">Size: {{ product.selected_variant.title }}</p>
+    {% endif %}
+
+    {% if settings.okendo_product_review_ratings %}
+      {% render 'okendo-reviews-product-rating-summary', product: product %}
+    {% endif %}
+
+    <div class="product-card__price">
+      <a href="{{ product.url | within: collection }}">
+      {% if product.price_varies %}
+        <span>
+        {% capture priceMin %}{{ product.price_min | money_with_currency }}{% endcapture %}
+        {{ 'products.product.from_text_html' | t: price: priceMin }}
+        </span>
+      {% else %}
+        {% if product.compare_at_price > product.price %}
+          <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+          <s data-compare-price>{{ product.compare_at_price | money_with_currency }}</s>
+        {% endif %}
+        <span data-product-price {% if product.compare_at_price > product.price %}class="product-card__sale-price"{% endif %}>
+          {{ product.price | money_with_currency }}
+        </span>
+      {% endif %}
+      </a>
+    </div>
+
+    {% if isWishlist %}
+      <button
+        type="submit"
+        class="btn btn--block wishlist__addToCart"
+        {% unless current_variant.available %} disabled="disabled"{% endunless %}
+        aria-label="{% if current_variant.available %}{{ product.title }} - {{ 'products.product.add_to_cart' | t }}{% else %}{{ product.title }} is {{ 'products.product.sold_out' | t }}{% endif %}"
+      >
+        {% if current_variant.available %}
+          {{ 'products.product.add_to_cart' | t }}
+        {% else %}
+          {{ 'products.product.unavailable' | t }}
+        {% endif %}
+      </button>
+    {% endif %}
+  </div>
+</div>

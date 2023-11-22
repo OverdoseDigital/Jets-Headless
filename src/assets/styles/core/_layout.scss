@@ -1,0 +1,296 @@
+html {
+  height: 100%;
+  background-color: var(--color-white);
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+
+  @media (prefers-reduced-motion) {
+    scroll-behavior: auto;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.page-header {
+  padding: $spacing-page-top-small 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  @include media-query($large-up) {
+    padding: $spacing-page-top-large 0;
+  }
+
+  .template-collection & {
+    padding: $spacing-lg 0 $spacing-xxl;
+
+    @include media-query($large-up) {
+      padding: $spacing-lg 0 $spacing-xxl;
+    }
+  }
+
+  h3,
+  .h3 {
+    margin-bottom: $spacing-sm;
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+  .common-banner & {
+    .h3 {
+      margin-bottom: $spacing-xxs;
+    }
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+%container {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: $outer-margin-sm;
+  padding-right: $outer-margin-sm;
+  width: 100%;
+  max-width: $page-width;
+
+  @include media-query($large-up) {
+    padding-left: $outer-margin-lg;
+    padding-right: $outer-margin-lg;
+  }
+}
+
+/* stylelint-disable */
+.container {
+  @extend %container;
+
+  &.container--extra-narrow {
+    max-width: rem(448px) + ($outer-margin-sm * 2);
+
+    @include media-query($large-up) {
+      max-width: rem(448px) + ($outer-margin-lg * 2);
+    }
+  }
+
+  &.container--narrow {
+    max-width: rem(680px) + ($outer-margin-sm * 2);
+
+    @include media-query($large-up) {
+      max-width: rem(680px) + ($outer-margin-lg * 2);
+    }
+  }
+
+  &.container--medium {
+    max-width: rem(680px) + ($outer-margin-sm * 2);
+
+    @include media-query($large-up) {
+      max-width: rem(680px) + ($outer-margin-lg * 2);
+    }
+  }
+
+  &.container--wide {
+    max-width: rem(910px) + ($outer-margin-sm * 2);
+  }
+
+  &.container--wide,
+  &.container--wide--large-up {
+    @include media-query($large-up) {
+      max-width: rem(910px) + ($outer-margin-lg * 2);
+    }
+  }
+}
+
+.container--fluid {
+  max-width: none;
+}
+
+.container--flush {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.container--flush--small {
+  @include media-query($small-down) {
+    padding-left: 0;
+    padding-right: 0;
+
+    .row {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+}
+
+.container--flush--medium-down {
+  @include media-query($medium-down) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.container--flush--medium-up {
+  @include media-query($medium-up) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* stylelint-disable selector-id-pattern, selector-max-id, selector-max-specificity */
+#fader {
+  position: fixed;
+  z-index: 999999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: white;
+  animation-duration: 300ms;
+  animation-timing-function: ease-in-out;
+}
+
+#fader.fade-out {
+  opacity: 0;
+  animation-name: fade-out;
+}
+
+#fader.fade-in {
+  opacity: 1;
+  animation-name: fade-in;
+}
+/* stylelint-enable selector-id-pattern, selector-max-id, selector-max-specificity */
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.section__title,
+.featured-collections__title {
+  margin-bottom: $spacing-xl;
+}
+
+.section-spacer--small {
+  margin-bottom: $spacing-lg;
+}
+
+.section-spacer--medium {
+  margin-bottom: $spacing-xxl;
+}
+
+.section-spacer--large {
+  margin-bottom: $spacing-xxxl;
+
+  @include media-query($large-up) {
+    margin-bottom: rem(96px);
+  }
+}
+
+#gorgias-chat-container {
+  position: relative;
+  z-index: 99;
+}
+
+// Text alignment
+.text-left {
+  text-align: left;
+}
+
+.text-left--medium-up {
+  @include media-query($medium-up) {
+    text-align: left;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-center--medium-up {
+  @include media-query($medium-up) {
+    text-align: center;
+  }
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-right--medium-up {
+  @include media-query($medium-up) {
+    text-align: right;
+  }
+}
+
+// Vertical Padding classes
+.vert-padding {
+  &.padding-small {
+    padding-top: $spacing-lg;
+    padding-bottom: $spacing-lg;
+  }
+
+  &.padding-regular {
+    padding-top: $spacing-lg;
+    padding-bottom: $spacing-lg;
+
+    @include media-query($medium-up) {
+      padding-top: $spacing-xxl;
+      padding-bottom: $spacing-xxl;
+    }
+  }
+
+  &.padding-large {
+    padding-top: $spacing-lg;
+    padding-bottom: $spacing-lg;
+
+    @include media-query($medium-up) {
+      padding-top: $spacing-xxxl;
+      padding-bottom: $spacing-xxxl;
+    }
+  }
+
+  &.padding-xlarge {
+    padding-top: $spacing-xxl;
+    padding-bottom: $spacing-xxl;
+
+    @include media-query($medium-up) {
+      padding-top: $spacing-xxxl;
+      padding-bottom: $spacing-xxxl;
+    }
+  }
+
+  &.padding-xxlarge {
+    padding-top: rem(64px);
+    padding-bottom: rem(64px);
+
+    @include media-query($medium-up) {
+      padding-top: rem(144px);
+      padding-bottom: rem(144px);
+    }
+  }
+}

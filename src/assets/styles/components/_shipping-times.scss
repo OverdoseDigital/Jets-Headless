@@ -1,0 +1,34 @@
+.shipping-times__wrapper {
+  padding: $spacing-sm 0;
+  margin-bottom: $spacing-lg;
+}
+
+.shipping-times {
+  position: relative;
+
+  .form__group {
+    position: relative;
+    margin: 0;
+  }
+
+  .btn {
+    position: absolute;
+    right: rem(4px);
+    top: rem(4px);
+  }
+
+  input[type='number'] {
+    appearance: textfield;
+    background-color: var(--color-white);
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+
+    &::placeholder {
+      color: var(--color-black);
+    }
+  }
+}

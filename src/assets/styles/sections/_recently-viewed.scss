@@ -1,0 +1,7 @@
+.recently-viewed__wrapper {
+  padding: $spacing-md 0;
+
+  @include media-query($medium-up) {
+    padding: $spacing-lg 0;
+  }
+}

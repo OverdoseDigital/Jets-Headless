@@ -1,0 +1,16 @@
+{% liquid
+    capture modalId
+      echo 'find-in-store--' | append: product.id
+    endcapture
+    capture header
+      echo 'Find in store'
+    endcapture
+    capture content
+      render 'pickup-availability'
+    endcapture
+    capture label
+      echo 'find-in-store-' | append: product.id | append: '--label'
+    endcapture
+
+    render 'component-modal-dialog', modal_class: 'find-in-store', modal_id: modalId, modal_header: header, modal_sticky_header: true, modal_label: label, modal_content: content
+%}

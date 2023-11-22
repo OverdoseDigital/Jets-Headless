@@ -1,0 +1,108 @@
+<div
+  data-section-id="{{ section.id }}"
+  data-section-type="template-gift-card-balance-check"
+>
+  <div class="container">
+    <div class="account account--narrow account--gcbc">
+      <div class="page-header">
+        <h1 class="h3">{{ page.title }}</h1>
+      </div>
+      <form id="giftCardBalanceForm">
+        <div class="form__group">
+          <label for="giftCardNumber">
+            {{ 'gift_cards.balance_check.card_number_label' | t }}
+          </label>
+          <input type="text"
+            name="voucherNumber"
+            id="giftCardNumber"
+            autocomplete="off"
+            autocapitalize="off"
+            autofocus
+          >
+        </div>
+        <div class="form__group">
+          <label for="giftCardPin">
+            {{ 'gift_cards.balance_check.pin_label' | t }}
+          </label>
+          <input type="text"
+            name="voucherPin"
+            id="giftCardPin"
+            autocomplete="off"
+            autocapitalize="off"
+          >
+        </div>
+        <p class="form__error hide">{{ 'gift_cards.balance_check.form_error' | t }}</p>
+        <p class="button-container">
+          <input
+            type="submit"
+            disabled="disabled"
+            class="btn btn--block"
+            value="{{ 'gift_cards.balance_check.submit_button_label' | t }}"
+          >
+        </p>
+      </form>
+      <section class="gcbc__card-balance-section hide">
+        <div class="gcbc__card-balance-information">
+          <div class="gcbc__info-item">
+            <h6 class="gcbc__info-label">
+              {{ 'gift_cards.balance_check.card_number_label' | t }}
+            </h6>
+            <p class="gcbc__info-value js--gcbc-card-number">
+
+            </p>
+          </div>
+          <div class="gcbc__info-item">
+            <h6 class="gcbc__info-label">
+              {{ 'gift_cards.balance_check.expiry_label' | t }}
+            </h6>
+            <p class="gcbc__info-value js--gcbc-expiry">
+
+            </p>
+          </div>
+          <div class="gcbc__info-item">
+            <h6 class="gcbc__info-label">
+              {{ 'gift_cards.balance_check.original_balance_label' | t }}
+            </h6>
+            <p class="gcbc__info-value js--gcbc-original">
+
+            </p>
+          </div>
+          <div class="gcbc__info-item">
+            <h6 class="gcbc__info-label">
+              {{ 'gift_cards.balance_check.current_balance_label' | t }}
+            </h6>
+            <p class="gcbc__info-value js--gcbc-balance">
+
+            </p>
+          </div>
+        </div>
+        <p class="button-container">
+          <input
+            type="submit"
+            class="btn btn--block js--gcbc-done"
+            value="{{ 'gift_cards.balance_check.done_cta' | t }}"
+          >
+        </p>
+      </section>
+      {%- if page.content != blank -%}
+        <div class="rte">
+          {{ page.content }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Gift Card Balance Check",
+    "templates": [
+      "page"
+    ],
+    "presets": [
+      {
+        "name": "Gift Card Balance Check"
+      }
+    ]
+  }
+{% endschema %}

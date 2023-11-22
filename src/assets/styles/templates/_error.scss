@@ -1,0 +1,22 @@
+.error-template {
+  .page-header {
+    p {
+      margin: 0;
+    }
+  }
+}
+
+.search-form--error {
+  margin: $spacing-lg 0 $spacing-lg 0;
+  min-width: rem(345px);
+
+  /* stylelint-disable selector-max-specificity, selector-no-qualifying-type */
+  input[type='search'].search__input {
+    max-width: unset;
+
+    &:focus {
+      max-width: unset;
+    }
+  }
+  /* stylelint-enable selector-max-specificity, selector-no-qualifying-type */
+}

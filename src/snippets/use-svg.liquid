@@ -1,0 +1,8 @@
+{% comment %}
+Parameters:
+title
+class
+svg_id
+viewbox
+{% endcomment %}
+<svg aria-label="{{ title }}" class="{{ class }}" xmlns="http://www.w3.org/2000/svg" viewBox="{{ viewbox }}"><use xlink:href="#{{ svg_id }}"/></svg>

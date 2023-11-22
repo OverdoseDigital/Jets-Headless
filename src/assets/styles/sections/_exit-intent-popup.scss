@@ -1,0 +1,40 @@
+.exit-intent-modal__content {
+  display: grid;
+  align-items: center;
+  padding: $spacing-xxl $spacing-lg;
+}
+
+.save-cart-form,
+.save-cart-form__success {
+  grid-column: 1;
+  grid-row: 1;
+
+  &[aria-hidden='true'] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.save-cart-form__success {
+  text-align: center;
+}
+
+.save-cart-form {
+  .h3 {
+    margin-bottom: $spacing-xxs;
+  }
+
+  label {
+    display: none;
+  }
+
+  input,
+  button {
+    display: block;
+    width: 100%;
+  }
+
+  input {
+    margin-bottom: $spacing-xs;
+  }
+}

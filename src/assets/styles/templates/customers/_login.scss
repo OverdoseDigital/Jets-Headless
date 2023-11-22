@@ -1,0 +1,35 @@
+.account--login {
+  margin-bottom: 4rem;
+
+  @include media-query($large-up) {
+    margin-bottom: 7rem;
+  }
+}
+
+.login__returning-customers {
+  margin-block: $spacing-sm;
+}
+
+.login__join-the-beach-club,
+.login__guest {
+  padding-top: 4rem;
+
+  @include media-query($large-up) {
+    padding-top: 6rem;
+  }
+}
+
+.login__intro-wrapper {
+  margin-bottom: $spacing-lg;
+  text-align: left;
+}
+
+.login__reset-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: $spacing-sm;
+}
+
+.reset__intro {
+  margin-bottom: $spacing-md;
+}

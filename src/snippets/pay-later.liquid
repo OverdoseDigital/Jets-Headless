@@ -1,0 +1,91 @@
+{% if settings.show_afterpay_payments == true and
+      settings.enable_ecommerce == true
+%}
+  <div class="product__pay-later small">
+    {% liquid
+      assign afterpayPaymentAmount = product.selected_or_first_available_variant.price | divided_by: settings.afterpay_payments_divide_by
+      assign afterpayPaymentAmount = afterpayPaymentAmount | money_with_currency
+      assign count_html = '<span data-afterpay-payments-no>' | append: settings.afterpay_payments_divide_by | append: '</span>'
+      assign amount_html = '<span data-afterpay-amount>' | append: afterpayPaymentAmount | append: '</span>'
+    %}
+    <span class="product__pay-later--text">
+      {{ 'products.product.payments_html' | t: count: count_html, amount: amount_html }}
+    </span>
+    {% render 'icon-afterpay' %}
+    {% if section_settings.pay_later_content_1 != blank %}
+      <button type="button" data-pay-later-{{ product.id }}-modal-trigger id="pay-later-{{ product.id }}-modal--label" class="btn btn__text btn--small btn__link">{{ 'products.product.view_options' | t }}</button>
+    {% endif %}
+  </div>
+
+  {% capture payLaterId %}pay-later--{{ product.id }}{% endcapture %}
+  {% capture payLaterHeader %}Payment Options{% endcapture %}
+  {% capture payLaterLabel %}pay-later-{{ product.id }}-modal--label{% endcapture %}
+  {% capture payLaterContents %}
+    {% liquid
+      assign tab_1_title = false
+      assign tab_1_content = false
+      assign tab_2_title = false
+      assign tab_2_content = false
+      assign tab_3_title = false
+      assign tab_3_content = false
+
+      if section_settings.pay_later_content_1.content != blank
+        assign tab_1_title = section_settings.pay_later_content_1.title
+        assign tab_1_content = section_settings.pay_later_content_1.content
+      endif
+
+      if section_settings.pay_later_content_2.content != blank
+        assign tab_2_title = section_settings.pay_later_content_2.title
+        assign tab_2_content = section_settings.pay_later_content_2.content
+      endif
+
+      if section_settings.pay_later_content_3.content != blank
+        assign tab_3_title = section_settings.pay_later_content_3.title
+        assign tab_3_content = section_settings.pay_later_content_3.content
+      endif
+    %}
+
+    <div class="modal__content">
+      <div class="js-tabs" data-tabs-prefix-class="pay-later">
+        <ul class="js-tablist">
+          {% if tab_1_title != blank %}
+            <li class="js-tablist__item">
+              <a href="#pay-later--{{ tab_1_title }}" class="js-tablist__link">{{ tab_1_title }}</a>
+            </li>
+          {% endif %}
+          {% if tab_2_title != blank %}
+            <li class="js-tablist__item">
+              <a href="#pay-later--{{ tab_2_title }}" class="js-tablist__link">{{ tab_2_title }}</a>
+            </li>
+          {% endif %}
+          {% if tab_3_title != blank %}
+            <li class="js-tablist__item">
+              <a href="#pay-later--{{ tab_3_title }}" class="js-tablist__link">{{ tab_3_title }}</a>
+            </li>
+          {% endif %}
+        </ul>
+        {% if tab_1_title != blank %}
+          <div id="pay-later--{{ tab_1_title }}" class="js-tabcontent rte">{{ tab_1_content | replace: '<img ', '<img loading="lazy" ' }}</div>
+        {% endif %}
+        {% if tab_2_title != blank %}
+          <div id="pay-later--{{ tab_2_title }}" class="js-tabcontent rte">{{ tab_2_content | replace: '<img ', '<img loading="lazy" ' }}</div>
+        {% endif %}
+        {% if tab_3_title != blank %}
+          <div id="pay-later--{{ tab_3_title }}" class="js-tabcontent rte">{{ tab_3_content | replace: '<img ', '<img loading="lazy" ' }}</div>
+        {% endif %}
+      </div>
+    </div>
+  {% endcapture %}
+
+  {% if section_settings.pay_later_content_1 != blank %}
+    {% render 'component-modal-dialog',
+      modal_class: 'pay-later',
+      modal_id: payLaterId,
+      modal_header: payLaterHeader,
+      modal_sticky_header: true,
+      modal_label: payLaterLabel,
+      modal_content: payLaterContents
+    %}
+  {% endif %}
+
+{% endif %}

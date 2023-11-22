@@ -1,0 +1,208 @@
+<section class="rich-text section-spacer--{{ section.settings.section_bottom_margin }}">
+  {% liquid
+    assign text_alignment = section.settings.text_alignment
+    if section.settings.text_alignment_universal == true
+      assign text_alignment = text_alignment | replace: '--medium-up', ''
+    endif
+  %}
+  <div
+    class="container
+    {{ section.settings.container_width }}
+    text-{{ text_alignment }}
+    {% if section.settings.padding_size != 'none' %}vert-padding padding-{{ section.settings.padding_size }}{% endif %}"
+  >
+    {%- if section.settings.title != blank -%}
+      <h2 class="h3">{{ section.settings.title }}</h2>
+    {%- endif -%}
+    {%- if section.settings.text != blank -%}
+      <div class="rte">
+        {{ section.settings.text }}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+#shopify-section-{{ section.id }} {
+  {%- if section.settings.background_color != blank -%}
+    background-color: {{ section.settings.background_color }};
+  {%- endif -%}
+  {%- if section.settings.text_color != blank -%}
+    color: {{ section.settings.text_color }};
+  {%- endif -%}
+}
+{%- if section.settings.link_color != blank -%}
+#shopify-section-{{ section.id }} a,
+#shopify-section-{{ section.id }} a:hover {
+  color: {{ section.settings.link_color }};
+}
+#shopify-section-{{ section.id }} a:after {
+  background-color: {{ section.settings.link_color }};
+}
+{%- endif -%}
+
+{% if section.settings.text_color != blank %}
+  #shopify-section-{{ section.id }} .section__title {
+    color: {{ section.settings.text_color }};
+  }
+{%- endif -%}
+</style>
+
+{% schema %}
+  {
+    "name": "Rich Text",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Talk about your brand"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color"
+      },
+      {
+        "type": "color",
+        "id": "link_color",
+        "label": "Link color"
+      },
+      {
+        "type": "header",
+        "content": "Layout options"
+      },
+      {
+        "type": "radio",
+        "id": "container_width",
+        "label": "Container width",
+        "options": [
+          {
+            "value": "",
+            "label": "Standard"
+          },
+          {
+            "value": "container--wide",
+            "label": "Wide"
+          },
+          {
+            "value": "container--narrow",
+            "label": "Narrow"
+          },
+          {
+            "value": "container--extra-narrow",
+            "label": "Extra narrow"
+          }
+        ],
+        "default": "container--narrow"
+      },
+      {
+        "type": "select",
+        "id": "padding_size",
+        "label": "Choose vertical padding spacing",
+        "options": [
+          {
+            "label": "None",
+            "value": "none"
+          },
+          {
+            "label": "Small",
+            "value": "small"
+          },
+          {
+            "label": "Regular",
+            "value": "regular"
+          },
+          {
+            "label": "Large",
+            "value": "large"
+          },
+          {
+            "label": "Extra-Large",
+            "value": "xlarge"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "Choose text alignment (Desktop)",
+        "options": [
+          {
+            "label": "Left",
+            "value": "left--medium-up"
+          },
+          {
+            "label": "Center",
+            "value": "center--medium-up"
+          },
+          {
+            "label": "Right",
+            "value": "right--medium-up"
+          }
+        ],
+        "default": "left--medium-up"
+      },
+      {
+        "type": "checkbox",
+        "id": "text_alignment_universal",
+        "label": "Also apply text alignment to mobile?",
+        "default": false
+      }
+    ],
+    "templates": [
+      "index",
+      "product",
+      "page",
+      "article",
+      "404",
+      "customers/register"
+    ],
+    "presets": [
+      {
+        "name": "Rich Text",
+        "category": "Text"
+      }
+    ]
+  }
+{% endschema %}

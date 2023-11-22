@@ -1,0 +1,35 @@
+/* stylelint-disable declaration-no-important */
+.footer__newsletter {
+  .klaviyo-form {
+    position: relative;
+    margin-top: $spacing-lg;
+    margin-bottom: $spacing-xxl;
+
+    /* stylelint-disable selector-max-specificity */
+    input[type='email'] {
+      padding-right: rem(110px) !important;
+
+      &:focus {
+        box-shadow: none !important;
+      }
+    }
+    /* stylelint-enable selector-max-specificity */
+
+    button {
+      position: absolute !important;
+      top: rem(4px);
+      right: rem(4px);
+      width: rem(100px) !important;
+      transform: translateY(-48px) !important;
+      font-weight: var(--font-headings-weight) !important;
+      letter-spacing: 0.1em !important;
+    }
+  }
+}
+
+.klaviyo-form {
+  img {
+    object-fit: fill;
+  }
+}
+/* stylelint-enable declaration-no-important */

@@ -1,0 +1,25 @@
+.component-picture__wrapper {
+  position: relative;
+
+  padding-top: var(--paddingTop);
+
+  @include media-query($medium-up) {
+    padding-top: var(--paddingTopDesktop);
+  }
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.component-picture__wrapper--breakpoint-large {
+  padding-top: var(--paddingTop);
+
+  @include media-query($large-up) {
+    padding-top: var(--paddingTopDesktop);
+  }
+}

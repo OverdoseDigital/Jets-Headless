@@ -1,0 +1,127 @@
+{%- liquid
+  capture font_faces
+    if settings.font_body != blank
+      echo settings.font_body | font_face: font_display: settings.font_display | append: '<split>'
+
+      assign font_body_medium = settings.font_body | font_modify: 'weight', '500'
+      echo font_body_medium | font_face: font_display: settings.font_display | append: '<split>'
+
+      assign font_body_bold = settings.font_body | font_modify: 'weight', '600'
+      echo font_body_bold | font_face: font_display: settings.font_display | append: '<split>'
+    endif
+    if settings.font_headings != blank
+      echo settings.font_headings | font_face: font_display: settings.font_display | append: '<split>'
+      assign font_headings_bold = settings.font_headings | font_modify: 'weight', 'bolder'
+      echo font_headings_bold | font_face: font_display: settings.font_display | append: '<split>'
+    endif
+  endcapture
+-%}
+
+{%- assign unique_font_faces = font_faces | strip_newlines | replace: '\n', '' | split: '<split>' | uniq -%}
+{% for font_face in unique_font_faces %}
+  {{ font_face }}
+{% endfor %}
+
+/* stylelint-disable */
+body {
+  font-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+  font-size: 1rem;
+}
+
+#container {
+  border-radius: 0;
+  padding: 48px;
+}
+
+h3.modal-title {
+  font-family: {{ settings.font_headings.family }}, {{ settings.font_headings.fallback_families }};
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 1.33;
+  letter-spacing: -0.0125rem;
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+}
+
+p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+
+.btn {
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #333333;
+  border-color: #333333;
+}
+
+.form-group {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.form-control {
+  font-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+  font-size: 14px;
+  max-width: 100%;
+  min-height: 48px;
+  border: 1px solid #e5e5e5;
+  background-color: #ffffff;
+  border-radius: 0;
+  padding: 8px 16px;
+  transition: border-color 0.2s ease;
+  color: #000000;
+  box-shadow: none;
+}
+
+select.form-control {
+  background-image: url({{ 'icon-chevron-down.svg' | asset_url }});
+  cursor: pointer;
+  appearance: none;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position: center right 16px;
+}
+
+.form-control:hover,
+.form-control:focus {
+  border-color: #b3b3b3;
+}
+
+.form-control:-webkit-autofill {
+  box-shadow: 0 0 0 1000px #ffffff inset;
+  background-color: transparent;
+}
+
+.close {
+  font-weight: 100;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 24px;
+}
+
+.alert {
+  padding: 16px;
+  border-radius: 0;
+}
+
+.alert-danger {
+  background-color: rgba(228, 95, 95, 0.1);
+  border-color: rgba(228, 95, 95, 0.1);
+  color: #e45f5f;
+}
+
+.alert-success {
+  background-color: #85ca6d;
+  border-color: #85ca6d;
+  color: #ffffff;
+}
+
+/* stylelint-enable */

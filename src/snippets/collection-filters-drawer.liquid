@@ -1,0 +1,164 @@
+{%- assign color_filter_names = 'colour,color,colour group,color group' | split: ',' -%}
+
+{% capture filtersClasses %}filters drawer-left{% endcapture %}
+{% capture filtersDesc %}Modal dialog for collection filters{% endcapture %}
+
+{% capture filtersContent %}
+<div class="collection-filter__drawer filters-drawer" data-collection-filter-drawer>
+
+  <div class="collection-filter__accordion">
+    {% liquid
+      assign accordion_index = 1
+      assign list_index = 0
+    %}
+    {%- for filter in results.filters -%}
+      {% assign trigger_id = 'filter-accordion-trigger-' | append: accordion_index | append: unique %}
+      {% assign panel_id = 'filter-accordion-panel-' | append: accordion_index | append: unique %}
+      <div class="collection-filter__group">
+        <div class="filter-accordion__label" role="heading" aria-level="4">
+          <button type="button" class="filter-accordion__trigger" id="{{ trigger_id }}" aria-multi="1" aria-controls="{{ panel_id }}" aria-expanded="true">
+            {{ filter.label }}
+            <span class="filter-accordion__trigger-indicator">
+            {%- render 'use-svg', title: 'Plus icon', svg_id: 'iconChevronDown', class: 'icon icon-chevron-down', viewbox: '0 0 24 24' -%}
+            </span>
+          </button>
+        </div>
+        <div class="filter-accordion__panel show-panel filter-accordion__panel-{{ filter.type }}" id="{{ panel_id }}" role="region" aria-labelledby="{{ trigger_id }}">
+          {%- case filter.type -%}
+            {%- when 'list' -%}
+              {%- liquid
+                assign filter_label_lowercase = filter.label | downcase
+                assign is_color_filter = false
+                if color_filter_names contains filter_label_lowercase
+                  assign is_color_filter = true
+                endif
+              -%}
+              <ul class="collection-filter__filter-list collection-filter__filter-list-{{ filter.label | handleize }}">
+                {%- for filter_value in filter.values -%}
+                  <li class="collection-filter__filter-value{% if is_color_filter %} collection-filter__filter-value--color{% endif %}">
+                    <input type="checkbox"
+                      name="{{ filter_value.param_name }}"
+                      value="{{ filter_value.value }}"
+                      id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                      {% if filter_value.active -%}checked{%- endif %}
+                      {% if filter_value.count == 0 and filter_value.active == false -%}disabled{%- endif %}
+                    >
+                    <label for="Filter-{{ filter.param_name }}-{{ forloop.index }}">
+                      {% if is_color_filter %}
+                        <span class="swatch swatch-filter--{{ filter_value.label | handle }}">{%- render 'use-svg', title: 'Check icon', svg_id: 'iconCheck', class: 'icon icon-check', viewbox: '0 0 24 24' -%}</span>
+                      {% endif %}
+                      {{ filter_value.label | capitalize }}
+                      {% if section.settings.include_filter_count %}
+                        <span class="filter-count">{{ filter_value.count }}</span>
+                      {% endif %}
+                    </label>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- when 'price_range' -%}
+              {%- liquid
+                assign range_min = 0
+                assign range_max = filter.range_max | divided_by: 100.0 | ceil
+                assign min_value = range_min
+                if filter.min_value.value
+                  assign min_value = filter.min_value.value | divided_by: 100.0 | floor
+                endif
+                assign max_value = range_max
+                if filter.max_value.value
+                  assign max_value = filter.max_value.value | divided_by: 100.0 | ceil
+                endif
+              -%}
+              <div class="collection-filter__filter-range-slider">
+                <div class="collection-filter__filter-range-inputs">
+                  <div class="collection-filter__filter-range-from">
+                    <label for="Filter-{{ filter.min_value.param_name }}">{{ 'collections.filtering.from' | t }}</label>
+                    <div class="collection-filter__input-group">
+                      <span>{{ cart.currency.symbol }}</span>
+                      <input name="{{ filter.min_value.param_name }}"
+                        id="Filter-{{ filter.min_value.param_name }}"
+                        type="number"
+                        placeholder="{{ range_min }}"
+                        min="{{ range_min }}"
+                        max="{{ range_max }}"
+                        {% if filter.min_value.value -%}
+                          value="{{ min_value }}"
+                        {%- endif %}
+                        data-collection-filter-price-range-min
+                      >
+                    </div>
+                  </div>
+                  <div class="collection-filter__filter-range-to">
+                    <label for="Filter-{{ filter.max_value.param_name }}">{{ 'collections.filtering.to' | t }}</label>
+                    <div class="collection-filter__input-group">
+                      <span>{{ cart.currency.symbol }}</span>
+                      <input name="{{ filter.max_value.param_name }}"
+                        id="Filter-{{ filter.max_value.param_name }}"
+                        type="number"
+                        placeholder="{{ range_max }}"
+                        min="{{ range_min }}"
+                        max="{{ range_max }}"
+                        {% if filter.max_value.value -%}
+                          value="{{ max_value }}"
+                        {%- endif %}
+                        data-collection-filter-price-range-max
+                      >
+                    </div>
+                  </div>
+                </div>
+                <range-slider class="price-range" min="{{ range_min }}" max="{{ range_max }}" valueMin="{{ min_value }}" valueMax="{{ max_value }}" step="1"></range-slider>
+              </div>
+          {%- endcase -%}
+
+          {%- if section.settings.include_facet_clears -%}
+            {%- if filter.active_values.size > 0 -%}
+              <a href="{{ filter.url_to_remove }}" data-collection-filter-clear-link class="btn__text btn__text--icon-left">
+                {% render 'icon-cross' %}
+                {{ 'collections.filtering.clear' | t }}
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      </div>
+      {% assign accordion_index = accordion_index | plus: 1 %}
+      {% assign list_index = list_index | plus: 1 %}
+    {%- endfor -%}
+  </div>
+
+  <div class="collection-filter__footer">
+    {%- liquid
+      assign resultsParams = ''
+      if results.terms != blank
+        if resultsParams == ''
+          assign resultsParams = '?q=' | append: results.terms
+        else
+          assign resultsParams = resultsParams | append: '&q=' | append: results.terms
+        endif
+      endif
+      if results.sort_by != blank
+        if resultsParams == ''
+          assign resultsParams = '?sort_by=' | append: results.sort_by
+        else
+          assign resultsParams = resultsParams | append: '&sort_by=' | append: results.sort_by
+        endif
+      endif
+    -%}
+
+    <div class="collection-filter__footer-btns">
+      <a href="{{ results.url }}{{ resultsParams }}" class="btn btn--secondary" data-collection-filter-clear-link data-collection-filter-clear-all>
+        {{ 'collections.filtering.clear_all' | t }}
+      </a>
+      <button type="button" class="btn" data-filter-modal-close>{{ 'collections.filtering.apply' | t }}</button>
+      <button type="submit" class="btn no-js" data-filter-submit>{{ 'collections.filtering.apply' | t }}</button>
+    </div>
+
+  </div>
+</div>
+{% endcapture %}
+
+{% render 'component-modal-dialog',
+  modal_class: filtersClasses,
+  modal_id: 'filters',
+  modal_desc: filtersDesc,
+  modal_sticky_header: true,
+  modal_content: filtersContent
+%}

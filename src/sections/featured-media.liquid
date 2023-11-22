@@ -1,0 +1,128 @@
+<div class="featured-media shopify-section--{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="featured-media">
+  <div class="container container--fluid">
+    {%- if section.settings.title != blank -%}
+      <div class="section__title">
+        <h2 class="h3">{{ section.settings.title }}</h2>
+      </div>
+    {%- endif -%}
+  </div>
+  <div class="container container--fluid container--flush--medium-down">
+    <div class="media__slider-container">
+      <ul class="featured-media__slider list-inline carousel" id="featured-media__slider--{{ section.id }}">
+        {%- liquid
+          assign block_length = section.blocks.size
+          if block_length > 0
+            capture block_width
+              case block_length
+                when 1
+                  echo ''
+                when 2
+                  echo 'half'
+                when 3
+                  echo 'third'
+                when 4
+                  echo 'quarter'
+                when 5
+                  echo 'fifth'
+                when 6
+                  echo 'sixth'
+              endcase
+            endcapture
+          endif
+        -%}
+        {% for block in section.blocks %}
+        <li class="slide slide--small featured-media__slide {{ block_width }} shopify-block-{{ block.id }}">
+          {% if block.settings.link != blank %}
+            <a href="{{ block.settings.link }}"{% if block.settings.link_new_tab %} target="_blank"{% endif %}>
+          {% endif %}
+            {% assign max_size = block.settings.img_max | append: 'px' %}
+            <div class="featured-media__wrapper">
+              {%- render 'component-image',
+                image: block.settings.image,
+                aspect_ratio: 'natural',
+                max_width: 640,
+                sizes: max_size
+              -%}
+            </div>
+          {% if block.settings.link != blank %}
+            </a>
+          {% endif %}
+        </li>
+
+        {%- capture block_styles -%}
+          {{ block_styles }}
+
+          .shopify-block-{{ block.id }} .featured-media__wrapper {
+            max-width: {{ max_size }};
+          }
+        {%- endcapture -%}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+{{ block_styles }}
+</style>
+
+{% schema %}
+  {
+    "name": "Featured Media",
+    "class": "featured-media",
+    "max_blocks": 6,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Featured Media"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "logo",
+        "name": "Logo",
+        "settings": [
+          {
+            "label": "Logo Image",
+            "id": "image",
+            "type": "image_picker"
+          },
+          {
+            "type": "range",
+            "id": "img_max",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "label": "Image Max Width",
+            "default": 100
+          },
+          {
+            "label": "Link",
+            "id": "link",
+            "type": "url",
+            "info": "Optional"
+          },
+          {
+            "label": "Open link in new tab?",
+            "id": "link_new_tab",
+            "type": "checkbox",
+            "default": false
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured Media",
+        "category": "Promotional"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,33 @@
+{%- liquid
+  assign transparent_gif = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+-%}
+{%- unless image == blank -%}
+  {%- liquid
+    if image.media_type and image.media_type != 'image'
+      assign image = image.preview_image
+    endif
+    if image.cloudinary_src == blank
+      assign src_fallback = image | image_url: width: 600
+      assign src_template = image | image_url: width: 100 | replace: 'width=100', 'width={width}'
+    else
+      assign src_fallback = image.cloudinary_src | append: 'w_600'
+      assign src_template = image.cloudinary_src | append: 'w_{width}'
+    endif
+    assign img_alt = img_alt | default: image.alt
+
+    capture srcset
+      render 'srcset', img_url: src_template, max_width: max_width
+    endcapture
+
+    assign imgIndex = imgIndex | default: false, allow_false: true
+
+  -%}
+  {
+    "id" : {{- image.id | json -}},
+    "srcset" : {{- srcset | json -}},
+    "src" : {{- src_fallback | json -}},
+    "width" : {{- image.width | json -}},
+    "height" : {{- image.height | json -}},
+    "alt" : {{ img_alt | strip_html | escape | json }}    
+  }
+{%- endunless -%}

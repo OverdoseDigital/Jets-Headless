@@ -1,0 +1,263 @@
+<div class="container">
+  <div class="account account--narrow account--login">
+    <div class="page-header">
+      <h1 class="h3">{{ 'customer.register.title' | t }}</h1>
+    </div>
+
+    <div class="register__register"
+      data-register-container
+      data-klaviyo-customer-list-id="{{ settings.klaviyo_subscriber_list_key }}"
+    >
+        <div class="register__intro">
+          {{ 'customer.register.register_intro_html' | t }}
+        </div>
+
+        {% form 'create_customer' %}
+          {% if form.errors.messages.form %}
+            <p class="form__error">
+              {{ form.errors.messages.form }}
+            </p>
+          {% endif %}
+
+           <div class="form__group">
+            <label for="FirstName">
+              {{ 'customer.register.first_name' | t }} *
+            </label>
+            <input type="text"
+              name="customer[first_name]"
+              id="FirstName"
+              placeholder="{{ 'customer.register.first_name' | t }}"
+              autofocus
+              {% if form.first_name %}value="{{ form.first_name }}"{% endif %}
+            >
+            <p class="form__field-error hide">
+              Please enter your first name
+            </p>
+          </div>
+
+          <div class="form__group">
+            <label for="LastName">
+              {{ 'customer.register.last_name' | t }} *
+            </label>
+            <input
+              type="text"
+              name="customer[last_name]"
+              id="LastName"
+              placeholder="{{ 'customer.register.last_name' | t }}"
+              {% if form.last_name %}value="{{ form.last_name }}"{% endif %}
+            >
+            <p class="form__field-error hide">
+              Please enter your last name
+            </p>
+          </div>
+
+          <div class="form__group">
+            <label for="Email">
+              {{ 'customer.register.email' | t }} *
+            </label>
+            <input
+              type="email"
+              name="customer[email]"
+              id="Email"
+              class="{% if form.errors contains 'email' %}input-error{% endif %}"
+              placeholder="{{ 'customer.register.email' | t }}"
+              value="{% if form.email %}{{ form.email }}{% endif %}"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+            >
+            <p class="form__field-error {% unless form.errors.messages.email %}hide{% endunless %}">
+              {%- if form.errors.messages.email -%}
+                Email {{ form.errors.messages.email }}
+              {% else %}
+                Please enter your email
+              {%- endif -%}
+            </p>
+          </div>
+
+          <div class="form__group">
+            <label for="CreatePassword">
+              {{ 'customer.register.password' | t }} *
+            </label>
+            <input
+              type="password"
+              name="customer[password]"
+              id="CreatePassword"
+              class="{% if form.errors contains 'password' %}input-error{% endif %}"
+              placeholder="{{ 'customer.register.password' | t }}"
+            >
+            <p class="form__field-error {% unless form.errors.messages.password %}hide{% endunless %}">
+              {% if form.errors contains 'password' %}
+                Password {{ form.errors.messages.password }}
+              {%- else -%}
+                Please enter a password
+              {% endif %}
+            </p>
+            <p class="form__field-error hide" data-password-error>
+              Password is too short (minimum is 5 characters)
+            </p>
+          </div>
+
+          <div class="form__group">
+            <label for="birth_day">{{ 'customer.register.birthday' | t }}</label>
+            <div class="register__birthday-input-wrapper">
+              <select value="" name="birth_day" id="birth_day">
+                <option selected value="" disabled>Day</option>
+                <option value="01">1</option>
+                <option value="02">2</option>
+                <option value="03">3</option>
+                <option value="04">4</option>
+                <option value="05">5</option>
+                <option value="06">6</option>
+                <option value="07">7</option>
+                <option value="08">8</option>
+                <option value="09">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+                <option value="31">31</option>
+              </select>
+              <select value="" name="birth_month" id="birth_month">
+                <option selected value="" disabled>Month</option>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+            </div>
+            <p class="form__field-error hide">
+              Please enter both day and month
+            </p>
+          </div>
+
+          <div
+            data-countries-wrapper
+            data-limit-countries="{% if settings.customers_addresses_limit_countries %}true{% else %}false{% endif %}"
+          >
+            <div class="form__group">
+              <label for="AddressCountry">{{ 'customer.addresses.country' | t }}</label>
+              <select
+                id="AddressCountry"
+                name="country_code"
+                data-default="{{ localization.country.iso_code }}"
+                data-fallback="{{ cart.currency.iso_code | slice: 0, 2 }}"
+              ></select>
+            </div>
+            <div>
+              <label for="nolabelfix" class="hide"></label>
+              <input hidden id="nolabelfix" data-nolabel-fix>
+            </div>
+          </div>
+
+          {%- if section.settings.include_marketing_checkbox -%}
+            <div class="form__group form__group--accepts-marketing {% if section.settings.hide_marketing_checkbox %}hide{% endif %}">
+              <div class="form__inline-input">
+                <input type="hidden" name="customer[accepts_marketing]" value="false" />
+
+                <input type="checkbox" name="customer[accepts_marketing]" id="accepts-marketing" {%- if section.settings.checked_by_default -%}checked{%- endif -%}/>
+                <label for="accepts-marketing">{{ section.settings.marketing_checkbox_label }}</label>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.marketing_disclaimer != blank -%}
+            <p class="form__group">
+              {{ section.settings.marketing_disclaimer }}
+            </p>
+          {%- endif -%}
+
+
+          <p>
+            <input type="submit" value="{{ 'customer.register.submit' | t }}" class="btn btn--block">
+          </p>
+
+          <p class="text-center">
+            <a href="{{ routes.root_url }}">{{ 'customer.register.cancel' | t }}</a>
+          </p>
+
+          <input type="hidden" name="customer[note][presentment_currency]" value="{{ cart.currency.iso_code }}," />
+          <input type="hidden" name="customer[note][birthday]" value="" data-birthday />
+
+          {%- if section.settings.redirect_page != blank -%}
+            <input type="hidden" name="return_to" value="/pages/{{ section.settings.redirect_page }}" />
+          {%- endif -%}
+        {% endform %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Register",
+    "settings": [
+      {
+        "type": "page",
+        "id": "redirect_page",
+        "label": "Page to redirect to after the customer signs up",
+        "info": "Leave blank to use Shopify's default functionality"
+      },
+      {
+        "type": "header",
+        "content": "Marketing Checkbox"
+      },
+      {
+        "type": "checkbox",
+        "id": "include_marketing_checkbox",
+        "label": "Include 'Accepts Marketing' checkbox in register form",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "checked_by_default",
+        "label": "Checkbox checked by default",
+        "default": false,
+        "info": "Sets the checkbox to be pre-checked (opt-out)"
+      },
+      {
+        "type": "checkbox",
+        "id": "hide_marketing_checkbox",
+        "label": "Hide marketing checkbox",
+        "default": false,
+        "info": "If the above two settings are enabled, checking this box will hide the sign-up checkbox from the form but keep it checked, this will sign the customer up by default upon register"
+      },
+      {
+        "type": "text",
+        "id": "marketing_checkbox_label",
+        "label": "Checkbox Label",
+        "default": "Sign me up to the newsletter"
+      },
+      {
+        "type": "textarea",
+        "id": "marketing_disclaimer",
+        "label": "Marketing Disclaimer",
+        "default": "Enter your details below to receive updates on new arrivals, the latest trends and access to rewards and benefits, starting with your $20 sign up reward."
+      }
+    ]
+  }
+{% endschema %}

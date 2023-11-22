@@ -1,0 +1,57 @@
+<div class="divider"></div>
+
+<style>
+  #shopify-section-{{ section.id }} .divider {
+    height: {{ section.settings.height }}px;
+
+    {%- if section.settings.bg_color != blank -%}
+      background-color: {{ section.settings.bg_color }}
+    {%- endif -%}
+  }
+
+  {%- if section.settings.different_height_desktop -%}
+    @media only screen and (min-width: {{ settings.grid_large }}px) {
+      #shopify-section-{{ section.id }} .divider {
+        height: {{ section.settings.height_desktop }}px;
+      }
+    }
+  {%- endif -%}
+</style>
+
+{% schema %}
+  {
+    "name": "Divider",
+    "settings": [
+      {
+        "type": "number",
+        "id": "height",
+        "label": "Height",
+        "default": 64
+      },
+      {
+        "type": "checkbox",
+        "id": "different_height_desktop",
+        "label": "Use a different height on desktop?",
+        "default": false,
+        "info": "Check this box to enable the input below."
+      },
+      {
+        "type": "number",
+        "id": "height_desktop",
+        "label": "Desktop Height",
+        "default": 64
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background color"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Divider",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}

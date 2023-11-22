@@ -1,0 +1,141 @@
+
+{% if shop.metafields.okendo.settings.isWidgetPlusEnabled == true %}
+    {% assign renderWidgetPlusContent = true %}
+{% elsif shop.metafields.okendo.settings.isWidgetPlusAdminEnabled == true and theme.role == "unpublished" %}
+    {% assign renderWidgetPlusContent = true %}
+{% endif %}
+
+{% if section.settings.product != blank %}
+    {% capture product_data_attribute %}data-oke-reviews-product-id="shopify-{{ section.settings.product.id }}"{% endcapture %}
+{% endif %}
+
+{% if section.settings.show_heading %}
+    {% if renderWidgetPlusContent == true %}
+        {% if section.settings.heading != blank %}
+            {% capture heading_data_attribute %}data-oke-header-text="{{ section.settings.heading }}"{% endcapture %}
+        {% endif %}
+        {% if section.settings.badge_link != blank %}
+                {% capture carousel_link_data_attribute %}data-oke-header-badge-url="{{ section.settings.badge_link }}"{% endcapture %}
+        {% endif %}
+    {% else %}
+        {% if section.settings.heading != blank %}
+            {% capture heading_data_attribute %}data-oke-reviews-carousel-heading="{{ section.settings.heading }}"{% endcapture %}
+        {% endif %}
+        {% if section.settings.badge_link != blank %}
+            {% capture carousel_link_data_attribute %}data-oke-reviews-carousel-link="{{ section.settings.badge_link }}"{% endcapture %}
+        {% endif %}
+    {% endif %}
+{% elsif renderWidgetPlusContent != true %}
+    {% capture hide_header_attribute %}data-oke-reviews-carousel-hide-header="true"{% endcapture %}
+{% else %}
+    {% capture hide_header_attribute %}data-oke-hide-header="true"{% endcapture %}
+{% endif %}
+{% if renderWidgetPlusContent == true %}
+  <div class="oke-carousel-container">
+    <div
+        data-oke-carousel
+        {{ product_data_attribute }}
+        {{ heading_data_attribute }}
+        {{ carousel_link_data_attribute }}
+        {{ hide_header_attribute }}
+    ></div>
+  </div>
+    {% else %}
+        {% if section.settings.contain_section %}
+          <div class="container container--flush--medium-down">
+        {% endif %}
+            <div class="okeReviews-reviewsCarousel-holder">
+              <div
+                data-oke-reviews-carousel
+                data-oke-reviews-carousel-heading="{{ section.settings.heading }}"
+                data-oke-reviews-autoplay="true"
+                data-oke-reviews-cell-align="center"
+                data-oke-reviews-load-initial-count="10"
+                data-oke-reviews-pagedots="true"
+              ></div>
+            </div>
+        {% if section.settings.contain_section %}
+          </div>
+        {% endif %}
+        <script>
+        window.okeReviewsCarouselOnInit = function () {
+            const carouselMain = document.querySelector('.js-okeReviews-reviewsCarousel');
+            if (carouselMain) {
+                const callback = function (mutationList) {
+                    for (const mutation of mutationList) {
+                        mutation.addedNodes.forEach(n => setupCarouselReviews(n));
+                    }
+                };
+                const observer = new MutationObserver(callback);
+                observer.observe(carouselMain, { childList: true });
+        
+                // Run callback for the first time
+                const reviews = document.querySelectorAll('.okeReviews-reviewsCarousel-slider-slide');
+                reviews.forEach(n => setupCarouselReviews(n));
+            }
+        };
+        
+        function setupCarouselReviews(nodeElement) {
+            const reviewerName = nodeElement.querySelector('.okeReviews-reviewsCarousel-review-reviewer-name');
+            const productName = nodeElement.querySelector('.okeReviews-reviewsCarousel-review-product-name');
+        
+            if(reviewerName && productName) {
+                reviewerName.insertAdjacentElement('beforebegin', productName);
+            }
+        }
+        </script>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Okendo Reviews Carousel",
+    "settings": [
+      {
+          "type": "checkbox",
+          "id": "show_heading",
+          "label": "Show heading",
+          "default": false
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "What are they saying"
+      },
+      {
+        "type": "checkbox",
+        "id": "contain_section",
+        "label": "Contain section",
+        "default": true
+      },
+      {
+          "type": "header",
+          "content": "Review Count Link"
+      },
+      {
+          "type": "paragraph",
+          "content": "If the heading is visible above the carousel, a review count will also be visible."
+      },
+      {
+          "type": "url",
+          "id": "badge_link",
+          "label": "Review Count Link"
+      },
+      {
+          "type": "header",
+          "content": "Filter Reviews"
+      },
+      {
+          "type": "product",
+          "id": "product",
+          "label": "By Product"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Okendo Reviews Carousel",
+        "category": "Product"
+      }
+    ]
+  }
+{% endschema %}

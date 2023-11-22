@@ -1,0 +1,113 @@
+.product-media-popup {
+  position: fixed;
+  z-index: 101;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-white);
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.2s opacity var(--transition-timing-flick), 0.2s visibility var(--transition-timing-flick);
+  pointer-events: none;
+}
+
+.media-popup-active {
+  overflow: hidden;
+
+  .product-media-popup {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: unset;
+  }
+}
+
+.product__slideshow-zoom {
+  height: 100%;
+
+  &::after {
+    content: 'flickity';
+    display: none; /* hide :after */
+  }
+
+  .product__media-item {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+
+    img,
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .component-image__wrapper,
+  .component-video__wrapper {
+    /* stylelint-disable-next-line declaration-no-important */
+    padding-top: 0 !important;
+    height: 100%;
+    width: 100%;
+  }
+
+  @extend %jets-carousel-buttons;
+
+  .flickity-page-dots {
+    @extend %small;
+    position: absolute;
+    left: $spacing-md;
+    top: $spacing-md;
+    width: rem(64px);
+    height: rem(32px);
+
+    &::before {
+      content: '/';
+    }
+
+    /* stylelint-disable selector-max-specificity, selector-max-class, max-nesting-depth */
+    .dot,
+    .dot::before,
+    .dot::after {
+      width: rem(24px);
+      height: rem(32px);
+    }
+
+    .dot {
+      counter-increment: carousel-cell;
+      position: absolute;
+      left: 0;
+      margin: 0;
+      opacity: 1;
+      border: none;
+
+      &.is-selected {
+        z-index: 1;
+        background-color: transparent;
+
+        &::before {
+          opacity: 1;
+          display: block;
+        }
+      }
+
+      &::before {
+        content: counter(carousel-cell);
+        background-color: transparent;
+        text-align: right;
+        opacity: 0;
+        display: none;
+      }
+
+      &:last-child::after {
+        content: counter(carousel-cell);
+        position: absolute;
+        top: 0;
+        right: -40px;
+        text-align: left;
+        order: 3;
+      }
+    }
+    /* stylelint-enable selector-max-specificity, selector-max-class, max-nesting-depth */
+  }
+}

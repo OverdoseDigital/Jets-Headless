@@ -1,0 +1,95 @@
+{%- capture gifts -%}
+  {%- for i in (1..1) -%}
+    {%- liquid
+      assign gwp_enabled_setting = 'gift_with_purchase_' | append: i | append: '_enable'
+      assign gwp_product_setting = 'gift_with_purchase_' | append: i | append: '_product'
+      assign gwp_threshold_setting = 'gift_with_purchase_' | append: i | append: '_threshold'
+      assign gwp_limit_collection_setting = 'gift_with_purchase_' | append: i | append: '_limit_collection'
+      assign gwp_limit_product_setting = 'gift_with_purchase_' | append: i | append: '_limit_product'
+
+      assign gwp_enabled = settings[gwp_enabled_setting]
+      assign gwp_product = all_products[settings[gwp_product_setting]]
+      assign gwp_threshold = settings[gwp_threshold_setting] | times: 100.0
+      assign gwp_limit_collection = collections[settings[gwp_limit_collection_setting]]
+      assign gwp_limit_product = all_products[settings[gwp_limit_product_setting]]
+      assign gwp_qualifying_amount = 0
+
+      assign gwp_product_is_valid = false
+      if gwp_product.available == true
+        assign gwp_product_is_valid = true
+      endif
+
+      if gwp_limit_product != blank
+        for line_item in cart.items
+          if line_item.product.gift_card? or line_item.product.id != gwp_limit_product.id
+            continue
+          endif
+          assign gwp_qualifying_amount = gwp_qualifying_amount | plus: line_item.final_line_price
+        endfor
+      elsif gwp_limit_collection != blank
+        for line_item in cart.items
+          if line_item.product.gift_card?
+            continue
+          endif
+          for line_item_collection in line_item.product.collections
+            if line_item_collection.id != gwp_limit_collection.id
+              continue
+            endif
+            assign gwp_qualifying_amount = gwp_qualifying_amount | plus: line_item.final_line_price
+            break
+          endfor
+        endfor
+      else
+        for line_item in cart.items
+          if line_item.product.gift_card?
+            continue
+          endif
+          assign gwp_qualifying_amount = gwp_qualifying_amount | plus: line_item.final_line_price
+        endfor
+      endif
+
+      assign gwp_amount_qualifies = false
+      if gwp_qualifying_amount > 0 and gwp_qualifying_amount >= gwp_threshold
+        assign gwp_amount_qualifies = true
+      endif
+
+      assign gwp_qualifies = false
+      if gwp_enabled and gwp_product_is_valid and gwp_amount_qualifies
+        assign gwp_qualifies = true
+      endif
+
+      unless i == 1
+        echo ','
+      endunless
+    -%}
+    {
+      "qualifies": {{ gwp_qualifies | json }},
+      "product": {% if gwp_product != blank %}{{ gwp_product | json }}{% else %}null{% endif %}
+    }
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- capture gifts_in_cart -%}
+  {%- assign first_line_item = true -%}
+  {%- for line_item in cart.items -%}
+    {%- liquid
+      if line_item.properties._gwp == blank
+        continue
+      endif
+      unless first_line_item
+        echo ','
+      endunless
+      assign first_line_item = false
+    -%}
+    {
+      "product_id": {{ line_item.product_id | json }},
+      "key": {{ line_item.key | json }},
+      "quantity": {{ line_item.quantity | json }}
+    }
+  {%- endfor -%}
+{%- endcapture -%}
+
+{
+  "gifts": [{{ gifts }}],
+  "giftsInCart": [{{ gifts_in_cart }}]
+}

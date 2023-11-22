@@ -1,0 +1,136 @@
+@import 'mixins';
+
+/*
+  %banner-text-positioning - must be placed inside a flex container with the row
+  direction, and having only one child element of fixed max width. These classes
+  then provide positioning options for that element within it's container, and
+  for the text within that element. See e.g. hero-slider.liquid for
+  section/block settings.
+
+  +-------------------+    +-------------------+
+  |                   |    |                   |
+  |+---------+        |    |        +---------+|
+  ||     text|        | or |        |text     || or...
+  |+---------+        |    |        +---------+|
+  +-------------------+    +-------------------+
+*/
+%banner-text-positioning {
+  &.justify-center {
+    @include media-query($small-down) {
+      justify-content: center;
+    }
+  }
+
+  &.align-start {
+    @include media-query($small-down) {
+      align-items: flex-start;
+    }
+  }
+
+  &.align-center {
+    @include media-query($small-down) {
+      align-items: center;
+    }
+  }
+
+  &.align-end {
+    @include media-query($small-down) {
+      align-items: flex-end;
+    }
+  }
+
+  &.desktop-justify-start {
+    @include media-query($medium-up) {
+      justify-content: flex-start;
+    }
+  }
+
+  &.desktop-justify-center {
+    @include media-query($medium-up) {
+      justify-content: center;
+    }
+  }
+
+  &.desktop-justify-end {
+    @include media-query($medium-up) {
+      justify-content: flex-end;
+    }
+  }
+
+  &.desktop-align-start {
+    @include media-query($medium-up) {
+      align-items: flex-start;
+    }
+  }
+
+  &.desktop-align-center {
+    @include media-query($medium-up) {
+      align-items: center;
+    }
+  }
+
+  &.desktop-align-end {
+    @include media-query($medium-up) {
+      align-items: flex-end;
+    }
+  }
+
+  &.text-left {
+    text-align: left;
+  }
+
+  &.text-center {
+    text-align: center;
+  }
+
+  &.text-right {
+    text-align: right;
+  }
+
+  &.medium-up--text-left {
+    @include media-query($medium-up) {
+      text-align: left;
+    }
+  }
+
+  &.medium-up--text-center {
+    @include media-query($medium-up) {
+      text-align: center;
+    }
+  }
+
+  &.medium-up--text-right {
+    @include media-query($medium-up) {
+      text-align: right;
+    }
+  }
+}
+
+%jets-carousel-buttons {
+  .flickity-prev-next-button {
+    z-index: 1; // raise above slider dots
+    width: rem(32px);
+    height: rem(32px);
+    border-radius: 0;
+
+    &:disabled {
+      display: none;
+    }
+
+    &.next {
+      right: $spacing-sm;
+    }
+
+    &.previous {
+      left: $spacing-sm;
+    }
+  }
+
+  .flickity-button-icon {
+    position: absolute;
+    top: 34%;
+    left: 34%;
+    width: 34%;
+    height: 34%;
+  }
+}

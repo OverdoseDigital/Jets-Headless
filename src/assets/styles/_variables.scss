@@ -1,0 +1,113 @@
+@import '~sass-rem';
+
+:root {
+  // Colors
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-white-rgb: rgba(255, 255, 255, 0.8);
+  --color-black-80: #333333;
+  --color-grey-5: #808080;
+  --color-grey-4: #b3b3b3;
+  --color-grey-3: #cccccc;
+  --color-grey-2: #e5e5e5;
+  --color-grey-2-rgb: rgba(0, 0, 0, 0.1);
+  --color-grey-1: #f5f5f5;
+  --color-offwhite: #fafafa;
+  --color-support-sale: #a24c4f;
+  --color-signal-success: #85ca6d;
+  --color-signal-success-light: rgba(133, 202, 109, 0.2);
+  --color-signal-warning: #f0b743;
+  --color-signal-error: #e45f5f;
+  --color-signal-error-light: rgba(228, 95, 95, 0.1);
+
+  // Placeholders
+  --placeholder-color-foreground: #161d25;
+  --placeholder-color-background: #f9fafb;
+  --color-fade: rgba(252, 252, 252, 0.3);
+  --color-focus-outline: #f5f5f5;
+  // Transitions
+  --transition-duration: 500ms;
+  --transition-timing: ease-in-out;
+  // More natural transition curve - fast then slow, like a flick
+  --transition-timing-flick: cubic-bezier(0.16, 0.68, 0.43, 0.99);
+}
+
+// Spacing
+$spacing-xxxs: rem(2px);
+$spacing-xxs: rem(4px);
+$spacing-xs: rem(8px);
+$spacing-sm: rem(16px);
+$spacing-md: rem(24px);
+$spacing-lg: rem(32px);
+$spacing-xl: rem(40px);
+$spacing-xxl: rem(48px);
+$spacing-xxxl: rem(80px);
+
+$outer-margin-sm: rem(16px);
+$outer-margin-lg: rem(32px);
+$drawer-width: rem(400px);
+
+$spacing-page-top-small: rem(48px);
+$spacing-page-top-large: rem(64px);
+
+$tab-button-height: rem(24px);
+
+// Grid
+$grid-xsmall: rem(375px);
+$grid-small: rem(480px);
+$grid-medium: rem(768px);
+$grid-large: rem(990px);
+$grid-widescreen: rem(1400px);
+$page-width: rem(1440px);
+
+// Breakpoints used with the media-query mixin
+$xxsmall: 'xxsmall';
+$xsmall: 'xsmall';
+$xsmall-down: 'xsmall-down';
+$xsmall-up: 'xsmall-up';
+$small: 'small';
+$small-down: 'small-down';
+$small-up: 'small-up';
+$medium: 'medium';
+$medium-down: 'medium-down';
+$medium-up: 'medium-up';
+$large: 'large';
+$large-down: 'large-down';
+$large-up: 'large-up';
+$widescreen: 'widescreen';
+
+$grid-breakpoints: (
+  $xxsmall,
+  $xsmall,
+  $xsmall-down,
+  $xsmall-up,
+  $small,
+  $small-down,
+  $small-up,
+  $medium,
+  $medium-down,
+  $medium-up,
+  $large,
+  $large-down,
+  $large-up,
+  $widescreen
+);
+
+$media-breakpoints: (
+  $xxsmall '(max-width: #{$grid-xsmall - rem(1px)})',
+  $xsmall '(min-width: #{$grid-xsmall}) and (max-width: #{$grid-small - rem(1px)})',
+  $xsmall-down '(max-width: #{$grid-small - rem(1px)})',
+  $xsmall-up '(min-width: #{$grid-xsmall})',
+  $small '(min-width: #{$grid-small}) and (max-width: #{$grid-medium - rem(1px)})',
+  $small-down '(max-width: #{$grid-medium - rem(1px)})',
+  $small-up '(min-width: #{$grid-small})',
+  $medium '(min-width: #{$grid-medium}) and (max-width: #{$grid-large - rem(1px)})',
+  $medium-down '(max-width: #{$grid-large - rem(1px)})',
+  $medium-up '(min-width: #{$grid-medium})',
+  $large '(min-width: #{$grid-large}) and (max-width: #{$grid-widescreen - rem(1px)})',
+  $large-down '(max-width: #{$grid-widescreen - rem(1px)})',
+  $large-up '(min-width: #{$grid-large})',
+  $widescreen '(min-width: #{$grid-widescreen})'
+);
+
+$breakpoint-has-widths: ($medium-up);

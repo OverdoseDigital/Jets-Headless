@@ -1,0 +1,104 @@
+{%- comment -%}
+  Parameters
+  product: product - the product object
+  compact: true or false. Compact is for product cards
+  isWishlist: true or false. If the wishlist page only show the relevant swatch
+{%- endcomment -%}
+
+{%- assign stitchedProducts = product.metafields.stitching.stitched_products -%}
+
+{%- if stitchedProducts -%}
+  {%- liquid
+    assign max_display_mob = 3
+    assign max_display_desk = 5
+    assign otherSwatches = ''
+    assign count = 1
+    assign swatchClasses = 'swatch__list-item'
+  -%}
+
+  {% for stitchedProduct in stitchedProducts.value %}
+    {%- liquid
+      assign color_group = stitchedProduct.color-group | handleize
+      assign color_label = stitchedProduct.color | capitalize
+      assign colorHandle = stitchedProduct.color | handleize
+      assign stitchedProductHandle = stitchedProduct.handle | handleize
+
+      if colorHandle == 'do-not-use' or colorHandle == blank or color_group == blank or color_group == 'inactive'
+        continue
+      endif
+    -%}
+
+    {% if product.handle == stitchedProductHandle %}
+      {% assign currentColorLabel = color_label %}
+      {% capture currentSwatch %}
+        <li class="swatch__list-item">
+          <a
+            {% unless compact %}data-tooltip="{{ color_label }}"{% endunless %}
+            data-aria-label="{{ color_label }}"
+            data-product="{{ stitchedProductHandle }}"
+            data-colour="{{ color_label }}"
+            class="swatch__item swatch--{{ color_group }} swatch__item--selected"
+            href="/products/{{ stitchedProductHandle }}">
+            <span class="visually-hidden">{{ color_label }}</span>
+          </a>
+        </li>
+      {% endcapture %}
+    {% endif %}
+
+    {% capture otherSwatches %}
+      {{ otherSwatches }}
+
+      {%- liquid
+        if compact
+          if count >= max_display_mob
+            assign swatchClasses = swatchClasses | append: ' medium-down--hide'
+          endif
+          if count >= max_display_desk
+            assign swatchClasses = swatchClasses | append: ' medium-up--hide'
+          endif
+        endif
+      %}
+
+      {% if product.handle != stitchedProductHandle %}
+        <li class="{{ swatchClasses }}">
+          <a
+            {% unless compact %}data-tooltip="{{ color_label }}"{% endunless %}
+            data-aria-label="{{ color_label }}"
+            data-product="{{ stitchedProductHandle }}"
+            class="swatch__item swatch--{{ color_group }}"
+            href="/products/{{ stitchedProductHandle }}">
+            <span class="visually-hidden">{{ color_label }}</span>
+          </a>
+        </li>
+        {% assign count = count | plus: 1 %}
+      {% endif %}
+
+    {% endcapture %}
+
+  {% endfor %}
+
+  {% if compact == false and currentColorLabel != blank %}
+    <span class="product-stitched__label small"><strong>{{ 'products.product.color' | t }}:</strong> {{ currentColorLabel }}</span>
+  {% endif %}
+
+  <ul class="product-stitched__swatches list-none {% if compact == true %}is-compact{% endif %}">
+    {{ currentSwatch }}
+    {% unless isWishlist %}
+      {{ otherSwatches }}
+      {% if compact %}
+        {% if stitchedProducts.value.size > max_display_mob %}
+          {% assign diff_mob = stitchedProducts.value.size | minus: max_display_mob %}
+          <li class="swatch__truncate medium-down--show large-up--hide"><a href="{{ product.url }}">{% render 'icon-plus' %}{{ diff_mob }}</a></li>
+        {% endif %}
+        {% if stitchedProducts.value.size > max_display_desk %}
+          {% assign diff_desk = stitchedProducts.value.size | minus: max_display_desk %}
+          <li class="swatch__truncate medium-down--hide large-up--show"><a href="{{ product.url }}">{% render 'icon-plus' %}{{ diff_desk }}</a></li>
+        {% endif %}
+      {% endif %}
+    {% endunless %}
+  </ul>
+{%- endif -%}
+
+{% unless product.has_only_default_variant %}
+  <hr>
+{% endunless %}

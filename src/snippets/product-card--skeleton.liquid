@@ -1,0 +1,23 @@
+<div class="skeleton-product-card">
+    <div class="product-card__image">
+        <div class="component-image__wrapper aspect-ratio aspect-ratio--portrait skeleton-shimmer"></div>
+    </div>
+    <div class="product-card__meta">
+        <div class="product-card__stitching-wishlist">
+            <ul class="product-stitched__swatches list-none is-compact">
+                {% for i in (1..4) %}
+                    <li class="swatch__list-item">
+                        <div class="swatch__item skeleton-shimmer">
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="product-card__wishlist skeleton-shimmer">
+            </div>
+        </div>
+        <div class="product-card__title small-mobile skeleton-shimmer">
+        </div>
+        <div class="product-card__price small-mobile skeleton-shimmer">
+        </div>
+    </div>
+  </div>

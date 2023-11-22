@@ -1,0 +1,22 @@
+[data-trigger-wishlist-modal],
+[data-wishlist-add] {
+  cursor: pointer;
+  width: rem(36px);
+  height: rem(36px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-grey-1);
+  border-radius: 50%;
+  background-color: transparent;
+
+  .icon-heart {
+    width: rem(16px);
+    height: rem(16px);
+
+    @include media-query($medium-up) {
+      width: rem(20px);
+      height: rem(20px);
+    }
+  }
+}

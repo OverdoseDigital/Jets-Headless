@@ -1,0 +1,107 @@
+{%- if section.blocks.size > 0 -%}
+  <div class="container section-spacer--{{ section.settings.section_bottom_margin }}">
+    {%- for block in section.blocks %}
+      {%- if block.settings.video != blank -%}
+        <div class="featured-video{% if block.settings.video_width == 'full' %} featured-video-width--full{% endif %}">
+          {% render 'component-video', video: block.settings.video %}
+
+          {%- if block.settings.title != blank -%}
+            <h2 class="featured-video__title h3">{{ block.settings.title }}</h2>
+          {%- endif -%}
+
+          {%- if block.settings.text != blank -%}
+            <div class="featured-video__text rte">
+              {{ block.settings.text }}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Featured Videos",
+    "class": "featured-videos",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Please note – each video section is limited to 16 videos maximum. To add more videos, please add another 'Featured videos' section below."
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Video",
+        "type": "video",
+        "settings": [
+          {
+            "type": "video_url",
+            "id": "video",
+            "accept": [
+              "youtube",
+              "vimeo"
+            ],
+            "label": "Video"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text"
+          },
+          {
+            "type": "select",
+            "id": "video_width",
+            "label": "Video width",
+            "options": [
+              {
+                "value": "half",
+                "label": "Half-Width"
+              },
+              {
+                "value": "full",
+                "label": "Full-Width"
+              }
+            ],
+            "default": "full",
+            "info": "(Desktop only)"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured Videos"
+      }
+    ]
+  }
+{% endschema %}

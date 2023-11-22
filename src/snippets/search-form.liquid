@@ -1,0 +1,39 @@
+{% comment %}
+Parameters:
+inputId: Unique id in case the form is used multiple times
+formClasses: Classes to include on the form element
+{% endcomment %}
+{% if wrapperClasses != blank %}<div class="{{ wrapperClasses }}">{% endif %}
+{% if settings.ss_enable %}
+  <form class="search__form" action="/collections/{{ settings.ss_collection_handle }}" method="get" role="search">
+    <input
+      class="search__input searchspring-ac"
+      type="search"
+      name="q"
+      id="{{ inputId }}"
+      value="{{ search.terms | escape }}"
+      placeholder="{{ 'general.search.placeholder' | t }}"
+      aria-label="{{ 'general.search.title' | t }}"
+    >
+    <button type="submit" class="search__button btn__icon" aria-label="{{ 'general.search.submit' | t }}">
+      {% render 'icon-search' %}
+    </button>
+  </form>
+{% else %}
+  <form class="search__form" action="{{ routes.search_url }}" method="get" role="search">
+    <input type="hidden" name="type" value="product" />
+    <input
+      class="search__input"
+      type="search"
+      name="q"
+      id="{{ inputId }}"
+      value="{{ search.terms | escape }}"
+      placeholder="{{ 'general.search.placeholder' | t }}"
+      aria-label="{{ 'general.search.title' | t }}"
+    >
+    <button type="submit" class="search__button btn__icon" aria-label="{{ 'general.search.submit' | t }}">
+      {% render 'icon-search' %}
+    </button>
+  </form>
+{% endif %}
+{% if wrapperClasses != blank %}</div>{% endif %}

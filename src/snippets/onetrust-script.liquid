@@ -1,0 +1,3 @@
+{% if settings.onetrust_enabled and settings.onetrust_script != blank %}
+  {{ settings.onetrust_script | replace: '<script', '<script defer ' }}
+{% endif %}

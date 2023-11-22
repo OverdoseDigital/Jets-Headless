@@ -1,0 +1,34 @@
+{% paginate customer.addresses by 50 %}
+<div class="container">
+  <div class="account account--addresses">
+    <header class="account__header">
+      {% render 'account-greeting', title: 'Addresses' %}
+      {% render 'component-accounts-pages-menu', linklist: linklists[settings.account_links], parent_class: 'account__top-nav' %}
+    </header>
+    <div class="address__addresses">
+      {% liquid
+        for address in customer.addresses
+          if address == customer.default_address
+            render 'customer-address', address: address, customer: customer
+          endif
+        endfor
+        for address in customer.addresses
+          if address != customer.default_address
+            render 'customer-address', address: address, customer: customer
+          endif
+        endfor
+      %}
+    </div>
+    <hr />
+
+    <div class="address__address-form" data-address-container>
+      <button type="button" class="btn btn--block" data-address-toggle="add">{{ 'customer.addresses.add_new' | t }}</button>
+      {%- render 'address-form', type: 'new', classes: 'address__form address__form--new hide' -%}
+    </div>
+
+    {% if paginate.pages > 1 %}
+      {% render 'pagination', paginate: paginate %}
+    {% endif %}
+  </div>
+</div>
+{% endpaginate %}

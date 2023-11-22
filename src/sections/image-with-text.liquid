@@ -1,0 +1,297 @@
+<div class="container">
+  <section class="image-with-text
+    {% if section.settings.layout_desktop == 'right' %} reverse-desktop{% endif %}
+    {% if section.settings.layout_mobile == 'below' %} reverse-mobile{% endif %}
+    vert-padding padding-{{ section.settings.padding_size }}"
+  >
+    {% liquid
+      capture img_alt
+        if section.settings.image.alt != blank
+          echo section.settings.image.alt
+        elsif section.settings.title != blank
+          echo section.settings.title
+        elsif section.settings.text != blank
+          echo section.settings.text
+        endif
+      endcapture
+    %}
+    {% capture image %}
+      <div class="image-with-text__image{% if section.settings.image_padding == 'padded' %} image-with-text__image--padded-desktop{% endif %}{% if section.settings.image_padding_mobile == 'padded' %} image-with-text__image--padded-mobile{% endif %}">
+        {%- render 'component-image',
+          image: section.settings.image,
+          aspect_ratio: 'natural',
+          max_width: 960,
+          img_alt: img_alt,
+          sizes: '(min-width: 77.5rem) calc(77.5rem / 2), (min-width: 48rem) 50vw, 100vw'
+        -%}
+      </div>
+    {% endcapture %}
+    {% capture text %}
+      <div class="image-with-text__text{% if section.settings.text_padding == 'tight' %} image-with-text__text--tight{% endif %}{% if section.settings.text_alignment_mobile == 'center' %} image-with-text__text--mobile-center{% endif %}">
+        <div class="image-with-text__text-inner">
+          {% if section.settings.title != blank %}
+            <h2 class="image-with-text__title h3">{{ section.settings.title | escape }}</h2>
+          {% endif %}
+          {% if section.settings.text != blank %}
+            <div class="image-with-text__text-body">
+              {{ section.settings.text }}
+            </div>
+          {% endif %}
+          {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+            <a
+              href="{{ section.settings.button_link }}"
+              {% if section.settings.link_new_tab %}target="_blank"{% endif %}
+              class="{% unless section.settings.button_style == '__text' %}btn {% endunless %}btn{{ section.settings.button_style }}"
+            >
+              {{ section.settings.button_label | escape }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endcapture %}
+    {% if section.settings.layout_mobile == 'above' %}
+      {{ image }}
+      {{ text }}
+    {% else %}
+      {{ text }}
+      {{ image }}
+    {% endif %}
+  </section>
+</div>
+
+<style>
+#shopify-section-{{ section.id }} {
+  {%- if section.settings.background_color != blank -%}
+    background-color: {{ section.settings.background_color }};
+  {%- endif -%}
+}
+
+{% if section.settings.text_color != blank %}
+  #shopify-section-{{ section.id }},
+  #shopify-section-{{ section.id }} .btn__text {
+    color: {{ section.settings.text_color }};
+  }
+
+  #shopify-section-{{ section.id }} .btn__text {
+    text-decoration-color: {{ section.settings.text_color | color_modify: 'alpha', 0.4 }};
+  }
+
+  #shopify-section-{{ section.id }} .btn__text:focus,
+  #shopify-section-{{ section.id }} .btn__text:active {
+    text-decoration-color: {{ section.settings.text_color }};
+  }
+
+  @media (hover: hover) {
+    #shopify-section-{{ section.id }} .btn__text:hover {
+      text-decoration-color: {{ section.settings.text_color }};
+    }
+  }
+{%- endif -%}
+</style>
+
+{% schema %}
+  {
+    "name": "Image with Text",
+    "class": "image-with-text-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "radio",
+        "id": "image_padding_mobile",
+        "label": "Wide image (mobile)?",
+        "default": "wide",
+        "options": [
+          {
+            "value": "padded",
+            "label": "Padded"
+          },
+          {
+            "value": "wide",
+            "label": "Wide"
+          }
+        ]
+      },
+      {
+        "type": "radio",
+        "id": "image_padding",
+        "label": "Wide image (desktop)?",
+        "default": "padded",
+        "options": [
+          {
+            "value": "padded",
+            "label": "Padded"
+          },
+          {
+            "value": "wide",
+            "label": "Wide"
+          }
+        ]
+      },
+      {
+        "type": "radio",
+        "id": "layout_desktop",
+        "label": "Image placement",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "type": "radio",
+        "id": "layout_mobile",
+        "label": "Image placement (mobile)",
+        "options": [
+          {
+            "value": "above",
+            "label": "Above"
+          },
+          {
+            "value": "below",
+            "label": "Below"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Image with text"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>Pair large text with an image to give focus to your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button label",
+        "default": "Read More"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button URL"
+      },
+      {
+        "type": "checkbox",
+        "label": "Open link in new tab?",
+        "id": "link_new_tab",
+        "default": false
+      },
+      {
+        "type": "radio",
+        "id": "button_style",
+        "label": "Button style",
+        "options": [
+          {
+            "value": "--secondary",
+            "label": "White with border"
+          },
+          {
+            "value": "--white",
+            "label": "White"
+          },
+          {
+            "value": "--primary",
+            "label": "Black"
+          },
+          {
+            "value": "__text",
+            "label": "Text"
+          }
+        ],
+        "default": "--secondary"
+      },
+      {
+        "type": "radio",
+        "id": "text_padding",
+        "label": "Text padding",
+        "options": [
+          {
+            "value": "tight",
+            "label": "Tight"
+          },
+          {
+            "value": "padded",
+            "label": "Padded"
+          }
+        ]
+      },
+      {
+        "type": "radio",
+        "id": "text_alignment_mobile",
+        "label": "Text alignment (mobile)",
+        "options": [
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "left",
+            "label": "Left"
+          }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Section background color"
+      },
+      {
+        "type": "select",
+        "id": "padding_size",
+        "label": "Choose vertical padding spacing",
+        "options": [
+          {
+            "label": "Small",
+            "value": "small"
+          },
+          {
+            "label": "Regular",
+            "value": "regular"
+          },
+          {
+            "label": "Large",
+            "value": "large"
+          },
+          {
+            "label": "Extra-Large",
+            "value": "xlarge"
+          },
+          {
+            "label": "XX-Large",
+            "value": "xxlarge"
+          }
+        ],
+        "default": "xxlarge"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Image with Text",
+        "category": "Image"
+      }
+    ]
+  }
+{% endschema %}

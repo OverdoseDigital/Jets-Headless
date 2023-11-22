@@ -1,0 +1,252 @@
+<div data-section-id="{{ section.id }}" data-section-type="faq-accordion">
+  {%- assign title = section.settings.title -%}
+
+  {%- capture accordionLabels -%}
+    {%- for block in section.blocks -%}
+      {{ block.settings.title }}{%- unless forloop.last -%}|{%- endunless -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- capture accordionContent -%}
+    {%- for block in section.blocks -%}
+      {{ block.settings.accordion_content }}{%- unless forloop.last -%}|{%- endunless -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {% assign labelArray = accordionLabels | split: '|' %}
+  {% assign contentArray = accordionContent | split: '|' %}
+  <div class="container container--narrow">
+    <section class="collapsible-block">
+      <details>
+        <summary
+          class="collapsible__trigger"
+          aria-controls="{{ section.id | append: '--panel' }}"
+          id="{{ section.id | append: '--label' }}"
+        >
+          <h2 class="section-title h5">
+            <span class="collapsible__trigger-icon">
+              {% render 'icons', icon: section.settings.accordion_title_icon %}
+            </span>
+            {{ title | escape }}
+          </h2>
+          <span class="collapsible__trigger-indicator">
+            {%- render 'use-svg', title: 'Chevron down icon', svg_id: 'iconChevronDown', class: 'icon icon-chevron-down', viewbox: '0 0 24 24' -%}
+            {%- render 'use-svg', title: 'Chevron up icon', svg_id: 'iconChevronUp', class: 'icon icon-chevron-up', viewbox: '0 0 24 24' -%}
+          </span>
+        </summary>
+
+        <div
+          class="collapsible__panel"
+          id="{{ section.id | append: '--panel' }}"
+          role="region"
+          aria-labelledby="{{ section.id | append: '--label' }}"
+        >
+          {% render 'component-accordion-item', labels: labelArray, contents: contentArray, multi: false, unique: section.id %}
+        </div>
+      </details>
+    </section>
+  </div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "{{ shop.url }}/pages/faqs",
+  "mainEntity": [
+    {%- for block in section.blocks -%}
+      {
+        "@type": "Question",
+        "name": "{{ block.settings.title | escape }}",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "{{ block.settings.accordion_content | strip_html | escape }}"
+        }
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}
+</script>
+
+{% schema %}
+  {
+    "name": "Collapsible Accordions",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Accordion section"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "info": "eg. Shop Online"
+      },
+      {
+        "type": "select",
+        "id": "accordion_title_icon",
+        "label": "Choose Icon",
+        "options": [
+          {
+            "label": "Account",
+            "value": "account"
+          },
+          {
+            "label": "Bag",
+            "value": "bag"
+          },
+          {
+            "label": "Bikini",
+            "value": "bikini-sm"
+          },
+          {
+            "label": "Book",
+            "value": "book"
+          },
+          {
+            "label": "Box",
+            "value": "box"
+          },
+          {
+            "label": "Maternity",
+            "value": "bump-friendly"
+          },
+          {
+            "label": "Calendar",
+            "value": "calendar"
+          },
+          {
+            "label": "Chat",
+            "value": "chat"
+          },
+          {
+            "label": "Check",
+            "value": "check"
+          },
+          {
+            "label": "Envelope",
+            "value": "envelope"
+          },
+          {
+            "label": "Gift",
+            "value": "gift"
+          },
+          {
+            "label": "Gift - card",
+            "value": "gift-card"
+          },
+          {
+            "label": "Gift - money",
+            "value": "gift-money"
+          },
+          {
+            "label": "Heart",
+            "value": "heart"
+          },
+          {
+            "label": "Location",
+            "value": "location"
+          },
+          {
+            "label": "Lock",
+            "value": "lock"
+          },
+          {
+            "label": "Measure",
+            "value": "measure"
+          },
+          {
+            "label": "Measure tape",
+            "value": "measure-tape"
+          },
+          {
+            "label": "Money",
+            "value": "money"
+          },
+          {
+            "label": "Palm",
+            "value": "palm"
+          },
+          {
+            "label": "Phone",
+            "value": "phone"
+          },
+          {
+            "label": "Regenerated Fibers",
+            "value": "regenerated-fibers"
+          },
+          {
+            "label": "Return",
+            "value": "return"
+          },
+          {
+            "label": "Search",
+            "value": "search"
+          },
+          {
+            "label": "Sunlounge",
+            "value": "sunlounge"
+          },
+          {
+            "label": "Support",
+            "value": "support"
+          },
+          {
+            "label": "Sustainable",
+            "value": "sustainable"
+          },
+          {
+            "label": "Swimsuit",
+            "value": "swimsuit-sm"
+          },
+          {
+            "label": "Tick",
+            "value": "tick"
+          },
+          {
+            "label": "Truck",
+            "value": "truck"
+          },
+          {
+            "label": "Upload",
+            "value": "upload"
+          },
+          {
+            "label": "Zip",
+            "value": "zip"
+          },
+          {
+            "label": "Zoom",
+            "value": "zoom"
+          }
+        ],
+        "default": "bag"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "accordion_block",
+        "name": "Accordion block",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Label",
+            "info": "eg. Question"
+          },
+          {
+            "type": "richtext",
+            "id": "accordion_content",
+            "label": "Content"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Collapsible Accordions",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}

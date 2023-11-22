@@ -1,0 +1,41 @@
+{%- comment %}
+  Parameters
+  collection: the collection object
+  label: (optional) the button label
+  modifiers: (optional) space separated list of BEM modifiers without block name eg. "title-below no-image"
+{% endcomment -%}
+{% liquid
+  assign classes = 'collection-card'
+
+  if modifiers
+    assign split_modifiers = modifiers | split: ' '
+
+    for modifier in split_modifiers
+      assign classes = classes | append: ' collection-card--' | append: modifier
+    endfor
+  endif
+%}
+
+<div class="{{ classes }}">
+  <a href="{{ collection.url }}">
+    <div class="collection-card__image">
+      {%- assign image_object = collection.image | default: collection.products.first.featured_image -%}
+      {%- render 'component-image',
+        image: image_object,
+        aspect_ratio: 'portrait',
+        max_width: 960,
+        sizes: '(max-width: 60.875rem) calc(100vw / 2), (max-width: 77.5rem) calc(77.5rem / 3), calc(100vw / 3)'
+      -%}
+      <div class="collection-card__image-text">
+        <h3 class="collection-card__image-title h5">{{ collection.title }}</h4>
+        <div class="collection-card__image-btn btn__text">
+          {% if link_text != blank -%}
+            {{- link_text -}}
+          {%- else -%}
+            {{- label | default: 'collections.general.button_title' | t -}}
+          {%- endif %}
+        </div>
+      </div>
+    </div>
+  </a>
+</div>

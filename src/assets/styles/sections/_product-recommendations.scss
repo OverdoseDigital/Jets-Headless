@@ -1,0 +1,13 @@
+.product-recommendations__title {
+  margin-bottom: $spacing-lg;
+}
+
+.product-recommendations__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-lg $spacing-sm;
+
+  @include media-query($large-up) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

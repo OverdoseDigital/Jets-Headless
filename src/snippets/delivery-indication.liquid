@@ -1,0 +1,18 @@
+{% liquid
+  assign freeShippingThresholdNumber = settings.free_shipping_bar_threshold_1 | times: 100 | round: 0
+  assign showIndicator = false
+  if settings.shipping_threshold_sync == true and product.price >= freeShippingThresholdNumber and settings.pdp_display_trust_icon_text == true
+    assign showIndicator = true
+  endif
+  if settings.shipping_threshold_sync == false and settings.pdp_display_trust_icon_text == true
+    assign showIndicator = true
+  endif
+%}
+{% if showIndicator %}
+  <div class="trust-icon__text"{% if settings.trust_icon_text_background != blank %} style="background: {{ settings.trust_icon_text_background }};"{% endif %}>
+    <div class="trust-icon">
+      {% render 'icons', icon: settings.pdp_trust_icon %}
+    </div>
+    <span>{{ settings.pdp_trust_text }}</span>
+  </div>
+{% endif %}

@@ -1,0 +1,4 @@
+<svg aria-label="Video thumbnail" width="80" height="56" viewBox="0 0 80 56" fill="none">
+<rect class="icon-video-thumbnail__background" width="80" height="56"/>
+<path class="icon-video-thumbnail__play" d="M35 34L45 28L35 22V34Z" stroke-width="1.5"/>
+</svg>

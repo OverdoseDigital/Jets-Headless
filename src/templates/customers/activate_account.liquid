@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="account account--narrow">
+    <div class="page-header">
+      <h1 class="h3">{{ 'customer.activate_account.title' | t }}</h1>
+      <p class="small">{{ 'customer.activate_account.subtext' | t }}</p>
+    </div>
+
+    {% form 'activate_customer_password' %}
+      {% if form.errors %}
+        {% for field in form.errors %}
+          <p class="form__error">
+            {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+          </p>
+        {% endfor %}
+      {% endif %}
+
+      <div class="form__group">
+        <label for="CustomerPassword">
+          {{ 'customer.activate_account.password' | t }}
+        </label>
+        <input type="password"
+          name="customer[password]"
+          id="CustomerPassword"
+          class="{% if form.errors contains 'password' %}input-error{% endif %}"
+          placeholder="{{ 'customer.activate_account.password' | t }}">
+      </div>
+
+      <div class="form__group">
+        <label for="CustomerPasswordConfirmation">
+          {{ 'customer.activate_account.password_confirm' | t }}
+        </label>
+        <input type="password"
+          name="customer[password_confirmation]"
+          id="CustomerPasswordConfirmation"
+          class="{% if form.errors contains 'password_confirmation' %}input-error{% endif %}"
+          placeholder="{{ 'customer.activate_account.password_confirm' | t }}">
+      </div>
+
+      <div class="activate__buttons">
+        <input type="submit" class="btn btn--block" value="{{ 'customer.activate_account.submit' | t }}">
+        <input type="submit" class="btn btn--secondary btn--block" name="decline" value="{{ 'customer.activate_account.cancel' | t }}">
+      </div>
+    {% endform %}
+
+  </div>
+</div>

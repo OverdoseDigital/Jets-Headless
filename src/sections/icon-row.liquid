@@ -1,0 +1,269 @@
+<section class="icon-row-section container {{ section.settings.container_width }} section-spacer--{{ section.settings.section_bottom_margin }} icon-size--{{ section.settings.icon_size }}">
+  <div class="icon-row icon-row-count-{{ section.settings.icons_per_row }}">
+    {%- for block in section.blocks -%}
+      <div class="icon-row__block">
+        {%- if block.settings.url != blank -%}
+          <a href="{{ block.settings.url }}">
+        {%- endif -%}
+
+        <div class="icon-row__icon">
+          {% render 'icons', icon: block.settings.icon %}
+        </div>
+
+        {%- if block.settings.title != blank -%}
+          <h6 class="icon-row__icon-title">{{ block.settings.title }}</h6>
+        {%- endif -%}
+
+        {%- if block.settings.url != blank -%}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Icon Row",
+    "settings": [
+      {
+        "type": "select",
+        "id": "icons_per_row",
+        "label": "Icons per row (desktop)",
+        "options": [
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          }
+        ],
+        "default": "4"
+      },
+      {
+        "type": "select",
+        "id": "icon_size",
+        "label": "Icon size",
+        "options": [
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ]
+      },
+      {
+        "type": "radio",
+        "id": "container_width",
+        "label": "Container width",
+        "options": [
+          {
+            "value": "",
+            "label": "Standard"
+          },
+          {
+            "value": "container--wide",
+            "label": "Wide"
+          },
+          {
+            "value": "container--narrow",
+            "label": "Narrow"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "icon",
+        "name": "Icon",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "url",
+            "id": "url",
+            "label": "Link"
+          },
+          {
+            "type": "select",
+            "id": "icon",
+            "label": "Icon",
+            "options": [
+              {
+                "label": "Account",
+                "value": "account"
+              },
+              {
+                "label": "Bag",
+                "value": "bag"
+              },
+              {
+                "label": "Bikini",
+                "value": "bikini-sm"
+              },
+              {
+                "label": "Book",
+                "value": "book"
+              },
+              {
+                "label": "Box",
+                "value": "box"
+              },
+              {
+                "label": "Maternity",
+                "value": "bump-friendly"
+              },
+              {
+                "label": "Calendar",
+                "value": "calendar"
+              },
+              {
+                "label": "Chat",
+                "value": "chat"
+              },
+              {
+                "label": "Check",
+                "value": "check"
+              },
+              {
+                "label": "Envelope",
+                "value": "envelope"
+              },
+              {
+                "label": "Gift",
+                "value": "gift"
+              },
+              {
+                "label": "Gift - card",
+                "value": "gift-card"
+              },
+              {
+                "label": "Gift - money",
+                "value": "gift-money"
+              },
+              {
+                "label": "Heart",
+                "value": "heart"
+              },
+              {
+                "label": "Location",
+                "value": "location"
+              },
+              {
+                "label": "Lock",
+                "value": "lock"
+              },
+              {
+                "label": "Measure",
+                "value": "measure"
+              },
+              {
+                "label": "Measure tape",
+                "value": "measure-tape"
+              },
+              {
+                "label": "Money",
+                "value": "money"
+              },
+              {
+                "label": "Palm",
+                "value": "palm"
+              },
+              {
+                "label": "Phone",
+                "value": "phone"
+              },
+              {
+                "label": "Regenerated Fibers",
+                "value": "regenerated-fibers"
+              },
+              {
+                "label": "Return",
+                "value": "return"
+              },
+              {
+                "label": "Search",
+                "value": "search"
+              },
+              {
+                "label": "Sunlounge",
+                "value": "sunlounge"
+              },
+              {
+                "label": "Support",
+                "value": "support"
+              },
+              {
+                "label": "Sustainable",
+                "value": "sustainable"
+              },
+              {
+                "label": "Swimsuit",
+                "value": "swimsuit-sm"
+              },
+              {
+                "label": "Tick",
+                "value": "tick"
+              },
+              {
+                "label": "Truck",
+                "value": "truck"
+              },
+              {
+                "label": "Upload",
+                "value": "upload"
+              },
+              {
+                "label": "Zip",
+                "value": "zip"
+              },
+              {
+                "label": "Zoom",
+                "value": "zoom"
+              }
+            ],
+            "default": "box"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Icon Row",
+        "category": "Image"
+      }
+    ]
+  }
+{% endschema %}

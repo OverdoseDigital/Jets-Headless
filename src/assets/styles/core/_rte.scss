@@ -1,0 +1,323 @@
+.rte {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-size: rem(14px);
+  line-height: 1.4;
+
+  // space out selected hash links - e.g. t's & c's.
+  :target::before {
+    content: '';
+    display: block;
+    height: var(--header-height);
+    margin: -var(--header-height) 0 0;
+  }
+
+  img {
+    height: auto;
+  }
+
+  ul,
+  ol {
+    margin: 0 0 $spacing-md 0;
+    padding: 0 0 0 $spacing-md;
+
+    li {
+      margin-bottom: $spacing-xs;
+    }
+  }
+
+  /* stylelint-disable declaration-property-value-disallowed-list, selector-max-compound-selectors, max-nesting-depth, selector-max-type */
+  ol {
+    list-style-type: none;
+    counter-reset: item;
+    margin: 0 0 $spacing-md;
+
+    > li {
+      display: table;
+      counter-increment: item;
+      margin-bottom: $spacing-sm;
+      width: 100%;
+
+      *:last-child {
+        margin-bottom: 0;
+      }
+
+      &::before {
+        content: counters(item, '.') '. ';
+        display: table-cell;
+        padding-right: 0.6em;
+        width: rem(40px);
+      }
+    }
+  }
+
+  li {
+    ol {
+      padding: 0;
+
+      > li {
+        padding: 0;
+        margin: $spacing-sm 0 0;
+
+        &::before {
+          content: counters(item, '.') ' ';
+        }
+      }
+    }
+  }
+  /* stylelint-enable declaration-property-value-disallowed-list, selector-max-compound-selectors, max-nesting-depth, selector-max-type */
+
+  * + h2,
+  * + h3 {
+    margin-top: $spacing-xl;
+  }
+
+  * + h4,
+  * + h5 {
+    margin-top: $spacing-lg;
+  }
+
+  dl {
+    margin-top: $spacing-xl;
+  }
+
+  table {
+    table-layout: fixed;
+    min-width: calc(100% - #{$spacing-sm});
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    @extend %small;
+    position: relative;
+    padding: $spacing-sm;
+    text-align: center;
+    min-height: rem(56px);
+
+    &:first-child {
+      padding-left: 0;
+      text-align: left;
+      white-space: normal;
+
+      &::after {
+        width: calc(100% - 8px);
+      }
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background-color: var(--color-grey-2);
+    }
+  }
+
+  .rte__table-wrapper {
+    th {
+      font-weight: 600;
+    }
+  }
+}
+
+// This class is wrapped around tables in the RTE
+// to prevent layout breaking with a scrollable parent
+.rte__table-wrapper {
+  position: relative;
+  margin-bottom: $spacing-lg;
+  margin-right: -$spacing-sm;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: $spacing-md;
+    height: 100%;
+    background: linear-gradient(-90deg, rgba(255, 255, 255, 1) 20%, rgba(255, 255, 255, 0) 100%);
+  }
+}
+
+.rte__table-inner-container {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: scroll;
+  padding-bottom: $spacing-lg;
+
+  &::after {
+    content: '';
+    display: block;
+    flex-shrink: 0;
+    width: $spacing-sm;
+    min-height: 100%;
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+
+    .template-page & {
+      @include media-query($large-up) {
+        white-space: normal;
+      }
+    }
+
+    &:first-child {
+      position: sticky;
+      left: 0;
+      background-color: var(--color-white);
+      z-index: 1;
+    }
+  }
+}
+
+.featured-table {
+  background: var(--color-offwhite);
+
+  thead {
+    th {
+      padding-top: $spacing-lg;
+      padding-bottom: $spacing-lg;
+    }
+  }
+
+  tbody {
+    /* stylelint-disable max-nesting-depth, selector-max-compound-selectors, selector-max-type */
+    tr {
+      &:first-child {
+        th,
+        td {
+          padding-top: $spacing-lg + rem(2px);
+
+          /* Row border */
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: rem(2px);
+            background-color: var(--color-white);
+          }
+        }
+      }
+
+      &:last-child {
+        th,
+        td {
+          padding-bottom: $spacing-lg;
+        }
+      }
+    }
+    /* stylelint-enable max-nesting-depth, selector-max-compound-selectors, selector-max-type */
+  }
+
+  th,
+  td {
+    padding-top: $spacing-sm;
+    padding-bottom: $spacing-sm;
+
+    .rte & {
+      font-size: rem(11px);
+
+      @include media-query($medium-up) {
+        font-size: rem(14px);
+      }
+    }
+
+    /* Column border */
+    &:last-child {
+      &::after {
+        content: normal;
+      }
+    }
+
+    &::after {
+      left: auto;
+      right: 0;
+      width: rem(2px);
+      height: 100%;
+      background-color: var(--color-white);
+    }
+  }
+
+  th {
+    &:first-child {
+      padding-left: $spacing-xs;
+      padding-right: $spacing-xl;
+      background-color: var(--color-offwhite);
+      font-weight: var(--font-weight-body);
+      letter-spacing: 0;
+
+      @include media-query($medium-up) {
+        padding-left: $spacing-sm;
+      }
+
+      @include media-query($large-up) {
+        padding-left: $spacing-lg;
+        padding-right: $spacing-lg;
+      }
+
+      &::after {
+        width: rem(2px);
+      }
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: rem(11px);
+
+    @include media-query($medium-up) {
+      font-size: rem(14px);
+    }
+  }
+}
+
+.progress-bar__wrapper {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  width: rem(168px);
+  background-color: var(--color-grey-2);
+
+  .template-page & {
+    @include media-query($large-up) {
+      display: none;
+    }
+  }
+}
+
+.progress-bar {
+  height: rem(2px);
+  background-color: var(--color-black);
+  transition: width 0.3s ease-out;
+  outline: 2px solid var(--color-white);
+}
+
+// This class is wrapped around YouTube/Vimeo embeds in the RTE
+// to make them responsive and prevent layout breaking
+.rte__video-wrapper {
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  height: 0;
+  height: auto;
+  padding-bottom: 56.25%;
+
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+}

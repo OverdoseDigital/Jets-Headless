@@ -1,0 +1,81 @@
+.account--addresses {
+  max-width: rem(451px);
+  margin: 0 auto 4rem;
+
+  @include media-query($medium-up) {
+    margin-bottom: 7.5rem;
+  }
+}
+
+.address__form--fields {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: $spacing-sm;
+  grid-auto-flow: row;
+
+  [data-aria-hidden='true'] {
+    display: none;
+  }
+
+  .form__group {
+    margin-bottom: 0;
+    grid-column: span 6;
+  }
+
+  [data-line-count='1'],
+  [data-line-count='2'],
+  [data-line-count='3'] {
+    grid-column: span 6;
+  }
+}
+
+.button-container button {
+  margin-bottom: $spacing-xs;
+}
+
+.address__delete {
+  margin-left: 1.25rem;
+}
+
+.address__addresses {
+  @include media-query($medium-up) {
+    margin-bottom: rem(53px);
+  }
+}
+
+.address__summary {
+  margin-bottom: $spacing-xs;
+}
+
+h5 ~ .address__summary {
+  margin-top: 0;
+}
+
+.address__address-form {
+  padding-top: $spacing-xs;
+  margin: 0 auto;
+  max-width: rem(451px);
+  text-align: left;
+
+  @include media-query($medium-up) {
+    padding-top: $spacing-xl;
+  }
+}
+
+.address__form--new {
+  padding-top: $spacing-sm;
+
+  @include media-query($medium-up) {
+    padding-top: 0;
+  }
+}
+
+.address__form--edit {
+  margin-top: $spacing-sm;
+  width: 100%;
+  text-align: left;
+}
+
+.form__group--set-default-address {
+  margin-block: $spacing-sm $spacing-lg;
+}

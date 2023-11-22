@@ -1,0 +1,39 @@
+{% if request.page_type == 'product' and settings.klaviyo_api_key != blank %}
+  <script defer src="https://a.klaviyo.com/media/js/onsite/onsite.js" onload="klaviyoOnsiteLoaded()"></script>
+  <script>
+    var klaviyo = klaviyo || [];
+    function klaviyoOnsiteLoaded() {
+        klaviyo.init({
+          account: {{ settings.klaviyo_api_key | json }},
+          platform: "shopify"
+        });
+        klaviyo.enable("backinstock",{
+        trigger: {
+          product_page_text: {{ settings.klaviyo_bis_trigger_button | json }},
+          product_page_class: "btn btn--block",
+          product_page_text_align: "center",
+          product_page_margin: "0px",
+          replace_anchor: false
+        },
+        modal: {
+          headline: "{product_name}",
+          body_content: {{ settings.klaviyo_bis_text | json }},
+          email_field_label: {{ settings.klaviyo_bis_email | json }},
+          button_label: {{ settings.klaviyo_bis_button | json }},
+          subscription_success_label: {{ settings.klaviyo_bis_success | json }},
+          footer_content: '',
+          additional_styles: "@import url('{{ 'klaviyo-bis.css' | asset_url }}');",
+          background_color: "#ffffff",
+          text_color: "#000000",
+          button_text_color: "#ffffff",
+          button_background_color: "#000000",
+          close_button_color: "#000000",
+          error_background_color: "#e45f5f",
+          error_text_color: "#ffffff",
+          success_background_color: "#85ca6d",
+          success_text_color: "#ffffff"
+        }
+      });
+    }
+  </script>
+{% endif %}

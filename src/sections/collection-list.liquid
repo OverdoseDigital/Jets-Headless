@@ -1,0 +1,57 @@
+<section class="collection-list">
+  <div class="container">
+    <div class="page-header">
+      <h1 class="h3">{{ page_title }}</h1>
+    </div>
+    <div class="collection-list__grid">
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          {%- assign collection = collections[block.settings.collection] -%}
+          <div class="collection-list__grid-item">
+            {%-
+              render 'component-collection-card',
+              collection: collection
+            -%}
+          </div>
+        {% endfor %}
+      {% else %}
+        {% for collection in collections %}
+          {%- comment %}<locksmith:33ec>{% endcomment -%}
+            {%- capture var %}{% render 'locksmith-variables', scope: 'subject', subject: collection, variable: 'transparent' %}{% endcapture %}{% if var == "true" %}{% else %}{% continue %}{% endif -%}
+          {%- comment %}</locksmith:33ec>{% endcomment -%}
+          {% unless collection.handle == 'frontpage' %}
+          <div class="collection-list__grid-item">
+            {%-
+              render 'component-collection-card',
+              collection: collection
+            -%}
+          </div>
+          {% endunless %}
+        {% endfor %}
+
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Collection List",
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "label": "Collection",
+            "id": "collection",
+            "type": "collection"
+          }
+        ]
+      }
+    ],
+    "templates": [
+      "list-collections"
+    ]
+  }
+{% endschema %}

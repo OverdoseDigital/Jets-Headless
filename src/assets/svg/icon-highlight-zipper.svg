@@ -1,0 +1,6 @@
+<svg aria-label="Zipper icon" class="icon" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M14 4c2.579.931 7.737 7.45 7.737 24.21M35 4c-2.947.931-8.842 7.45-8.842 24.21" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" stroke-dasharray="2 3"/>
+  <path d="M27.104 28.21h.6v-.6h-.6v.6Zm0 1.95h-.6v.355l.312.17.288-.525Zm-3.158-1.35h3.158v-1.2h-3.158v1.2Zm2.558-.6v1.95h1.2v-1.95h-1.2Zm.312 2.476c.692.38 2.057 1.602 2.057 3.371h1.2c0-2.388-1.794-3.937-2.68-4.424l-.577 1.053Zm2.057 3.371c0 .463-.088.898-.249 1.298l1.114.448c.218-.543.335-1.13.335-1.746h-1.2Z" fill="currentColor" stroke="none" />
+  <path d="M20.542 28.21h-.6v-.6h.6v.6Zm0 1.95h.6v.336l-.286.175-.314-.511Zm4.51-1.35h-4.51v-1.2h4.51v1.2Zm-3.91-.6v1.95h-1.2v-1.95h1.2Zm-.286 2.461c-.596.365-1.836 1.584-1.836 3.386h-1.2c0-2.355 1.59-3.908 2.409-4.41l.627 1.024Zm-1.836 3.386c0 .471.08.913.226 1.319l-1.129.407a5.071 5.071 0 0 1-.297-1.726h1.2Z" fill="currentColor" stroke="none" />
+  <rect x="21.738" y="32.421" width="4.421" height="11.579" rx="1" stroke="currentColor" stroke-width="1.2"/>
+</svg>

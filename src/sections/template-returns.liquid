@@ -1,0 +1,105 @@
+<div class="container">
+  <div class="account account--orders">
+    {% if customer %}
+      <header class="account__header account__header--orders">
+        {% capture title %}{{ 'customer.orders.title' | t }}{% endcapture %}
+        {% render 'account-greeting', title: page.title %}
+        {% render 'component-accounts-pages-menu', linklist: linklists[settings.account_links], parent_class: 'account__top-nav' %}
+      </header>
+    {% else %}
+      <header class="page-header">
+        <h1 class="h3">{{ page.title }}</h1>
+      </header>
+    {% endif %}
+
+    {% if page.content != blank %}
+      <div class="rte">
+        {{ page.content }}
+      </div>
+    {% endif %}
+
+    {% if customer %}
+      <div class="returns__orders">
+        {% if customer.orders.size != 0 %}
+          {% paginate customer.orders by 20 %}
+            {% for order in customer.orders %}
+              <div class="returns__order">
+                {% render 'returns-order-card', order: order %}
+              </div>
+            {% endfor %}
+          {% endpaginate %}
+        {% else %}
+          <p class="account__orders-none">{{ 'customer.orders.none' | t }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+  {% if paginate.pages > 1 %}
+    {% render 'pagination', paginate: paginate, show_prev_next: true, center: true %}
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Template Returns",
+    "settings": [
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "header",
+        "content": "Return Items"
+      },
+      {
+        "type": "range",
+        "id": "return_timeframe",
+        "min": 10,
+        "max": 90,
+        "step": 1,
+        "unit": "day",
+        "label": "Return Eligibility Timeframe ",
+        "default": 30
+      },
+      {
+        "type": "text",
+        "id": "return_link_label",
+        "label": "Return link text",
+        "default": "Return Items"
+      },
+      {
+        "type": "url",
+        "id": "return_link",
+        "label": "Link URL"
+      }
+    ],
+    "templates": [
+      "page"
+    ],
+    "presets": [
+      {
+        "name": "Template Returns"
+      }
+    ]
+  }
+{% endschema %}

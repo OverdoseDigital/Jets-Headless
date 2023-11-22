@@ -1,0 +1,5 @@
+.product--modal {
+  @include media-query($medium-up) {
+    padding: 0 $spacing-lg $spacing-lg;
+  }
+}

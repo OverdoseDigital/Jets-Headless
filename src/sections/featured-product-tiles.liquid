@@ -1,0 +1,301 @@
+<div class="featured-product-tiles shopify-section--{{ section.id }} section-spacer--{{ section.settings.section_bottom_margin }}" data-section-id="{{ section.id }}" data-section-type="featured-product-tiles">
+  <div class="featured-product-tiles__grid{% if section.settings.slider_on_mobile %} featured-product-tiles__grid--mob-slider{% endif %}">
+  {% for block in section.blocks %}
+    <div class="featured-product-tile featured-product-tile--{{ block.settings.tile_width_mobile }} featured-product-tile--{{ block.settings.tile_width_desktop }}">
+      {%- liquid
+
+        if block.settings.tile_width_desktop == 'desk-third'
+          assign img_sizes = '(min-width: 61.875rem) 34vw, 100vw'
+        elsif block.settings.tile_width_desktop == 'desk-half'
+          assign img_sizes = '(min-width: 61.875rem) 50vw, 100vw'
+        elsif block.settings.tile_width_desktop == 'desk-two-thirds'
+          assign img_sizes = '(min-width: 61.875rem) 67vw, 100vw'
+        else
+          assign img_sizes = '100vw'
+        endif
+
+        render 'component-picture', image_mobile: block.settings.image_mobile, image_desktop: block.settings.image_desktop, sizes: img_sizes, placeholderType: 'image', breakpoint_desktop: settings.grid_large
+
+        if block.settings.product_one != blank
+          assign campaignProductOne = all_products[block.settings.product_one]
+          render 'featured-product-trigger', product: campaignProductOne, horizontal: block.settings.horizontal_position_one, vertical: block.settings.vertical_position_one, horizontal_desk: block.settings.horizontal_position_one_desk, vertical_desk: block.settings.vertical_position_one_desk
+        endif
+
+        if block.settings.product_two != blank
+          assign campaignProductTwo = all_products[block.settings.product_two]
+          render 'featured-product-trigger', product: campaignProductTwo, horizontal: block.settings.horizontal_position_two, vertical: block.settings.vertical_position_two, horizontal_desk: block.settings.horizontal_position_two_desk, vertical_desk: block.settings.vertical_position_two_desk
+        endif
+
+        if block.settings.product_three != blank
+          assign campaignProductThree = all_products[block.settings.product_three]
+          render 'featured-product-trigger', product: campaignProductThree, horizontal: block.settings.horizontal_position_three, vertical: block.settings.vertical_position_three, horizontal_desk: block.settings.horizontal_position_three_desk, vertical_desk: block.settings.vertical_position_three_desk
+        endif
+      -%}
+
+    </div>
+  {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Featured Product Tiles",
+    "class": "featured-product-tiles",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Images will show at their natural aspect ratio, except images in a row will match the height of the tallest image"
+      },
+      {
+        "type": "checkbox",
+        "id": "slider_on_mobile",
+        "label": "Slider on mobile",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Layout options"
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "tile",
+        "name": "Product Image Tile",
+        "settings": [
+          {
+            "label": "Image - mobile",
+            "id": "image_mobile",
+            "type": "image_picker"
+          },
+          {
+            "label": "Image - desktop",
+            "id": "image_desktop",
+            "type": "image_picker"
+          },
+          {
+            "type": "radio",
+            "id": "tile_width_mobile",
+            "label": "Tile width - mobile",
+            "options": [
+              {
+                "value": "mobile-full",
+                "label": "Full width"
+              },
+              {
+                "value": "mobile-half",
+                "label": "Half"
+              }
+            ],
+            "default": "mobile-full"
+          },
+          {
+            "type": "radio",
+            "id": "tile_width_desktop",
+            "label": "Tile width - desktop",
+            "options": [
+              {
+                "value": "desk-full",
+                "label": "Full width"
+              },
+              {
+                "value": "desk-two-thirds",
+                "label": "Two thirds"
+              },
+              {
+                "value": "desk-half",
+                "label": "Half"
+              },
+              {
+                "value": "desk-third",
+                "label": "One third"
+              }
+            ],
+            "default": "desk-half"
+          },
+          {
+            "type": "header",
+            "content": "Product One"
+          },
+          {
+            "type": "product",
+            "id": "product_one",
+            "label": "Product One"
+          },
+          {
+            "type": "range",
+            "id": "horizontal_position_one",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Mobile Button horizontal position %",
+            "default": 25
+          },
+          {
+            "type": "range",
+            "id": "vertical_position_one",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Mobile Button vertical position %",
+            "default": 25
+          },
+          {
+            "type": "range",
+            "id": "horizontal_position_one_desk",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Desktop Button horizontal position %",
+            "default": 25
+          },
+          {
+            "type": "range",
+            "id": "vertical_position_one_desk",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Desktop Button vertical position %",
+            "default": 25
+          },
+          {
+            "type": "header",
+            "content": "Product Two"
+          },
+          {
+            "type": "product",
+            "id": "product_two",
+            "label": "Product Two"
+          },
+          {
+            "type": "range",
+            "id": "horizontal_position_two",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Mobile Button horizontal position %",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "vertical_position_two",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Mobile Button vertical position %",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "horizontal_position_two_desk",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Desktop Button horizontal position %",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "vertical_position_two_desk",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Desktop Button vertical position %",
+            "default": 50
+          },
+          {
+            "type": "header",
+            "content": "Product Three"
+          },
+          {
+            "type": "product",
+            "id": "product_three",
+            "label": "Product Three"
+          },
+          {
+            "type": "range",
+            "id": "horizontal_position_three",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Mobile Button horizontal position %",
+            "default": 75
+          },
+          {
+            "type": "range",
+            "id": "vertical_position_three",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Mobile Button vertical position %",
+            "default": 75
+          },
+          {
+            "type": "range",
+            "id": "horizontal_position_three_desk",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Desktop Button horizontal position %",
+            "default": 75
+          },
+          {
+            "type": "range",
+            "id": "vertical_position_three_desk",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Desktop Button vertical position %",
+            "default": 75
+          }
+        ]
+      }
+    ],
+    "templates": [
+      "page",
+      "article",
+      "index"
+    ],
+    "presets": [
+      {
+        "name": "Featured Product Tiles",
+        "category": "Campaign"
+      }
+    ]
+  }
+{% endschema %}

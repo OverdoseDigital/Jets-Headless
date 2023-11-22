@@ -1,0 +1,132 @@
+{%- if section.settings.popup_enabled -%}
+  <div data-section-id="{{ section.id }}" data-section-type="popup" data-timer-delay="{{ section.settings.popup_timer_delay }}">
+    {% capture popupClasses %}popup {{ section.settings.popup_size }}{% endcapture %}
+    {% capture popupID %}{{ section.id }}{% endcapture %}
+    {% capture popupDesc %}{{ section.settings.popup_description }}{% endcapture %}
+    {% capture popupContent %}
+      <div class="popup__inner">
+        {%- if section.settings.popup_image != blank -%}
+          {%- liquid
+            capture sizes
+              if section.settings.popup_size == 'sm'
+                echo '(min-width: 30rem) 30rem, 100vw'
+              elsif section.settings.popup_size == 'md'
+                echo '(min-width: 48rem) 48rem, 100vw'
+              elsif section.settings.popup_size == 'full'
+                echo '100vw'
+              endif
+            endcapture
+          -%}
+          {%- render 'component-image',
+            image: section.settings.popup_image,
+            aspect_ratio: 'natural',
+            max_width: 1000,
+            sizes: sizes
+          -%}
+        {%- endif -%}
+        {%- if section.settings.popup_title != blank -%}
+          <h2 class="h3">{{ section.settings.popup_title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.popup_content != blank -%}
+          {{ section.settings.popup_content }}
+        {%- endif -%}
+        {%- if section.settings.popup_html != blank -%}
+          {{ section.settings.popup_html }}
+        {%- endif -%}
+        {%- if section.settings.popup_link_text != blank and section.settings.popup_link != blank -%}
+          <p><a href="{{ section.settings.popup_link }}" class="btn">{{ section.settings.popup_link_text }}</a></p>
+        {%- endif -%}
+      </div>
+    {% endcapture %}
+
+    {% render 'component-modal-dialog',
+      modal_class: popupClasses,
+      modal_id: popupID,
+      modal_desc: popupDesc,
+      modal_content: popupContent
+    %}
+
+  </div>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Popup",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Will show a popup after a specified delay, and won't show again in the same browser for 24hrs."
+      },
+      {
+        "type": "checkbox",
+        "id": "popup_enabled",
+        "label": "Show popup",
+        "default": false
+      },
+      {
+        "type": "number",
+        "id": "popup_timer_delay",
+        "label": "Popup timer delay",
+        "default": 5000,
+        "info": "1000 = 1 second"
+      },
+      {
+        "type": "select",
+        "id": "popup_size",
+        "label": "Popup size",
+        "options": [
+          {
+            "value": "sm",
+            "label": "Small"
+          },
+          {
+            "value": "md",
+            "label": "Medium"
+          },
+          {
+            "value": "full",
+            "label": "Full screen"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "popup_image",
+        "label": "Image"
+      },
+      {
+        "type": "text",
+        "id": "popup_title",
+        "label": "Popup title",
+        "default": "Hello"
+      },
+      {
+        "type": "text",
+        "id": "popup_description",
+        "label": "Popup description",
+        "default": "A popup to welcome visitors",
+        "info": "Required for accessibility, a brief description of the purpose of the popup."
+      },
+      {
+        "type": "richtext",
+        "id": "popup_content",
+        "label": "Popup text content"
+      },
+      {
+        "type": "html",
+        "id": "popup_html",
+        "label": "HTML"
+      },
+      {
+        "type": "url",
+        "id": "popup_link",
+        "label": "Button link"
+      },
+      {
+        "type": "text",
+        "id": "popup_link_text",
+        "label": "Button text"
+      }
+    ]
+  }
+{% endschema %}

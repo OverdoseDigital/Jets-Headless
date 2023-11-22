@@ -1,0 +1,22 @@
+{% assign timeframe = section.settings.return_timeframe | times: 24 | times: 60 | times: 60 %}
+{% assign now_seconds = 'now' | date: "%s" | plus: 0 %}
+{% assign date_eligible = order.created_at | date: '%s' | plus: timeframe %}
+
+<div class="returns__order-card">
+  <div class="returns__order-card--text">
+    <div>
+      <p class="returns__order-number">{{ 'customer.orders.order_number' | t: name: order.name }}</p>
+      <p>{{ 'customer.orders.date' | t }}: {{ order.created_at | date: '%d %b %Y' }}</p>
+      <p>{{ 'customer.orders.total' | t }}: {{ order.total_price | money_with_currency }}</p>
+      {% comment %} {% unless order.location %}
+        <p>{{ 'customer.orders.online_purchase' | t }}</p>
+      {% endunless %} {% endcomment %}
+    </div>
+    <p class="returns__order-links">
+      <a href="{{ order.customer_url }}" class="btn__text">{{ 'customer.orders.view_details' | t }}</a>
+      {% if date_eligible > now_seconds %}
+      &nbsp;<a href="{{ section.settings.return_link }}" class="btn__text" target="_blank">{{ section.settings.return_link_label }}</a>
+      {% endif %}
+    </p>
+  </div>
+</div>

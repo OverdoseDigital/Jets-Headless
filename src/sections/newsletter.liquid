@@ -1,0 +1,111 @@
+<section class="newsletter-section">
+  <div class="container">
+  {% if section.settings.section_title != blank %}
+    <div class="section__title">
+      <h2 class="h3">{{ section.settings.section_title | escape }}</h2>
+    </div>
+  {% endif %}
+  {% if section.settings.paragraph != blank %}
+    {{ section.settings.paragraph }}
+  {% endif %}
+
+  {%-
+    render 'component-subscribe-form',
+    form_name: 'customer',
+    class: 'form',
+    id: 'subscribe-form',
+    label: 'signup',
+    placeholder: section.settings.form_label,
+    value: 'newsletter',
+    submit_label: section.settings.submit_label
+  -%}
+
+</div>
+</section>
+
+<style>
+#shopify-section-{{ section.id }} {
+  {%- if section.settings.background_color != blank -%}
+    background-color: {{ section.settings.background_color }};
+  {%- endif -%}
+  {%- if section.settings.text_color != blank -%}
+    color: {{ section.settings.text_color }};
+  {%- endif -%}
+}
+{%- if section.settings.link_color != blank -%}
+#shopify-section-{{ section.id }} a,
+#shopify-section-{{ section.id }} a:hover {
+  color: {{ section.settings.link_color }};
+}
+#shopify-section-{{ section.id }} a:after {
+  background-color: {{ section.settings.link_color }};
+}
+{%- endif -%}
+
+{% if section.settings.text_color != blank %}
+  #shopify-section-{{ section.id }} .section__title {
+    color: {{ section.settings.text_color }};
+  }
+{%- endif -%}
+</style>
+
+{% schema %}
+  {
+    "name": "Newsletter",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Settings"
+      },
+      {
+        "type": "text",
+        "id": "section_title",
+        "label": "Heading",
+        "default": "Subscribe to our newsletter"
+      },
+      {
+        "type": "richtext",
+        "id": "paragraph",
+        "label": "Paragraph",
+        "default": "<p>Use this space to talk up the benefits of subscribing.</p>"
+      },
+      {
+        "type": "paragraph",
+        "content": "Any customers who sign up will have an account created for them in Shopify. [View customers](/admin/customers?query=&accepts_marketing=1)"
+      },
+      {
+        "type": "text",
+        "id": "form_label",
+        "label": "Form label and placeholder",
+        "default": "Subscribe"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color"
+      },
+      {
+        "type": "color",
+        "id": "link_color",
+        "label": "Link color"
+      },
+      {
+        "type": "text",
+        "id": "submit_label",
+        "label": "Form submit button label",
+        "default": "Signup"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Newsletter",
+        "category": "Promotional"
+      }
+    ]
+  }
+{% endschema %}

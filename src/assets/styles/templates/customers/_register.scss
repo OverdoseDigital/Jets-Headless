@@ -1,0 +1,11 @@
+.register__intro {
+  margin-bottom: $spacing-md;
+  text-align: left;
+}
+
+.register__birthday-input-wrapper {
+  margin-top: $spacing-xs;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: $spacing-sm;
+}

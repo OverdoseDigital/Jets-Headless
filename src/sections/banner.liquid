@@ -1,0 +1,357 @@
+<section class="{% if section.settings.section_width == 'contained' %}container container--flush--medium-down{% endif %} section-spacer--{{ section.settings.section_bottom_margin }}">
+  <div class="common-banner">
+    <div class="common-banner__wrapper">
+      {% liquid
+        capture img_alt
+          if section.settings.mobile_image.alt != blank
+            echo section.settings.mobile_image.alt
+          elsif section.settings.desktop_image.alt != blank
+            echo section.settings.desktop_image.alt
+          elsif section.settings.title != blank
+            echo section.settings.title
+          elsif section.settings.text != blank
+            echo section.settings.text
+          endif
+        endcapture
+
+        assign img_sizes = '100vw'
+
+        if section.settings.section_width == 'contained'
+          assign img_sizes = '(min-width: 90rem) 90rem, 100vw'
+        endif
+      %}
+
+      {%- render 'component-picture',
+        image_mobile: section.settings.mobile_image,
+        image_desktop: section.settings.desktop_image,
+        img_alt: img_alt,
+        max_width_mobile: 1600,
+        sizes: img_sizes
+      -%}
+      <div class="common-banner__container common-banner__container--row {{ section.settings.text_align }} {{ section.settings.text_align_desktop }} {{ section.settings.content_position }} {{ section.settings.content_position_desktop }}">
+        <header class="common-banner__content">
+          {% if section.settings.title != blank %}
+            <h2 class="h1">{{ section.settings.title | escape }}</h2>
+          {% endif %}
+          {% if section.settings.text != blank %}
+            <div class="banner__text-body">
+              {{ section.settings.text }}
+            </div>
+          {% endif %}
+          {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+            <a
+              href="{{ section.settings.button_link }}"
+              {% if section.settings.link_new_tab %}target="_blank"{% endif %}
+              class="{% unless section.settings.button_style == '__text' %}btn {% endunless %}btn{{ section.settings.button_style }}"
+            >
+              {{ section.settings.button_label | escape }}
+            </a>
+          {% endif %}
+        </header>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  {%- if section.settings.overlay_level > 0 -%}
+    #shopify-section-{{ section.id }} .common-banner__container::after {
+      background-color: rgba(0, 0, 0, {{ section.settings.overlay_level | divided_by: 100.0 }})
+    }
+  {%- endif -%}
+
+  {%- if section.settings.text_color != blank -%}
+    #shopify-section-{{ section.id }} .common-banner__content,
+    #shopify-section-{{ section.id }} .banner__text-body a,
+    #shopify-section-{{ section.id }} .btn__text {
+      color: {{ section.settings.text_color }};
+    }
+
+    #shopify-section-{{ section.id }} .btn__text {
+      text-decoration-color: {{ section.settings.text_color | color_modify: 'alpha', 0.4 }};
+    }
+
+    #shopify-section-{{ section.id }} .btn__text:focus,
+    #shopify-section-{{ section.id }} .btn__text:active {
+      text-decoration-color: {{ section.settings.text_color }};
+    }
+
+    @media (hover: hover) {
+      #shopify-section-{{ section.id }} .btn__text:hover {
+        text-decoration-color: {{ section.settings.text_color }};
+      }
+    }
+  {%- endif -%}
+
+  {%- if section.settings.text_color_desktop != blank -%}
+    @media only screen and (min-width: {{ settings.grid_medium }}px) {
+      #shopify-section-{{ section.id }} .common-banner__content,
+      #shopify-section-{{ section.id }} .banner__text-body a,
+      #shopify-section-{{ section.id }} .btn__text {
+        color: {{ section.settings.text_color_desktop }};
+      }
+
+      #shopify-section-{{ section.id }} .btn__text {
+        text-decoration-color: {{ section.settings.text_color_desktop | color_modify: 'alpha', 0.4 }};
+      }
+
+      #shopify-section-{{ section.id }} .btn__text:focus,
+      #shopify-section-{{ section.id }} .btn__text:active {
+        text-decoration-color: {{ section.settings.text_color_desktop }};
+      }
+    }
+
+    @media only screen and (min-width: {{ settings.grid_medium }}px) and (hover: hover) {
+      #shopify-section-{{ section.id }} .btn__text:hover {
+        text-decoration-color: {{ section.settings.text_color_desktop }};
+      }
+    }
+  {%- endif -%}
+</style>
+
+{% schema %}
+  {
+    "name": "Banner",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "A single image banner."
+      },
+      {
+        "type": "paragraph",
+        "content": "To create a double image banner on desktop, instead use the 'Hero slider' section with two half slide blocks."
+      },
+      {
+        "type": "radio",
+        "id": "section_width",
+        "label": "Banner width",
+        "options": [
+          {
+            "value": "full",
+            "label": "Full width"
+          },
+          {
+            "value": "contained",
+            "label": "Contained"
+          }
+        ],
+        "default": "full"
+      },
+      {
+        "type": "image_picker",
+        "id": "mobile_image",
+        "label": "Mobile image",
+        "info": "Minimum size 1600px wide"
+      },
+      {
+        "type": "image_picker",
+        "id": "desktop_image",
+        "label": "Desktop image",
+        "info": "Minimum size 2560px wide"
+      },
+      {
+        "type": "range",
+        "id": "overlay_level",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "%",
+        "label": "Image darkening",
+        "default": 0
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Banner Heading"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>Further explain the header in paragraph form. Entice the reader to click the following call to action.</p>"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "text_color_desktop",
+        "label": "Text color - desktop"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button label",
+        "default": "Read More"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button URL"
+      },
+      {
+        "type": "checkbox",
+        "label": "Open link in new tab?",
+        "id": "link_new_tab",
+        "default": false
+      },
+      {
+        "type": "radio",
+        "id": "button_style",
+        "label": "Button style",
+        "options": [
+          {
+            "value": "--white",
+            "label": "White"
+          },
+          {
+            "value": "--primary",
+            "label": "Black"
+          },
+          {
+            "value": "__text",
+            "label": "Text"
+          }
+        ],
+        "default": "--white"
+      },
+      {
+        "type": "select",
+        "id": "content_position",
+        "label": "Content position - mobile",
+        "default": "justify-center align-end",
+        "options": [
+          {
+            "value": "justify-center align-start",
+            "label": "Top"
+          },
+          {
+            "value": "justify-center align-center",
+            "label": "Centre"
+          },
+          {
+            "value": "justify-center align-end",
+            "label": "Bottom"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "content_position_desktop",
+        "label": "Content position - desktop",
+        "default": "desktop-justify-start desktop-align-end",
+        "options": [
+          {
+            "value": "desktop-justify-start desktop-align-start",
+            "label": "Left Top"
+          },
+          {
+            "value": "desktop-justify-center desktop-align-start",
+            "label": "Centre Top"
+          },
+          {
+            "value": "desktop-justify-end desktop-align-start",
+            "label": "Right Top"
+          },
+          {
+            "value": "desktop-justify-start desktop-align-center",
+            "label": "Left Centre"
+          },
+          {
+            "value": "desktop-justify-center desktop-align-center",
+            "label": "Centre Centre"
+          },
+          {
+            "value": "desktop-justify-end desktop-align-center",
+            "label": "Right Centre"
+          },
+          {
+            "value": "desktop-justify-start desktop-align-end",
+            "label": "Left Bottom"
+          },
+          {
+            "value": "desktop-justify-center desktop-align-end",
+            "label": "Centre Bottom"
+          },
+          {
+            "value": "desktop-justify-end desktop-align-end",
+            "label": "Right Bottom"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "text_align",
+        "label": "Text align - mobile",
+        "default": "text-center",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "Left"
+          },
+          {
+            "value": "text-center",
+            "label": "Centre"
+          },
+          {
+            "value": "text-right",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "text_align_desktop",
+        "label": "Text align - desktop",
+        "default": "medium-up--text-left",
+        "options": [
+          {
+            "value": "medium-up--text-left",
+            "label": "Left"
+          },
+          {
+            "value": "medium-up--text-center",
+            "label": "Centre"
+          },
+          {
+            "value": "medium-up--text-right",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Banner",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}

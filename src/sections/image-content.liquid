@@ -1,0 +1,283 @@
+{%- liquid
+  if section.settings.content_width_desktop == 'contained'
+    assign container_classes = 'container'
+  elsif section.settings.content_width_desktop == 'wide'
+    assign container_classes = 'container container--wide'
+  elsif section.settings.content_width_desktop == 'narrow'
+    assign container_classes = 'container container--narrow'
+  elsif section.settings.content_width_desktop == 'extra-narrow'
+    assign container_classes = 'container container--extra-narrow'
+  endif
+
+  if section.settings.content_width == 'full-width' and section.settings.content_width_desktop != 'full-width'
+    assign container_classes = container_classes | append: ' container--flush--small'
+  endif
+
+  if section.settings.content_width == 'contained' and section.settings.content_width_desktop == 'full-width'
+    assign container_classes = 'container container--fluid container--flush--medium-up'
+  endif
+-%}
+<section class="section-spacer--{{ section.settings.section_bottom_margin }}" data-section-id="{{ section.id }}" data-section-type="image">
+  <div
+    class="image-content__grid
+    {{ container_classes }}
+    {% if section.settings.padding_size != 'none' %}vert-padding padding-{{ section.settings.padding_size }}{% endif %}"
+  >
+    {%- for block in section.blocks -%}
+      <div class="image-content image-content--{{ block.settings.image_width_mobile }} image-content--{{ block.settings.image_width_desktop }}">
+        {%- liquid
+          assign image_sizes = '100vw'
+          if block.settings.image_width_desktop == 'desk-third'
+            assign image_sizes = '(min-width: 61.875rem) 34vw, 100vw'
+          elsif block.settings.image_width_desktop == 'desk-half'
+            assign image_sizes = '(min-width: 61.875rem) 50vw, 100vw'
+          elsif block.settings.image_width_desktop == 'desk-two-thirds'
+            assign image_sizes = '(min-width: 61.875rem) 67vw, 100vw'
+          endif
+
+          if section.settings.content_width_desktop == 'wide'
+            assign image_sizes = '(min-width: 58.875rem) 56.875rem, 100vw'
+            if block.settings.image_width_desktop == 'desk-third'
+              assign image_sizes = '(min-width: 58.875rem) 18.75rem, 100vw'
+            elsif block.settings.image_width_desktop == 'desk-half'
+              assign image_sizes = '(min-width: 58.875rem) 28.3125rem, 100vw'
+            elsif block.settings.image_width_desktop == 'desk-two-thirds'
+              assign image_sizes = '(min-width: 58.875rem) 37.875rem, 100vw'
+            endif
+
+          elsif section.settings.content_width_desktop == 'narrow'
+            assign image_sizes = '(min-width: 44.5rem) 42.5rem, 100vw'
+            if block.settings.image_width_desktop == 'desk-third'
+              assign image_sizes = '(min-width: 44.5rem) 14rem, 100vw'
+            elsif block.settings.image_width_desktop == 'desk-half'
+              assign image_sizes = '(min-width: 44.5rem) 21.125rem, 100vw'
+            elsif block.settings.image_width_desktop == 'desk-two-thirds'
+              assign image_sizes = '(min-width: 44.5rem) 28.25rem, 100vw'
+            endif
+
+          elsif section.settings.content_width_desktop == 'extra-narrow'
+            assign image_sizes = '(min-width: 30rem) 28rem, 100vw'
+            if block.settings.image_width_desktop == 'desk-third'
+              assign image_sizes = '(min-width: 30rem) 9.25rem, 100vw'
+            elsif block.settings.image_width_desktop == 'desk-half'
+              assign image_sizes = '(min-width: 30rem) 14rem, 100vw'
+            elsif block.settings.image_width_desktop == 'desk-two-thirds'
+              assign image_sizes = '(min-width: 30rem) 18.625rem, 100vw'
+            endif
+          endif
+        -%}
+
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}">
+        {%- endif -%}
+
+        {%- render 'component-picture',
+          image_mobile: block.settings.image_mobile,
+          image_desktop: block.settings.image_desktop,
+          sizes: image_sizes,
+          placeholderType: 'image',
+          breakpoint_desktop: settings.grid_large
+        -%}
+
+        {%- if block.settings.link != blank -%}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Image Content",
+    "class": "image-content-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout options"
+      },
+      {
+        "type": "radio",
+        "id": "content_width",
+        "label": "Content width - mobile",
+        "options": [
+          {
+            "value": "full-width",
+            "label": "Full width"
+          },
+          {
+            "value": "contained",
+            "label": "Contained"
+          }
+        ],
+        "default": "contained"
+      },
+      {
+        "type": "radio",
+        "id": "content_width_desktop",
+        "label": "Content width - desktop",
+        "options": [
+          {
+            "value": "full-width",
+            "label": "Full width"
+          },
+          {
+            "value": "contained",
+            "label": "Contained"
+          },
+          {
+            "value": "wide",
+            "label": "Wide"
+          },
+          {
+            "value": "narrow",
+            "label": "Narrow"
+          },
+          {
+            "value": "extra-narrow",
+            "label": "Extra narrow"
+          }
+        ],
+        "default": "wide"
+      },
+      {
+        "type": "select",
+        "id": "padding_size",
+        "label": "Choose vertical padding spacing",
+        "options": [
+          {
+            "label": "None",
+            "value": "none"
+          },
+          {
+            "label": "Small",
+            "value": "small"
+          },
+          {
+            "label": "Regular",
+            "value": "regular"
+          },
+          {
+            "label": "Large",
+            "value": "large"
+          },
+          {
+            "label": "Extra-Large",
+            "value": "xlarge"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "select",
+        "id": "section_bottom_margin",
+        "label": "Section bottom margin",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "default": "none"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Image",
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "Images will show at their natural aspect ratio, except images in a row will match the height of the tallest image"
+          },
+          {
+            "label": "Image - mobile",
+            "id": "image_mobile",
+            "type": "image_picker",
+            "info": "Minimum width 2560px"
+          },
+          {
+            "label": "Image - desktop",
+            "id": "image_desktop",
+            "type": "image_picker",
+            "info": "Optional, minimum width 2560px"
+          },
+          {
+            "type": "radio",
+            "id": "image_width_mobile",
+            "label": "Image width - mobile",
+            "options": [
+              {
+                "value": "mobile-full",
+                "label": "Full width"
+              },
+              {
+                "value": "mobile-half",
+                "label": "Half"
+              }
+            ],
+            "default": "mobile-full"
+          },
+          {
+            "type": "radio",
+            "id": "image_width_desktop",
+            "label": "Image width - desktop",
+            "options": [
+              {
+                "value": "desk-full",
+                "label": "Full width"
+              },
+              {
+                "value": "desk-two-thirds",
+                "label": "Two thirds"
+              },
+              {
+                "value": "desk-half",
+                "label": "Half"
+              },
+              {
+                "value": "desk-third",
+                "label": "One third"
+              }
+            ],
+            "default": "desk-full"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link",
+            "info": "Optional"
+          }
+        ]
+      }
+    ],
+    "templates": [
+      "page",
+      "article",
+      "index"
+    ],
+    "presets": [
+      {
+        "name": "Image Content",
+        "category": "Image",
+        "blocks": [
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

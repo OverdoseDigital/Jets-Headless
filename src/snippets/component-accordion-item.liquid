@@ -1,0 +1,52 @@
+{%- comment %}
+  Parameters
+  labels: An array of label strings for the accordion items
+  contents: An array of content strings for the accordion items
+  modifiers: (optional) space separated list of BEM modifiers without block name eg. "title-below no-image"
+  open_first: boolean. Default is true
+  multi: boolean. Default is false
+  unique: string. Unique identifier to prevent duplicate ids
+{% endcomment -%}
+{% liquid
+  assign classes = 'accordion'
+
+  if modifiers
+    assign split_modifiers = modifiers | split: ' '
+
+    for modifier in split_modifiers
+      assign classes = classes | append: ' accordion--' | append: modifier
+    endfor
+  endif
+
+  assign accordion_index = 1
+  assign list_index = 0
+%}
+
+<div class="{{ classes }}">
+  {%- for label in labels -%}
+    {% assign trigger_id = 'accordion-trigger-' | append: accordion_index | append: unique %}
+    {% assign panel_id = 'accordion-panel-' | append: accordion_index | append: unique %}
+
+    <div class="accordion__label" role="heading" aria-level="4">
+      <button type="button" class="accordion__trigger" id="{{ trigger_id }}" {% if multi == true %}aria-multi="1" {% endif %} aria-controls="{{ panel_id }}" aria-expanded="{% if open_first == true and list_index == 0 %}true{% else %}false{% endif %}">
+        {{ labels[list_index] }}
+        <span class="accordion__trigger-indicator">
+        {%- render 'use-svg', title: 'Plus icon', svg_id: 'iconPlusSm', class: 'icon icon-plus-sm', viewbox: '0 0 20 20' -%}
+        {%- render 'use-svg', title: 'Minus icon', svg_id: 'iconMinusSm', class: 'icon icon-minus-sm', viewbox: '0 0 20 20' -%}
+        </span>
+      </button>
+    </div>
+    <div class="accordion__panel {% if list_index == 0 and open_first == true %}show-panel{% endif %}" id="{{ panel_id }}" role="region" aria-labelledby="{{ trigger_id }}">
+      <div class="accordion__body rte">
+      {% if type == 'html' %}
+        {{ contents[list_index].html }}
+      {% else %}
+        {{ contents[list_index] }}
+      {% endif %}
+      </div>
+    </div>
+
+    {% assign accordion_index = accordion_index | plus: 1 %}
+    {% assign list_index = list_index | plus: 1 %}
+  {%- endfor -%}
+</div>

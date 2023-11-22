@@ -1,0 +1,17 @@
+<div class="trust-indicators">
+  {% if settings.indicator_text_1 != blank %}
+    <{% if settings.indicator_link_1 != blank %}a href="{{ settings.indicator_link_1 }}"{% else %}span{% endif %} class="trust-indicator">
+      <span class="trust-indicator__icon">{% render 'icons', icon: settings.trust_icon_1 %}</span><span class="trust-indicator__text">{{ settings.indicator_text_1 }}</span>
+    </{% if settings.indicator_link_1 != blank %}a{% else %}span{% endif %}>
+  {% endif %}
+  {% if settings.indicator_text_2 != blank %}
+    <{% if settings.indicator_link_2 != blank %}a href="{{ settings.indicator_link_2 }}"{% else %}span{% endif %} class="trust-indicator">
+      <span class="trust-indicator__icon">{% render 'icons', icon: settings.trust_icon_2 %}</span><span class="trust-indicator__text">{{ settings.indicator_text_2 }}</span>
+    </{% if settings.indicator_link_2 != blank %}a{% else %}span{% endif %}>
+  {% endif %}
+  {% if settings.indicator_text_3 != blank %}
+    <{% if settings.indicator_link_3 != blank %}a href="{{ settings.indicator_link_3 }}"{% else %}span{% endif %} class="trust-indicator">
+      <span class="trust-indicator__icon">{% render 'icons', icon: settings.trust_icon_3 %}</span><span class="trust-indicator__text">{{ settings.indicator_text_3 }}</span>
+    </{% if settings.indicator_link_3 != blank %}a{% else %}span{% endif %}>
+  {% endif %}
+</div>

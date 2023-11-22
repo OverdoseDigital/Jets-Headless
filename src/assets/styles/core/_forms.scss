@@ -1,0 +1,211 @@
+form {
+  margin: 0;
+}
+
+a,
+area,
+button,
+[role='button'],
+input,
+label,
+select,
+summary,
+textarea {
+  touch-action: manipulation;
+}
+
+/* stylelint-disable selector-max-specificity, selector-no-qualifying-type, selector-max-attribute */
+input[type='text'],
+input[type='tel'],
+input[type='email'],
+input[type='password'],
+input[type='date'],
+input[type='number'],
+input[type='search'],
+input[type='time'],
+input[type='url'],
+textarea,
+select {
+  font-size: rem(14px);
+  max-width: 100%;
+  min-height: rem(48px);
+  border: 1px solid var(--color-grey-2);
+  background-color: var(--color-white);
+  border-radius: 0;
+  padding: $spacing-xs $spacing-sm;
+  transition: border-color 0.2s ease;
+  color: var(--color-black);
+
+  &::placeholder {
+    font-weight: 400;
+    color: var(--color-black);
+  }
+
+  &[disabled] {
+    border-color: var(--color-grey-1);
+    background-color: var(--color-grey-1);
+    color: var(--color-grey-4);
+    cursor: default;
+
+    &::placeholder {
+      color: var(--color-grey-4);
+    }
+
+    &:focus,
+    &:hover {
+      border-color: var(--color-grey-1);
+    }
+  }
+
+  &.input-error {
+    border-color: var(--color-signal-error);
+    background-color: var(--color-signal-error-light);
+    color: var(--color-signal-error);
+  }
+
+  &:focus {
+    border-color: var(--color-grey-5);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--color-grey-5);
+    }
+  }
+}
+
+button,
+select {
+  color: var(--color-black);
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+  height: rem(48px);
+  padding-right: rem(40px);
+  background-size: rem(16px 16px);
+  background-repeat: no-repeat;
+  background-position: center right rem(16px);
+}
+
+/* stylelint-enable selector-max-specificity, selector-no-qualifying-type, selector-max-attribute */
+
+button,
+input[type='submit'],
+label[for] {
+  cursor: pointer;
+}
+
+textarea {
+  min-height: rem(100px);
+  padding: $spacing-sm;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+// Force option color (affects IE only)
+option {
+  background-color: var(--color-white);
+  color: var(--color-black);
+}
+
+.form__group {
+  margin-bottom: $spacing-md;
+  text-align: left;
+
+  label,
+  input[type='text'],
+  input[type='tel'],
+  input[type='email'],
+  input[type='password'],
+  input[type='date'],
+  input[type='number'],
+  input[type='search'],
+  input[type='time'],
+  input[type='url'],
+  textarea,
+  select {
+    display: block;
+    width: 100%;
+  }
+
+  &.has-error {
+    /* stylelint-disable-next-line selector-max-specificity */
+    input[type='text'],
+    input[type='tel'],
+    input[type='email'],
+    input[type='password'],
+    input[type='date'],
+    input[type='number'],
+    input[type='search'],
+    input[type='time'],
+    input[type='url'],
+    textarea,
+    select {
+      border-color: var(--color-signal-error);
+      background-color: var(--color-signal-error-light);
+      color: var(--color-signal-error);
+    }
+  }
+
+  label {
+    color: var(--color-grey-5);
+
+    + input,
+    + select,
+    + textarea {
+      margin-top: $spacing-xs;
+    }
+  }
+}
+
+.form__inline-input {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.form__success,
+.form__error,
+.errors {
+  margin-top: $spacing-sm;
+  margin-bottom: $spacing-sm;
+  padding: $spacing-sm;
+  font-size: rem(14px);
+}
+
+.form__success {
+  background-color: var(--color-signal-success-light);
+}
+
+.form__error,
+.errors {
+  background-color: var(--color-signal-error-light);
+  color: var(--color-signal-error);
+}
+
+.errors {
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    margin: 0 0 $spacing-xxs;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.form__field-error {
+  @extend %small;
+  margin-top: $spacing-xs;
+  color: var(--color-signal-error);
+}

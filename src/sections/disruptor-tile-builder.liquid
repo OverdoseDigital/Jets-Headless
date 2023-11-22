@@ -1,0 +1,212 @@
+<div class="disruptor-tiles">
+{% for block in section.blocks %}
+  {%- assign block_settings = block.settings -%}
+  {%- capture disruptorTile -%}
+    {% if block_settings.button_link != blank %}
+      <a class="promo-tile" href="{{ block_settings.button_link }}">
+    {%- else -%}
+      <div class="promo-tile">
+    {%- endif -%}
+        <div class="promo-tile__bg" style="background-color: {{ block_settings.background_color }};">
+          {%- if block_settings.mob_image != blank or block_settings.desk_image != blank -%}
+            {%- render 'component-picture',
+              image_mobile: block_settings.mob_image,
+              image_desktop: block_settings.desk_image,
+              max_width_mobile: 800,
+              lazy: true
+            -%}
+          {%- endif -%}
+        </div>
+        <div class="promo-tile__content promo-tile__content-align-{{ block_settings.content_vertical_position }}" style="--distruptor-text-color: {{ block_settings.text_color }};">
+          {%- if block_settings.title != blank -%}
+            <h2 class="h2-caps">{{ block_settings.title }}</h2>
+          {%- endif -%}
+          {%- if block_settings.paragraph != blank -%}
+            <p>{{ block_settings.paragraph }}</p>
+          {%- endif -%}
+          {%- if block_settings.button_text != blank -%}
+            <div><span class="{% unless block_settings.button_style == '__text' %}btn {% endunless %}btn{{ block_settings.button_style }}">{{ block_settings.button_text }}</span></div>
+          {%- endif -%}
+        </div>
+    {%- if block_settings.button_link != blank -%}
+      </a>
+    {%- else -%}
+      </div>
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <div class="disruptor-tile__presenter">
+    <div class="disruptor-tile__item disruptor-tile__item-standard">
+      {{ disruptorTile }}
+      <p>Desktop default size</p>
+    </div>
+
+    <div class="disruptor-tile__item disruptor-tile__item-largest">
+      {{ disruptorTile }}
+      <p>Largest size</p>
+    </div>
+
+    <div class="disruptor-tile__item disruptor-tile__item-smallest">
+      {{ disruptorTile }}
+      <p>Smallest size</p>
+    </div>
+
+    <div class="disruptor-tile__item disruptor-tile__item-code">
+      <p>Your generated code, paste this into Searchspring</p>
+      <textarea>
+      {{- disruptorTile | escape -}}
+      </textarea>
+    </div>
+  </div>
+
+  <hr />
+
+{% endfor %}
+
+</div>
+<style>
+  .disruptor-tiles {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .disruptor-tiles hr {
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  .disruptor-tile__presenter {
+    display: grid;
+    margin: 0 auto;
+    gap: 16px;
+    grid-template-columns: 332px 448px 164px;
+  }
+
+  .disruptor-tile__item-code {
+    grid-column: span 3;
+  }
+
+  .disruptor-tile__item-smallest .promo-tile__content h2 {
+    font-size: 85%;
+  }
+
+  .disruptor-tile__item-code textarea {
+    width: 100%;
+    min-height: 300px;
+    white-space: pre;
+    font-family: monospace;
+    font-size: 12px;
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Disruptor Tile Builder",
+    "blocks": [
+      {
+        "type": "disruptor-tile",
+        "name": "Disruptor Tile",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "mob_image",
+            "label": "Mobile image"
+          },
+          {
+            "type": "image_picker",
+            "id": "desk_image",
+            "label": "Desktop image"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Title"
+          },
+          {
+            "type": "textarea",
+            "id": "paragraph",
+            "label": "Paragraph"
+          },
+          {
+            "type": "url",
+            "id": "button_link",
+            "label": "Tile Link"
+          },
+          {
+            "type": "text",
+            "id": "button_text",
+            "label": "Button Text"
+          },
+          {
+            "type": "color",
+            "id": "text_color",
+            "label": "Text Color",
+            "default": "#ffffff"
+          },
+          {
+            "type": "color",
+            "id": "background_color",
+            "label": "Background Color",
+            "default": "#000000",
+            "info": "Can be used or shows while the image loads"
+          },
+          {
+            "type": "radio",
+            "id": "content_vertical_position",
+            "label": "Content vertical position",
+            "options": [
+              {
+                "value": "top",
+                "label": "Top"
+              },
+              {
+                "value": "middle",
+                "label": "Middle"
+              },
+              {
+                "value": "bottom",
+                "label": "Bottom"
+              }
+            ],
+            "default": "middle"
+          },
+          {
+            "type": "radio",
+            "id": "button_style",
+            "label": "Button style",
+            "options": [
+              {
+                "value": "--white",
+                "label": "White"
+              },
+              {
+                "value": "--primary",
+                "label": "Malibu (blue)"
+              },
+              {
+                "value": "--tertiary",
+                "label": "Black"
+              },
+              {
+                "value": "__text",
+                "label": "Text"
+              }
+            ],
+            "default": "--white"
+          }
+        ]
+      }
+    ],
+    "templates": [
+      "page"
+    ],
+    "presets": [
+      {
+        "name": "Disruptor Tile Builder",
+        "category": "Utility"
+      }
+    ]
+  }
+{% endschema %}

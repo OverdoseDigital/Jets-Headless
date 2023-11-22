@@ -1,0 +1,9 @@
+{% if collection.description != blank %}
+  <div class="collection__long-desc">
+    <div class="collection__long-desc-trunc-wrap">
+      <h3>{{ collection.title }}</h3>
+      {{ collection.description }}
+    </div>
+    <button type="button" class="btn" data-toggle-desc>{{ 'collections.general.read_more' | t }}</button>
+  </div>
+{% endif %}

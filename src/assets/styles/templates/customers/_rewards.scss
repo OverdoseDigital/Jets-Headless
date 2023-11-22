@@ -1,0 +1,226 @@
+.account__tier-status-wrapper {
+  text-align: center;
+}
+
+.account__tier-status-header {
+  margin: 0 auto $spacing-lg;
+
+  .icon {
+    height: 3.75rem;
+    width: 3.75rem;
+  }
+
+  h4 {
+    margin: 0.5rem 0 0.25rem;
+  }
+}
+
+.account__tier-status {
+  margin: 1.75rem 0 $spacing-xxl;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-xxxs;
+
+  @include media-query($medium-up) {
+    margin-bottom: rem(64px);
+  }
+
+  > div {
+    background-color: var(--color-offwhite);
+  }
+
+  .icon-trend {
+    width: rem(16px);
+    height: rem(16px);
+  }
+
+  &.account__tier-status--top-tier {
+    .account__tier-status-anniversary {
+      @include media-query($small-down) {
+        grid-column: span 2;
+      }
+
+      @include media-query($medium-up) {
+        grid-row: span 2;
+      }
+    }
+  }
+}
+
+$tier-status-border-radius: rem(4px);
+
+.account__tier-status-available,
+.account__tier-status-spend-to-next,
+.account__tier-status-anniversary,
+.account__tier-status-progress-bar-wrapper {
+  padding: $spacing-md $spacing-lg;
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.account__tier-status-spend-to-next,
+.account__tier-status-anniversary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  h5 {
+    margin-bottom: $spacing-xxs;
+
+    @include media-query($small-down) {
+      font-size: rem(12px);
+    }
+  }
+
+  .muted {
+    display: inline-flex;
+    align-items: center;
+
+    .icon {
+      margin-left: $spacing-xxs;
+    }
+  }
+}
+
+.account__tier-status-available {
+  grid-column: span 2;
+  grid-row: span 1;
+  border-top-left-radius: $tier-status-border-radius;
+  border-top-right-radius: $tier-status-border-radius;
+
+  @include media-query($medium-up) {
+    grid-column: span 1;
+    grid-row: span 2;
+    border-top-right-radius: 0;
+  }
+
+  h5 {
+    @include media-query($small-down) {
+      font-size: rem(12px);
+    }
+  }
+
+  .h1 {
+    margin-bottom: rem(20px);
+  }
+}
+
+.account__tier-status-anniversary {
+  @include media-query($medium-up) {
+    border-top-right-radius: $tier-status-border-radius;
+  }
+}
+
+.account__tier-status-progress-bar-wrapper {
+  border-bottom-left-radius: $tier-status-border-radius;
+  border-bottom-right-radius: $tier-status-border-radius;
+  grid-column: span 2;
+
+  p {
+    margin: $spacing-xxs;
+  }
+}
+
+.account__rewards-summary {
+  text-align: left;
+
+  h5 {
+    @include media-query($medium-up) {
+      margin-left: $spacing-sm;
+    }
+  }
+
+  table {
+    width: 100%;
+    border: 1px solid var(--color-offwhite);
+    border-collapse: collapse;
+  }
+
+  tr {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-xxxs;
+    margin: 0 (-$spacing-xxxs); // negative margin is to fix optical alignment
+
+    &:nth-child(2n + 1) {
+      th,
+      td {
+        background: var(--color-offwhite);
+      }
+    }
+  }
+
+  th,
+  td {
+    @extend %small;
+    padding: $spacing-sm $spacing-xs;
+
+    @include media-query($medium-up) {
+      padding: $spacing-sm;
+    }
+
+    &:not(:first-child) {
+      text-align: right;
+    }
+  }
+}
+
+$reward-progress-bar-border-radius: rem(8px);
+
+.account__tier-status-progress-bar-outer {
+  position: relative;
+  height: 4px;
+  background: var(--color-grey-2);
+  border-radius: $reward-progress-bar-border-radius;
+  margin-top: $spacing-lg;
+  margin-bottom: $spacing-xl;
+}
+
+.account__tier-status-progress-bar-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: rem(4px);
+  width: var(--rewards-progress-percentage);
+  background: var(--color-black);
+  border-radius: $reward-progress-bar-border-radius;
+}
+
+.account__tier-status-progress-spend {
+  position: absolute;
+  top: rem(-43px);
+  left: var(--rewards-progress-percentage);
+  padding: $spacing-xs $spacing-sm;
+  background: var(--color-black);
+  border-radius: rem(15px);
+  transform: translateX(-50%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    height: 0;
+    width: 0;
+    pointer-events: none;
+    border-color: rgba(136, 183, 213, 0);
+    border-top-color: var(--color-black);
+    border-width: 4px;
+    margin-left: -4px;
+  }
+}
+
+.account__tier-status-progress-label {
+  position: absolute;
+  top: $spacing-xs;
+  &:first-of-type {
+    left: 0;
+  }
+  &:last-of-type {
+    right: 0;
+  }
+}

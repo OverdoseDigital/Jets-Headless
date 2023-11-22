@@ -1,0 +1,228 @@
+.instagram-feed-section {
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h5 {
+      font-weight: var(--font-weight-body);
+    }
+
+    a {
+      text-decoration: none;
+    }
+  }
+}
+
+/* stylelint-disable selector-id-pattern, selector-max-id, selector-max-specificity, declaration-no-important, selector-class-pattern, selector-no-qualifying-type */
+
+.instagram-embed:not(:has(#foursixty-hideable-container)) {
+  position: relative;
+  padding-bottom: 21.8%;
+
+  @include media-query($small-down) {
+    padding-bottom: 46.8%;
+  }
+
+  .fs-slider-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+// Home page feed
+.fs-has-links::after {
+  content: 'Shop the look';
+  padding: 4px 8px;
+  color: rgba(2, 2, 2, 1);
+}
+
+.fs-wrapper div.fs-text-container .fs-entry-title,
+div.fs-detail-title {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-style: normal;
+  font-size: rem(14px);
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+div.fs-text-container .fs-entry-date,
+div.fs-detail-container .fs-post-info,
+div.fs-wrapper div.fs-has-links::after,
+.fs-text-product,
+.fs-overlink-text {
+  @extend %smallcaps;
+  // font-family: var(--font-body);
+  // font-weight: var(--font-weight-body);
+  // font-style: normal;
+  // font-size: rem(14px);
+  // letter-spacing: 0;
+}
+
+.fs-wrapper div.fs-text-container * {
+  color: rgba(2, 2, 2, 1);
+}
+
+.fs-wrapper div.fs-text-container {
+  background-color: rgba(248, 248, 248, 0.8);
+  margin: 0;
+}
+
+div.fs-entry-date {
+  display: none;
+}
+
+div.fs-service-icon {
+  display: none;
+}
+
+div.fs-entry-title {
+  display: none;
+}
+
+// PDP feed
+#foursixty-hideable-container {
+  h3 {
+    @extend %h4;
+    margin-bottom: $spacing-md;
+    text-align: center;
+  }
+}
+
+.fs-wrapper {
+  height: auto;
+}
+
+.fs-slider-container {
+  right: 0;
+}
+
+.fs-slider_v2_5-feed.fs-wrapper {
+  text-align: center;
+
+  .template-index & {
+    display: flex;
+  }
+}
+
+.fs-mobile.fs-slider_v2_5:not(.fs-prepended-detail) {
+  margin-bottom: $spacing-xxl;
+}
+
+.fs-desktop.fs-slider_v2_5:not(.fs-prepended-detail) {
+  margin-bottom: rem(64px);
+}
+
+.template-index {
+  .fs-mobile.fs-slider_v2_5:not(.fs-prepended-detail) {
+    margin-bottom: 0;
+  }
+
+  .fs-desktop.fs-slider_v2_5:not(.fs-prepended-detail) {
+    margin-bottom: 0;
+  }
+}
+
+.fs-mobile.fs-slider_v2_5 .fs-entry-container {
+  width: calc(100% / 2.8) !important;
+  padding-top: 47% !important;
+}
+
+.fs-slider_v2_5 .fs-entry-container {
+  display: inline-block;
+  height: 0 !important;
+  width: calc(16.666% - 3.33px) !important;
+  padding-top: 21.8% !important;
+  flex-shrink: 0;
+  margin: 0 2px;
+
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+.fs-slider_v2_5 .fs-wrapper div.fs-timeline-entry {
+  margin: 0;
+}
+
+// Shop social page
+.fs-lookbook_v2_5.fs-wrapper div.fs-timeline-entry {
+  margin: 2px;
+}
+
+/* stylelint-enable selector-id-pattern, selector-max-id, selector-max-specificity, declaration-no-important, selector-class-pattern, selector-no-qualifying-type */
+
+.fs-detail-content {
+  img[aria-hidden='true'] {
+    width: 1px;
+  }
+}
+
+.fs-next-button {
+  &::before {
+    content: 'Load More';
+    @extend %btn;
+    @extend %btn--secondary;
+  }
+  svg {
+    display: none;
+  }
+}
+
+.fs-slider-next-button,
+.fs-slider-prev-button {
+  background-color: transparent;
+
+  &.fs-hidden {
+    opacity: 0;
+  }
+
+  svg {
+    display: none;
+  }
+
+  &::after {
+    content: '';
+    width: rem(32px);
+    height: rem(32px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: hsla(0, 0%, 100%, 0.75);
+    background-position: center center;
+    background-size: rem(16px 16px);
+    background-repeat: no-repeat;
+    transition: 0.2s background-color var(--transition-timing-flick), 0.2s transform var(--transition-timing-flick);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      &::after {
+        transform: translateX(0);
+        background-color: var(--color-white);
+      }
+    }
+  }
+}
+
+.fs-slider-prev-button {
+  &::after {
+    background-image: var(--icon-chevron-left);
+    transform: translateX(-100%);
+  }
+}
+
+.fs-slider-next-button {
+  &::after {
+    background-image: var(--icon-chevron-right);
+    transform: translateX(100%);
+  }
+}
+
+// Add to cart popup
+.fs-buy-button {
+  text-decoration: none;
+}

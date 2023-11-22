@@ -1,0 +1,77 @@
+{%- comment -%}
+  While hacky in appearance, the Shopify web fonts are included in this way
+  to prevent duplicate declarations of font-faces that are used for multiple
+  text types.
+
+  By doing this, we can also use link rel=preload to preload the fonts.
+{%- endcomment -%}
+{%- liquid
+  assign font_urls = ''
+  capture font_faces
+    if settings.font_body != blank
+      assign font_body_url = settings.font_body | font_url
+      assign font_urls = font_urls | append: font_body_url | append: '<split>'
+      echo settings.font_body | font_face: font_display: settings.font_display | append: '<split>'
+
+      assign font_body_medium = settings.font_body | font_modify: 'weight', '500'
+      assign font_body_medium_url = font_body_medium | font_url
+      assign font_urls = font_urls | append: font_body_medium_url | append: '<split>'
+      echo font_body_medium | font_face: font_display: settings.font_display | append: '<split>'
+
+      assign font_body_bold = settings.font_body | font_modify: 'weight', '600'
+      assign font_body_bold_url = font_body_bold | font_url
+      assign font_urls = font_urls | append: font_body_bold_url | append: '<split>'
+      echo font_body_bold | font_face: font_display: settings.font_display | append: '<split>'
+    endif
+    if settings.font_headings != blank
+      assign font_headings_url = settings.font_headings | font_url
+      assign font_urls = font_urls | append: font_headings_url | append: '<split>'
+      echo settings.font_headings | font_face: font_display: settings.font_display | append: '<split>'
+      assign font_headings_bold = settings.font_headings | font_modify: 'weight', 'bolder'
+      assign font_headings_bold_url = font_headings_bold | font_url
+      assign font_urls = font_urls | append: font_headings_bold_url | append: '<split>'
+      echo font_headings_bold | font_face: font_display: settings.font_display | append: '<split>'
+    endif
+  endcapture
+  assign unique_font_urls = font_urls | split: '<split>' | uniq | sort
+-%}
+
+{%- for font_url in unique_font_urls -%}
+  <link rel="preload" href="{{ font_url }}" as="font" type="font/woff2" crossorigin>
+{%- endfor -%}
+
+<style>
+  {%- assign unique_font_faces = font_faces | strip_newlines | replace: '\n', '' | split: '<split>' | uniq -%}
+  {% for font_face in unique_font_faces %}
+    {{ font_face }}
+  {% endfor %}
+
+  :root {
+    --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+    --font-weight-body: {{ settings.font_body.weight }};
+    --font-weight-medium: {{ settings.font_body_medium.weight }};
+    --font-weight-bold: {{ settings.font_body_bold.weight }};
+    --font-headings: {{ settings.font_headings.family }}, {{ settings.font_headings.fallback_families }};
+    --font-headings-weight: {{ settings.font_headings.weight }};
+    --icon-chevron-left: url('{{ 'icon-chevron-left.svg' | asset_url }}');
+    --icon-chevron-right: url('{{ 'icon-chevron-right.svg' | asset_url }}');
+    --icon-zoom-in: url('{{ 'icon-zoom-in.svg' | asset_url }}');
+    --icon-find-fit: url('{{ 'icon-swimsuit-sm.svg' | asset_url }}');
+  }
+
+  {% unless layout == 'checkout' %}
+  select,
+  .custom-select-opener::after,
+  .selectCustom-trigger::after {
+    background-repeat: no-repeat;
+    background-image: url({{ 'icon-chevron-down.svg' | asset_url }});
+  }
+
+  .selectCustom-option::after,
+  .collection__sort-list a.is-active::after,
+  .currencies-list input[type="radio"] + label:after {
+    background-repeat: no-repeat;
+    background-image: url({{ 'icon-check.svg' | asset_url }});
+  }
+{% endunless %}
+</style>

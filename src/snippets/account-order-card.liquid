@@ -1,0 +1,25 @@
+<div class="account__order-card">
+  {% for line_item in order.line_items %}
+    {%- render 'component-image',
+      image: line_item.image,
+      aspect_ratio: 'natural',
+      max_width: 640,
+      sizes: '(min-width: 37.5rem) calc((37.5rem) / 2), 50vw'
+    -%}
+    {% break %}
+  {% endfor %}
+  <div class="account__order-card--text">
+    <div>
+      <p class="account__order-number">{{ 'customer.orders.order_number' | t: name: order.name }}</p>
+      <p>{{ 'customer.orders.date' | t }}: {{ order.created_at | date: '%d %b %Y' }}</p>
+      <p>{{ 'customer.orders.total' | t }}: {{ order.total_price | money }}</p>
+      {% comment %} {% if order.tags contains 'Instore Purchase' %}
+        <p>{{ "customer.orders.instore_purchase" | t }}</p>
+      {% else %}
+        <p>{{ "customer.orders.online_purchase" | t }}</p>
+      {% endif %} {% endcomment %}
+      <p>{{ 'customer.orders.fulfillment_status' | t }}: {{ order.fulfillment_status_label }}</p>
+    </div>
+    <p><a href="{{ order.customer_url }}">{{ 'customer.orders.view_order' | t }}</a></p>
+  </div>
+</div>
