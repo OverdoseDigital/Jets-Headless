@@ -105,12 +105,12 @@ const Cart = ({rootUrl, freeShippingBarSettings, giftWithPurchaseDetails, isCart
     document.body.classList.remove('cart-loading');
 
     setCart(newCart);
+
     const counters = document.querySelectorAll('[data-items-count]');
     counters.forEach((counter) => {
       counter.innerHTML = newCart.item_count;
       counter.setAttribute('data-items-count', newCart.item_count);
     });
-
     if (upsellsEnabled) {
       getUpsellProducts(newCart.items);
     }
@@ -368,7 +368,8 @@ const Cart = ({rootUrl, freeShippingBarSettings, giftWithPurchaseDetails, isCart
               <span dangerouslySetInnerHTML={{__html: iconClose}} />
             </button>
           </div>
-          {showShippingBar && <FreeShippingBar total={total} freeShippingBarSettings={freeShippingBarSettings} />}
+
+          {showShippingBar && <FreeShippingBar total={total} freeShippingBarSettings={freeShippingBarSettings} items={cartItems} />}
           <RewardsBalance />
         </>
       )}
@@ -401,6 +402,8 @@ const Cart = ({rootUrl, freeShippingBarSettings, giftWithPurchaseDetails, isCart
                   setEditProduct={setEditProduct}
                   rootUrl={rootUrl}
                   key={item.key}
+                  addToCart={handleAddToCartEvent}
+                  items={cartItems}
                 />
               ))}
             </ul>
@@ -419,6 +422,7 @@ const Cart = ({rootUrl, freeShippingBarSettings, giftWithPurchaseDetails, isCart
               total={total}
               products={upsellProducts}
               addToCart={handleAddToCartEvent}
+              items={cartItems}
             />
             : null
           }

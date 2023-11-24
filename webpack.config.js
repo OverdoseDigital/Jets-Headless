@@ -2,6 +2,7 @@ const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack')
 
 const entrypoints = {
   'layout.checkout': './src/assets/scripts/layouts/checkout.js',
@@ -112,11 +113,14 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
     new CleanWebpackPlugin(),
     new CopyPlugin(themeFiles),
     new MiniCssExtractPlugin({
       filename: 'assets/[name].css',
-    }),
+    })
   ],
   output: {
     filename: 'assets/[name].js',

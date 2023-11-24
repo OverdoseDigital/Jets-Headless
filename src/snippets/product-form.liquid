@@ -1,5 +1,25 @@
 {% if product.metafields.custom.bundling_with == blank %}
 {% form 'product', product, data-product-form: '', data-product-handle: product.handle %}
+
+  {% if product.metafields.custom.cross_sell_product != blank %}
+    {% assign cross_sell_product = product.metafields.custom.cross_sell_product.value %}
+    {% if cross_sell_product.available %}
+      {%- capture upsell_data -%}
+        {
+          "handle": "{{cross_sell_product.handle }}",
+          "price": "{{cross_sell_product.selected_or_first_available_variant.price }}",
+          "compare_at_price": "{{cross_sell_product.selected_or_first_available_variant.compare_at_price }}",
+          "variant_id": "{{cross_sell_product.selected_or_first_available_variant.id }}",
+          "image": "{{cross_sell_product.featured_image.src | image_url }}",
+          "title": "{{cross_sell_product.title }}",
+          "variants": {{ cross_sell_product.variants | json  }}
+        }
+      {%- endcapture -%}
+      <input type="hidden" name="properties[_upsell_data]" value='{{ upsell_data | strip_newlines }}'>
+      <input type="hidden" name="properties[_upsell_block_title]" value="{{product.metafields.custom.cross_sell_block_title }}">
+    {% endif %}
+  {% endif %}
+
   <div class="product__title--wrapper">
     <h1 class="h3 product__title">{{ product.title }}</h1>
     {% if settings.include_review_summary %}
@@ -318,5 +338,30 @@
 
 
 </form>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    $(".product__form-options--bundle button").on('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      // handleCartToggle(event);
+      var items = []
+      $(".product__form-options--bundle input").each((i, el) => {
+          items.push({
+              quantity: 1,
+              id: el.getAttribute("value")
+          })
+      })
+
+
+      console.log('test')
+      window.sideCart.handleAddToCartEvent(items, true)
+      // jQuery.post(window.Shopify.routes.root + 'cart/add.js', {items}).then(res => {
+      //   console.log(res);
+      //   document.body.classList.add('cart-is-visible');
+      // });
+    })
+  })
+</script>
   
 {% endif %}

@@ -10,7 +10,7 @@ import iconPlus from '../../../../assets/svg/icon-plus-sm.svg';
 import iconMinus from '../../../../assets/svg/icon-minus-sm.svg';
 
 /* eslint-disable babel/camelcase */
-const CartUpsells = ({total, products, addToCart}) => {
+const CartUpsells = ({total, products, addToCart, items}) => {
   const upsellsHeading = window.theme.cartUpsells ? window.theme.cartUpsells.heading : '';
   const upsellsAddToCart = window.theme.cartUpsells.addToBag ? window.theme.cartUpsells.addToBag : 'Add';
   const [upsellsExpanded, setUpsellsExpanded] = useState(true);
@@ -25,6 +25,25 @@ const CartUpsells = ({total, products, addToCart}) => {
       handleProductOptionsArrows(productOptionsWrapper);
     }
   }, [selectedUpsell]);
+
+  useEffect(() => {
+    let hasUpsellOffers = false
+    let itemsWithUpsells = items.filter(i => i?.properties?._upsell_data)
+    if(itemsWithUpsells.length) {
+      itemsWithUpsells.map(iwu => {
+        let upsellData = JSON.parse(iwu.properties?._upsell_data)
+        let inCart = items.find(i => i.handle == upsellData.handle)
+        if(!inCart) hasUpsellOffers = true
+      })
+    }
+    if(hasUpsellOffers) {
+      upsellsCollapseWrapper.current.style.height = 0
+      setUpsellsExpanded(false)
+    } else {
+      upsellsCollapseWrapper.current.style.height = `${upsellsCollapseWrapper.current.scrollHeight}px`;
+      setUpsellsExpanded(true)
+    }
+  }, [items]);
 
   const addUpsellProductToCart = async (variantId) => {
     if (!variantId) {
@@ -138,13 +157,17 @@ const CartUpsells = ({total, products, addToCart}) => {
                           <p className="cart__upsell-title">{title}</p>
                           {compare_at_price > price ? (
                             <p className="cart__upsell-price">
-                              <s>{formatMoney(compare_at_price, window.theme.moneyFormat)}</s>
+                              <s>
+                                {formatMoney(compare_at_price, window.theme.moneyFormat)}
+                              </s>
                               <span className="cart__upsell-price--sale">
                                 {formatMoney(price, window.theme.moneyFormat)}
                               </span>
                             </p>
                           ) : (
-                            <p className="cart__upsell-price">{formatMoney(price, window.theme.moneyFormat)}</p>
+                            <p className="cart__upsell-price">
+                              {formatMoney(price, window.theme.moneyFormat)}
+                            </p>
                           )}
                         </div>
 

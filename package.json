@@ -53,6 +53,7 @@
     "papaparse": "^5.3.1",
     "preact": "^10.5.9",
     "pristinejs": "^0.1.9",
+    "process": "^0.11.10",
     "range-slider-wc": "^0.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

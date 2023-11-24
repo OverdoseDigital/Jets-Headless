@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {formatMoney} from '@shopify/theme-currency';
 
-const FreeShippingBar = ({total, freeShippingBarSettings}) => {
+const FreeShippingBar = ({total, freeShippingBarSettings, items}) => {
   const {remainingTemplate, reachedTemplate, serviceOne, thresholdOne} = freeShippingBarSettings;
-
+  const [shippingProgressVisible, setShippingProgressVisible] = useState(true)
   /**
    * Create the free shipping remaining spend message.
    * @param {number} cartTotal
@@ -16,6 +16,23 @@ const FreeShippingBar = ({total, freeShippingBarSettings}) => {
     const remainingAmt = formatMoney(threshold - cartTotal, window.theme.moneyFormat);
     return remainingTemplate.replace('{{ amount }}', remainingAmt).replace('{{ service }}', service);
   };
+
+  useEffect(() => {
+    let hasUpsellOffers = false
+    let itemsWithUpsells = items.filter(i => i?.properties?._upsell_data)
+    if(itemsWithUpsells.length) {
+      itemsWithUpsells.map(iwu => {
+        let upsellData = JSON.parse(iwu.properties?._upsell_data)
+        let inCart = items.find(i => i.handle == upsellData.handle)
+        if(!inCart) hasUpsellOffers = true
+      })
+    }
+    if(hasUpsellOffers) {
+      setShippingProgressVisible(false)
+    } else {
+      setShippingProgressVisible(true)
+    }
+  }, [items]);
 
   /**
    * Construct free shipping bar percentage and message.
@@ -42,13 +59,13 @@ const FreeShippingBar = ({total, freeShippingBarSettings}) => {
     width: `${barPercentage}%`,
   };
 
-  return (
+  return ( shippingProgressVisible ?
     <div className="cart__free-shipping">
       <div className="cart__progress">
         <div className="cart__progress-bar" style={barWidth} />
       </div>
       <p>{barMessage}</p>
-    </div>
+    </div> : null
   );
 };
 
